@@ -1,3 +1,1 @@
-## Prerequisites
-
-**frontend-redesign**
+## frontend-redesign
