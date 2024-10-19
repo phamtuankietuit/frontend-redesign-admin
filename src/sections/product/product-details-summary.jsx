@@ -14,7 +14,7 @@ import { formHelperTextClasses } from '@mui/material/FormHelperText';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { fCurrency, fShortenNumber } from 'src/utils/format-number';
+import { fCurrency, fMyShortenNumber } from 'src/utils/format-number';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -52,11 +52,13 @@ export function ProductDetailsSummary({
     subDescription,
   } = product;
 
-  const existProduct = !!items?.length && items.map((item) => item.id).includes(id);
+  const existProduct =
+    !!items?.length && items.map((item) => item.id).includes(id);
 
   const isMaxQuantity =
     !!items?.length &&
-    items.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
+    items.filter((item) => item.id === id).map((item) => item.quantity)[0] >=
+      available;
 
   const defaultValues = {
     id,
@@ -85,7 +87,11 @@ export function ProductDetailsSummary({
   const onSubmit = handleSubmit(async (data) => {
     try {
       if (!existProduct) {
-        onAddCart?.({ ...data, colors: [values.colors], subtotal: data.price * data.quantity });
+        onAddCart?.({
+          ...data,
+          colors: [values.colors],
+          subtotal: data.price * data.quantity,
+        });
       }
       onGotoStep?.(0);
       router.push(paths.product.checkout);
@@ -96,7 +102,11 @@ export function ProductDetailsSummary({
 
   const handleAddCart = useCallback(() => {
     try {
-      onAddCart?.({ ...values, colors: [values.colors], subtotal: values.price * values.quantity });
+      onAddCart?.({
+        ...values,
+        colors: [values.colors],
+        subtotal: values.price * values.quantity,
+      });
     } catch (error) {
       console.error(error);
     }
@@ -107,7 +117,11 @@ export function ProductDetailsSummary({
       {priceSale && (
         <Box
           component="span"
-          sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
+          sx={{
+            color: 'text.disabled',
+            textDecoration: 'line-through',
+            mr: 0.5,
+          }}
         >
           {fCurrency(priceSale)}
         </Box>
@@ -121,7 +135,11 @@ export function ProductDetailsSummary({
     <Stack direction="row" spacing={3} justifyContent="center">
       <Link
         variant="subtitle2"
-        sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
+        sx={{
+          color: 'text.secondary',
+          display: 'inline-flex',
+          alignItems: 'center',
+        }}
       >
         <Iconify icon="mingcute:add-line" width={16} sx={{ mr: 1 }} />
         Compare
@@ -129,7 +147,11 @@ export function ProductDetailsSummary({
 
       <Link
         variant="subtitle2"
-        sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
+        sx={{
+          color: 'text.secondary',
+          display: 'inline-flex',
+          alignItems: 'center',
+        }}
       >
         <Iconify icon="solar:heart-bold" width={16} sx={{ mr: 1 }} />
         Favorite
@@ -137,7 +159,11 @@ export function ProductDetailsSummary({
 
       <Link
         variant="subtitle2"
-        sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
+        sx={{
+          color: 'text.secondary',
+          display: 'inline-flex',
+          alignItems: 'center',
+        }}
       >
         <Iconify icon="solar:share-bold" width={16} sx={{ mr: 1 }} />
         Share
@@ -148,7 +174,28 @@ export function ProductDetailsSummary({
   const renderColorOptions = (
     <Stack direction="row">
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Color
+        Màu sắc
+      </Typography>
+
+      <Controller
+        name="colors"
+        control={control}
+        render={({ field }) => (
+          <ColorPicker
+            colors={colors}
+            selected={field.value}
+            onSelectColor={(color) => field.onChange(color)}
+            limit={4}
+          />
+        )}
+      />
+    </Stack>
+  );
+
+  const renderOptions = (
+    <Stack direction="row">
+      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
+        Tập
       </Typography>
 
       <Controller
@@ -175,14 +222,13 @@ export function ProductDetailsSummary({
       <Field.Select
         name="size"
         size="small"
-        helperText={
-          <Link underline="always" color="textPrimary">
-            Size chart
-          </Link>
-        }
         sx={{
           maxWidth: 88,
-          [`& .${formHelperTextClasses.root}`]: { mx: 0, mt: 1, textAlign: 'right' },
+          [`& .${formHelperTextClasses.root}`]: {
+            mx: 0,
+            mt: 1,
+            textAlign: 'right',
+          },
         }}
       >
         {sizes.map((size) => (
@@ -197,7 +243,7 @@ export function ProductDetailsSummary({
   const renderQuantity = (
     <Stack direction="row">
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Quantity
+        Số lượng
       </Typography>
 
       <Stack spacing={1}>
@@ -210,8 +256,12 @@ export function ProductDetailsSummary({
           onDecrease={() => setValue('quantity', values.quantity - 1)}
         />
 
-        <Typography variant="caption" component="div" sx={{ textAlign: 'right' }}>
-          Available: {available}
+        <Typography
+          variant="caption"
+          component="div"
+          sx={{ textAlign: 'right' }}
+        >
+          Kho: {available}
         </Typography>
       </Stack>
     </Stack>
@@ -229,32 +279,52 @@ export function ProductDetailsSummary({
         onClick={handleAddCart}
         sx={{ whiteSpace: 'nowrap' }}
       >
-        Add to cart
+        Thêm vào giỏ hàng
       </Button>
 
-      <Button fullWidth size="large" type="submit" variant="contained" disabled={disableActions}>
-        Buy now
+      <Button
+        fullWidth
+        size="large"
+        type="submit"
+        variant="contained"
+        disabled={disableActions}
+      >
+        Mua ngay
       </Button>
     </Stack>
   );
 
   const renderSubDescription = (
     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-      {subDescription}
+      Đội Doras đã có trận thắng tưng bừng trước đội Edogawa Boros trong một
+      trận đấu khá căng thẳng. Nhưng ngay sau đó, Kuro cùng với các bạn mình đã
+      nhận lời so tài với cầu thủ bóng đá Ronaemon ở trận đấu kết hợp giữa hai
+      môn bóng cháy và bóng đa. Đội nào thắng đây khi các luật chơi đã thay đổi
+      rất nhiều!?
     </Typography>
   );
 
   const renderRating = (
-    <Stack direction="row" alignItems="center" sx={{ color: 'text.disabled', typography: 'body2' }}>
-      <Rating size="small" value={totalRatings} precision={0.1} readOnly sx={{ mr: 1 }} />
-      {`(${fShortenNumber(totalReviews)} reviews)`}
+    <Stack
+      direction="row"
+      alignItems="center"
+      sx={{ color: 'text.disabled', typography: 'body2' }}
+    >
+      <Rating
+        size="small"
+        value={totalRatings}
+        precision={0.1}
+        readOnly
+        sx={{ mr: 1 }}
+      />
+      {`(${fMyShortenNumber(totalReviews)} đánh giá)`}
     </Stack>
   );
 
   const renderLabels = (newLabel.enabled || saleLabel.enabled) && (
     <Stack direction="row" alignItems="center" spacing={1}>
-      {newLabel.enabled && <Label color="info">{newLabel.content}</Label>}
-      {saleLabel.enabled && <Label color="error">{saleLabel.content}</Label>}
+      {newLabel.enabled && <Label color="info">NEW</Label>}
+      {saleLabel.enabled && <Label color="error">SALE</Label>}
     </Stack>
   );
 
@@ -269,7 +339,9 @@ export function ProductDetailsSummary({
           'success.main',
       }}
     >
-      {inventoryType}
+      {inventoryType === 'out of stock' && 'Hết hàng'}
+      {inventoryType === 'low stock' && 'Còn ít hàng'}
+      {inventoryType === 'in stock' && 'Còn hàng'}
     </Box>
   );
 
@@ -281,7 +353,7 @@ export function ProductDetailsSummary({
 
           {renderInventoryType}
 
-          <Typography variant="h5">{name}</Typography>
+          <Typography variant="h5">Đội Quân Doraemon Đặc Biệt</Typography>
 
           {renderRating}
 
@@ -292,9 +364,13 @@ export function ProductDetailsSummary({
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
+        {renderOptions}
+
+        <Divider sx={{ borderStyle: 'dashed' }} />
+
         {renderColorOptions}
 
-        {renderSizeOptions}
+        <Divider sx={{ borderStyle: 'dashed' }} />
 
         {renderQuantity}
 

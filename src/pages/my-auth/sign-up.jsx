@@ -2,11 +2,11 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
 
-import { CenteredSignInView } from 'src/auth/view/auth-demo/centered';
+import { CenteredSignUpView } from 'src/auth/view/auth-demo/centered';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Sign in - ${CONFIG.appName}` };
+const metadata = { title: `Sign up - ${CONFIG.appName}` };
 
 export default function Page() {
   return (
@@ -15,7 +15,7 @@ export default function Page() {
         <title> {metadata.title}</title>
       </Helmet>
 
-      <CenteredSignInView />
+      <CenteredSignUpView />
     </>
   );
 }

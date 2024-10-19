@@ -89,16 +89,22 @@ export function ProductShopDetailsView({ product, error, loading }) {
 
       <CustomBreadcrumbs
         links={[
-          { name: 'Home', href: '/' },
-          { name: 'Shop', href: paths.product.root },
-          { name: product?.name },
+          { name: 'Trang chủ', href: '/' },
+          { name: 'Sách Tiếng Việt', href: '/' },
+          { name: 'Thiếu Nhi', href: '/' },
+          { name: 'Đội Quân Doraemon Đặc Biệt' },
         ]}
         sx={{ mb: 5 }}
       />
 
       <Grid container spacing={{ xs: 3, md: 5, lg: 8 }}>
         <Grid xs={12} md={6} lg={7}>
-          <ProductDetailsCarousel images={product?.images} />
+          <ProductDetailsCarousel
+            images={[
+              'https://images.unsplash.com/photo-1723204576658-e44be93f5e0b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              'https://images.unsplash.com/photo-1641492516424-0348c3072884?q=80&w=1987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            ]}
+          />
         </Grid>
 
         <Grid xs={12} md={6} lg={5}>

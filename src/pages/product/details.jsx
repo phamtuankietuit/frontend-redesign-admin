@@ -22,7 +22,11 @@ export default function Page() {
         <title> {metadata.title}</title>
       </Helmet>
 
-      <ProductShopDetailsView product={product} loading={productLoading} error={productError} />
+      <ProductShopDetailsView
+        product={product}
+        loading={productLoading}
+        error={productError}
+      />
     </>
   );
 }

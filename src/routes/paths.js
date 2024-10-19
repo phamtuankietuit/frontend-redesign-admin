@@ -45,6 +45,11 @@ export const paths = {
     details: (title) => `/post/${paramCase(title)}`,
     demo: { details: `/post/${paramCase(MOCK_TITLE)}` },
   },
+  // MY AUTH
+  myAuth: {
+    signIn: '/sign-in',
+    signUp: '/sign-up',
+  },
   // AUTH
   auth: {
     amplify: {

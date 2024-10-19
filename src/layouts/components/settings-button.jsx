@@ -18,7 +18,7 @@ export function SettingsButton({ sx, ...other }) {
       sx={{ p: 0, width: 40, height: 40, ...sx }}
       {...other}
     >
-      <Badge color="error" variant="dot" invisible={!settings.canReset}>
+      <Badge color="error" variant="dot" invisible>
         <SvgIcon
           component={m.svg}
           animate={{ rotate: 360 }}

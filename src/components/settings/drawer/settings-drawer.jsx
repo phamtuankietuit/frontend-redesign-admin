@@ -49,7 +49,7 @@ export function SettingsDrawer({
 
       <FullScreenButton />
 
-      <Tooltip title="Reset">
+      {/* <Tooltip title="Reset">
         <IconButton
           onClick={() => {
             settings.onReset();
@@ -60,7 +60,7 @@ export function SettingsDrawer({
             <Iconify icon="solar:restart-bold" />
           </Badge>
         </IconButton>
-      </Tooltip>
+      </Tooltip> */}
 
       <Tooltip title="Close">
         <IconButton onClick={settings.onCloseDrawer}>

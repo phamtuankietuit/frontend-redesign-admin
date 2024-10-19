@@ -20,21 +20,14 @@ import { Logo } from 'src/components/logo';
 
 const LINKS = [
   {
-    headline: 'Minimal',
+    headline: 'KKBooks',
     children: [
-      { name: 'About us', href: paths.about },
-      { name: 'Contact us', href: paths.contact },
+      { name: 'Về chúng tôi', href: paths.about },
+      { name: 'Liên hệ', href: paths.contact },
       { name: 'FAQs', href: paths.faqs },
     ],
   },
-  {
-    headline: 'Legal',
-    children: [
-      { name: 'Terms and condition', href: '#' },
-      { name: 'Privacy policy', href: '#' },
-    ],
-  },
-  { headline: 'Contact', children: [{ name: 'support@minimals.cc', href: '#' }] },
+  { headline: 'Email', children: [{ name: 'support@kkbooks.com', href: '#' }] },
 ];
 
 // ----------------------------------------------------------------------
@@ -73,8 +66,9 @@ export function Footer({ layoutQuery, sx }) {
                 [theme.breakpoints.up(layoutQuery)]: { mx: 'unset' },
               }}
             >
-              The starting point for your next project with Minimal UI Kit, built on the newest
-              version of Material-UI ©, ready to be customized to your style.
+              KKBooks
+              <br />
+              Khám phá thế giới tri thức ngay tại đây!
             </Typography>
 
             <Stack

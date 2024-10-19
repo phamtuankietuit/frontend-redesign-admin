@@ -61,7 +61,12 @@ export function ProductDetailsCarousel({ images }) {
           ref={carousel.thumbs.thumbsRef}
           options={carousel.options?.thumbs}
           slotProps={{ disableMask: true }}
-          sx={{ width: 360 }}
+          sx={{
+            width: 360,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
           {slides.map((item, index) => (
             <CarouselThumb

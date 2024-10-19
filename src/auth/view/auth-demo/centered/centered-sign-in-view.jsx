@@ -18,20 +18,15 @@ import { AnimateLogo2 } from 'src/components/animate';
 import { Form, Field } from 'src/components/hook-form';
 
 import { FormHead } from '../../../components/form-head';
-import { FormSocials } from '../../../components/form-socials';
-import { FormDivider } from '../../../components/form-divider';
 
 // ----------------------------------------------------------------------
 
 export const SignInSchema = zod.object({
   email: zod
     .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
-  password: zod
-    .string()
-    .min(1, { message: 'Password is required!' })
-    .min(6, { message: 'Password must be at least 6 characters!' }),
+    .min(1, { message: 'Không được bỏ trống!' })
+    .email({ message: 'Email không hợp lệ!' }),
+  password: zod.string().min(1, { message: 'Không được bỏ trống!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -64,23 +59,12 @@ export function CenteredSignInView() {
 
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
-      <Field.Text name="email" label="Email address" InputLabelProps={{ shrink: true }} />
+      <Field.Text name="email" label="Email" InputLabelProps={{ shrink: true }} />
 
       <Box gap={1.5} display="flex" flexDirection="column">
-        <Link
-          component={RouterLink}
-          href={paths.authDemo.centered.resetPassword}
-          variant="body2"
-          color="inherit"
-          sx={{ alignSelf: 'flex-end' }}
-        >
-          Forgot password?
-        </Link>
-
         <Field.Text
           name="password"
-          label="Password"
-          placeholder="6+ characters"
+          label="Mật khẩu"
           type={password.value ? 'text' : 'password'}
           InputLabelProps={{ shrink: true }}
           InputProps={{
@@ -93,6 +77,16 @@ export function CenteredSignInView() {
             ),
           }}
         />
+
+        <Link
+          component={RouterLink}
+          href={paths.authDemo.centered.resetPassword}
+          variant="body2"
+          color="inherit"
+          sx={{ alignSelf: 'flex-end' }}
+        >
+          Quên mật khẩu?
+        </Link>
       </Box>
 
       <LoadingButton
@@ -104,7 +98,7 @@ export function CenteredSignInView() {
         loading={isSubmitting}
         loadingIndicator="Sign in..."
       >
-        Sign in
+        Đăng nhập
       </LoadingButton>
     </Box>
   );
@@ -114,12 +108,12 @@ export function CenteredSignInView() {
       {renderLogo}
 
       <FormHead
-        title="Sign in to your account"
+        title="Đăng nhập"
         description={
           <>
-            {`Don’t have an account? `}
-            <Link component={RouterLink} href={paths.authDemo.centered.signUp} variant="subtitle2">
-              Get started
+            {`Chưa có tài khoản? `}
+            <Link component={RouterLink} href={paths.myAuth.signUp} variant="subtitle2">
+              Đăng ký
             </Link>
           </>
         }
@@ -128,14 +122,6 @@ export function CenteredSignInView() {
       <Form methods={methods} onSubmit={onSubmit}>
         {renderForm}
       </Form>
-
-      <FormDivider />
-
-      <FormSocials
-        signInWithGoogle={() => {}}
-        singInWithGithub={() => {}}
-        signInWithTwitter={() => {}}
-      />
     </>
   );
 }

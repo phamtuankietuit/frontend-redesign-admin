@@ -46,7 +46,14 @@ export default function App() {
                 <CheckoutProvider>
                   <Snackbar />
                   <ProgressBar />
-                  <SettingsDrawer />
+                  <SettingsDrawer
+                    hideDirection
+                    hidePresets
+                    hideNavLayout
+                    hideNavColor
+                    hideFont
+                    hideCompact
+                  />
                   <Router />
                 </CheckoutProvider>
               </MotionLazy>

@@ -7,6 +7,7 @@ import { SplashScreen } from 'src/components/loading-screen';
 
 import { authRoutes } from './auth';
 import { mainRoutes } from './main';
+import { myAuthRoutes } from './my-auth';
 import { authDemoRoutes } from './auth-demo';
 import { dashboardRoutes } from './dashboard';
 import { componentsRoutes } from './components';
@@ -44,6 +45,9 @@ export function Router() {
 
     // Components
     ...componentsRoutes,
+
+    // My Auth
+    ...myAuthRoutes,
 
     // No match
     { path: '*', element: <Navigate to="/404" replace /> },

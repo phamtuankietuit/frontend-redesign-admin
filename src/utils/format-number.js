@@ -2,7 +2,7 @@ import { formatNumberLocale } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
-const DEFAULT_LOCALE = { code: 'en-US', currency: 'USD' };
+const DEFAULT_LOCALE = { code: 'vi-VN', currency: 'VND' };
 
 function processInput(inputValue) {
   if (inputValue == null || Number.isNaN(inputValue)) return null;
@@ -78,6 +78,19 @@ export function fShortenNumber(inputValue, options) {
   }).format(number);
 
   return fm.replace(/[A-Z]/g, (match) => match.toLowerCase());
+}
+
+// ----------------------------------------------------------------------
+
+export function fMyShortenNumber(inputValue) {
+  if (Number(inputValue) >= 1e9) {
+    return `${(Number(inputValue) / 1e9).toFixed(1).replace(/\.0$/, '')}B`; // Billions
+  } if (Number(inputValue) >= 1e6) {
+    return `${(Number(inputValue) / 1e6).toFixed(1).replace(/\.0$/, '')}M`; // Millions
+  } if (Number(inputValue) >= 1e3) {
+    return `${(Number(inputValue) / 1e3).toFixed(1).replace(/\.0$/, '')}k`; // Thousands
+  }
+  return inputValue.toString(); // Less than 1000
 }
 
 // ----------------------------------------------------------------------

@@ -5,7 +5,7 @@ import packageJson from '../package.json';
 // ----------------------------------------------------------------------
 
 export const CONFIG = {
-  appName: 'Minimal UI',
+  appName: 'KKBooks',
   appVersion: packageJson.version,
   serverUrl: import.meta.env.VITE_SERVER_URL ?? '',
   assetsDir: import.meta.env.VITE_ASSETS_DIR ?? '',
@@ -15,7 +15,7 @@ export const CONFIG = {
    */
   auth: {
     method: 'jwt',
-    skip: false,
+    skip: true,
     redirectPath: paths.dashboard.root,
   },
   /**

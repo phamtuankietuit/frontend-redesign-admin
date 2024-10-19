@@ -13,28 +13,28 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { passwordRegex, phoneNumberRegex } from 'src/utils/regex';
+
 import { Iconify } from 'src/components/iconify';
 import { AnimateLogo2 } from 'src/components/animate';
 import { Form, Field } from 'src/components/hook-form';
 
 import { FormHead } from '../../../components/form-head';
-import { FormSocials } from '../../../components/form-socials';
-import { FormDivider } from '../../../components/form-divider';
-import { SignUpTerms } from '../../../components/sign-up-terms';
 
 // ----------------------------------------------------------------------
 
 export const SignUpSchema = zod.object({
-  firstName: zod.string().min(1, { message: 'First name is required!' }),
-  lastName: zod.string().min(1, { message: 'Last name is required!' }),
+  name: zod.string().min(1, { message: 'Không được bỏ trống!' }),
+  phoneNumber: zod.string().min(1, { message: 'Không được bỏ trống!' }).regex(phoneNumberRegex, {
+    message: 'Số điện thoại không hợp lệ!',
+  }),
   email: zod
     .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
-  password: zod
-    .string()
-    .min(1, { message: 'Password is required!' })
-    .min(6, { message: 'Password must be at least 6 characters!' }),
+    .min(1, { message: 'Không được bỏ trống!' })
+    .email({ message: 'Email không hợp lệ!' }),
+  password: zod.string().min(1, { message: 'Không được bỏ trống!' }).regex(passwordRegex, {
+    message: 'Chứa ít nhất 1 chữ thường, 1 chữ hoa, 1 số và ít nhất 8 ký tự!',
+  }),
 });
 
 // ----------------------------------------------------------------------
@@ -43,8 +43,8 @@ export function CenteredSignUpView() {
   const password = useBoolean();
 
   const defaultValues = {
-    firstName: '',
-    lastName: '',
+    name: '',
+    phoneNumber: '',
     email: '',
     password: '',
   };
@@ -72,17 +72,25 @@ export function CenteredSignUpView() {
 
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
-      <Box display="flex" gap={{ xs: 3, sm: 2 }} flexDirection={{ xs: 'column', sm: 'row' }}>
+      {/* <Box display="flex" gap={{ xs: 3, sm: 2 }} flexDirection={{ xs: 'column', sm: 'row' }}>
         <Field.Text name="firstName" label="First name" InputLabelProps={{ shrink: true }} />
         <Field.Text name="lastName" label="Last name" InputLabelProps={{ shrink: true }} />
-      </Box>
+      </Box> */}
 
-      <Field.Text name="email" label="Email address" InputLabelProps={{ shrink: true }} />
+      <Field.Text name="name" label="Tên" InputLabelProps={{ shrink: true }} />
+
+      <Field.Text
+        name="phoneNumber"
+        label="Số điện thoại"
+        type="tel"
+        InputLabelProps={{ shrink: true }}
+      />
+
+      <Field.Text name="email" label="Email" InputLabelProps={{ shrink: true }} />
 
       <Field.Text
         name="password"
-        label="Password"
-        placeholder="6+ characters"
+        label="Mật khẩu"
         type={password.value ? 'text' : 'password'}
         InputLabelProps={{ shrink: true }}
         InputProps={{
@@ -105,7 +113,7 @@ export function CenteredSignUpView() {
         loading={isSubmitting}
         loadingIndicator="Create account..."
       >
-        Create account
+        Đăng ký
       </LoadingButton>
     </Box>
   );
@@ -115,12 +123,12 @@ export function CenteredSignUpView() {
       {renderLogo}
 
       <FormHead
-        title="Get started absolutely free"
+        title="Đăng ký"
         description={
           <>
-            {`Already have an account? `}
-            <Link component={RouterLink} href={paths.authDemo.centered.signIn} variant="subtitle2">
-              Get started
+            {`Đã có tài khoản? `}
+            <Link component={RouterLink} href={paths.myAuth.signIn} variant="subtitle2">
+              Đăng nhập
             </Link>
           </>
         }
@@ -129,16 +137,6 @@ export function CenteredSignUpView() {
       <Form methods={methods} onSubmit={onSubmit}>
         {renderForm}
       </Form>
-
-      <SignUpTerms />
-
-      <FormDivider />
-
-      <FormSocials
-        signInWithGoogle={() => {}}
-        singInWithGithub={() => {}}
-        signInWithTwitter={() => {}}
-      />
     </>
   );
 }
