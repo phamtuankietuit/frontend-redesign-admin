@@ -9,7 +9,7 @@ import { ProductShopDetailsView } from 'src/sections/product/view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Product details - ${CONFIG.appName}` };
+const metadata = { title: `${CONFIG.appName}` };
 
 export default function Page() {
   const { id = '' } = useParams();

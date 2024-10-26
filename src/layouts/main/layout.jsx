@@ -1,12 +1,16 @@
+import { useState, useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
-import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 
-import { paths } from 'src/routes/paths';
 import { usePathname } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+import { useDebounce } from 'src/hooks/use-debounce';
+
+import { _notifications } from 'src/_mock';
+import { useSearchProducts } from 'src/actions/product';
 
 import { Logo } from 'src/components/logo';
 
@@ -14,12 +18,15 @@ import { Main } from './main';
 import { NavMobile } from './nav/mobile';
 import { NavDesktop } from './nav/desktop';
 import { Footer, HomeFooter } from './footer';
+import { _account } from '../config-nav-account';
 import { MenuButton } from '../components/menu-button';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
 import { navData as mainNavData } from '../config-nav-main';
-import { SignInButton } from '../components/sign-in-button';
+import { AccountDrawer } from '../components/account-drawer';
 import { SettingsButton } from '../components/settings-button';
+import { SearchHome } from '../components/search-home/search-home';
+import { NotificationsDrawer } from '../components/notifications-drawer';
 
 // ----------------------------------------------------------------------
 
@@ -35,6 +42,14 @@ export function MainLayout({ sx, data, children, header }) {
   const layoutQuery = 'md';
 
   const navData = data?.nav ?? mainNavData;
+
+  // SearchHome
+  const [searchQuery, setSearchQuery] = useState('');
+  const handleSearch = useCallback((inputValue) => {
+    setSearchQuery(inputValue);
+  }, []);
+  const debouncedQuery = useDebounce(searchQuery);
+  const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
 
   return (
     <LayoutSection
@@ -71,36 +86,44 @@ export function MainLayout({ sx, data, children, header }) {
                 <Logo />
               </>
             ),
-            rightArea: (
-              <>
+            centerArea: (
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexGrow: 1,
+                }}
+              >
                 {/* -- Nav desktop -- */}
                 <NavDesktop
                   data={navData}
                   sx={{
                     display: 'none',
-                    [theme.breakpoints.up(layoutQuery)]: { mr: 2.5, display: 'flex' },
+                    [theme.breakpoints.up(layoutQuery)]: {
+                      mr: 2.5,
+                      display: 'flex',
+                    },
                   }}
                 />
-                <Box display="flex" alignItems="center" gap={{ xs: 1, sm: 1.5 }}>
-                  {/* -- Settings button -- */}
-                  <SettingsButton />
-                  {/* -- Sign in button -- */}
-                  <SignInButton />
-                  {/* -- Purchase button -- */}
-                  <Button
-                    variant="contained"
-                    rel="noopener"
-                    target="_blank"
-                    href={paths.minimalStore}
-                    sx={{
-                      display: 'none',
-                      [theme.breakpoints.up(layoutQuery)]: { display: 'inline-flex' },
-                    }}
-                  >
-                    Purchase
-                  </Button>
-                </Box>
-              </>
+                <SearchHome
+                  query={debouncedQuery}
+                  results={searchResults}
+                  onSearch={handleSearch}
+                  loading={searchLoading}
+                />
+              </Box>
+            ),
+            rightArea: (
+              <Box
+                display="flex"
+                alignItems="center"
+                gap={{ xs: 0, sm: 0.75, md: 1.25 }}
+              >
+                <NotificationsDrawer data={_notifications} />
+                <SettingsButton />
+                <AccountDrawer data={_account} />
+              </Box>
             ),
           }}
         />
@@ -108,7 +131,9 @@ export function MainLayout({ sx, data, children, header }) {
       /** **************************************
        * Footer
        *************************************** */
-      footerSection={homePage ? <HomeFooter /> : <Footer layoutQuery={layoutQuery} />}
+      footerSection={
+        homePage ? <HomeFooter /> : <Footer layoutQuery={layoutQuery} />
+      }
       /** **************************************
        * Style
        *************************************** */

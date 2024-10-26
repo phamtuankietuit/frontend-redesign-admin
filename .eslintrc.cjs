@@ -102,5 +102,6 @@ module.exports = {
         'internal-pattern': ['src/**'],
       },
     ],
+    'semi': ['error', 'always'],
   },
 };

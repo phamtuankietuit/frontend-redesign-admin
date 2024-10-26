@@ -6,7 +6,7 @@
 const config = {
   semi: true,
   tabWidth: 2,
-  endOfLine: 'lf',
+  endOfLine: 'crlf',
   printWidth: 80,
   singleQuote: true,
   trailingComma: 'es5',

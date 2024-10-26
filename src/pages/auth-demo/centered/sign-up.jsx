@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
 
-import { CenteredSignUpView } from 'src/auth/view/auth-demo/centered';
+import { CenteredSignUpView } from 'src/auth/view';
 
 // ----------------------------------------------------------------------
 
