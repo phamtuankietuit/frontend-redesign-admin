@@ -11,6 +11,7 @@ import { myAuthRoutes } from './my-auth';
 import { authDemoRoutes } from './auth-demo';
 import { dashboardRoutes } from './dashboard';
 import { componentsRoutes } from './components';
+import { myMainRoutes } from './my-main';
 
 // ----------------------------------------------------------------------
 
@@ -34,20 +35,23 @@ export function Router() {
     },
 
     // Auth
-    ...authRoutes,
-    ...authDemoRoutes,
+    // ...authRoutes,
+    // ...authDemoRoutes,
 
     // Dashboard
-    ...dashboardRoutes,
+    // ...dashboardRoutes,
 
     // Main
-    ...mainRoutes,
+    // ...mainRoutes,
 
     // Components
-    ...componentsRoutes,
+    // ...componentsRoutes,
 
     // My Auth
     ...myAuthRoutes,
+
+    // My Main
+    ...myMainRoutes,
 
     // No match
     { path: '*', element: <Navigate to="/404" replace /> },
