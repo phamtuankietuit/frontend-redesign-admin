@@ -4,7 +4,7 @@ import { Iconify } from 'src/components/iconify';
 
 export const _account = [
   {
-    label: 'Account settings',
+    label: 'Cài đặt tài khoản',
     href: '#',
     icon: <Iconify icon="solar:settings-bold-duotone" />,
   },

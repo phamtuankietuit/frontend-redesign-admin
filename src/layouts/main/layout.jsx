@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -10,6 +11,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { useDebounce } from 'src/hooks/use-debounce';
 
 import { _notifications } from 'src/_mock';
+import { selectAuth } from 'src/state/auth/auth.slice';
 import { useSearchProducts } from 'src/actions/product';
 
 import { Logo } from 'src/components/logo';
@@ -23,6 +25,7 @@ import { MenuButton } from '../components/menu-button';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
 import { navData as mainNavData } from '../config-nav-main';
+import { SignInButton } from '../components/sign-in-button';
 import { AccountDrawer } from '../components/account-drawer';
 import { SettingsButton } from '../components/settings-button';
 import { SearchHome } from '../components/search-home/search-home';
@@ -39,9 +42,11 @@ export function MainLayout({ sx, data, children, header }) {
 
   const homePage = pathname === '/';
 
-  const layoutQuery = 'md';
+  const layoutQuery = 'sm';
 
   const navData = data?.nav ?? mainNavData;
+
+  const { user } = useSelector(selectAuth);
 
   // SearchHome
   const [searchQuery, setSearchQuery] = useState('');
@@ -120,9 +125,10 @@ export function MainLayout({ sx, data, children, header }) {
                 alignItems="center"
                 gap={{ xs: 0, sm: 0.75, md: 1.25 }}
               >
-                <NotificationsDrawer data={_notifications} />
+                {user && <NotificationsDrawer data={_notifications} />}
                 <SettingsButton />
-                <AccountDrawer data={_account} />
+                {!user && <SignInButton />}
+                {user && <AccountDrawer data={_account} />}
               </Box>
             ),
           }}

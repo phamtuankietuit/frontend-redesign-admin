@@ -40,8 +40,6 @@ export const SignInSchema = zod.object({
 export function CenteredSignInView() {
   const router = useRouter();
 
-  const { isSignedIn } = useSelector(selectAuth);
-
   const password = useBoolean();
 
   const dispatch = useDispatch();
@@ -60,8 +58,8 @@ export function CenteredSignInView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      dispatch(signInAsync(data));
-      dispatch(getMeAsync());
+      await dispatch(signInAsync(data)).unwrap();
+      await dispatch(getMeAsync()).unwrap();
 
       router.replace('/');
     } catch (error) {

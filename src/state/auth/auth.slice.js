@@ -12,6 +12,11 @@ const initialState = {
 const authSlice = createSlice({
   name: 'auth',
   initialState,
+  reducers: {
+    signOut: (state) => {
+      state = initialState;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(signInAsync.rejected, () => {
