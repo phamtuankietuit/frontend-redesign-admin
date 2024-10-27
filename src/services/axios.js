@@ -1,6 +1,10 @@
 import axios from 'axios';
 
+import { useRouter } from 'src/routes/hooks';
+
 import { CONFIG } from 'src/config-global';
+
+import { toast } from 'src/components/snackbar';
 
 import { setSession, getAccessToken, getRefreshToken } from './token.service';
 
@@ -11,14 +15,12 @@ const AxiosInstance = axios.create({
 AxiosInstance.interceptors.request.use(
     (config) => {
         const accessToken = getAccessToken();
-        console.log("🚀 ~ accessToken:", accessToken);
         const unAuthorizeUrls = ['/auth/sign-in'];
 
         if (accessToken && config.url && !unAuthorizeUrls.includes(config.url)) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
 
-        console.log("🚀 ~ config:", config);
         return config;
     },
     (error) => Promise.reject(error)
@@ -45,7 +47,9 @@ AxiosInstance.interceptors.response.use(
 
                     return AxiosInstance(originalRequest);
                 } catch (refreshError) {
-                    console.error('Refresh token expired, please login again');
+                    toast.error('Refresh token expired, please login again');
+                    const router = useRouter();
+                    router.replace('/auth/sign-in');
                 }
             }
         }

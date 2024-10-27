@@ -20,7 +20,6 @@ const CenteredLayout = {
 };
 
 const authCentered = {
-  path: '',
   element: (
     <AuthCenteredLayout>
       <Outlet />
@@ -37,7 +36,6 @@ const authCentered = {
 
 export const myAuthRoutes = [
   {
-    path: '',
     element: (
       <Suspense fallback={<SplashScreen />}>
         <Outlet />

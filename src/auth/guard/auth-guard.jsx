@@ -1,44 +1,33 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { paths } from 'src/routes/paths';
-import { useRouter, usePathname, useSearchParams } from 'src/routes/hooks';
+import { useRouter } from 'src/routes/hooks';
+
+import { selectAuth } from 'src/state/auth/auth.slice';
+import { getAccessToken } from 'src/services/token.service';
+import { getMeAsync } from 'src/services/auth/auth.service';
 
 import { SplashScreen } from 'src/components/loading-screen';
-
-import { useAuthContext } from '../hooks';
 
 // ----------------------------------------------------------------------
 
 export function AuthGuard({ children }) {
   const router = useRouter();
 
-  const pathname = usePathname();
+  const dispatch = useDispatch();
 
-  const searchParams = useSearchParams();
-
-  const { authenticated, loading } = useAuthContext();
+  const { user, loading } = useSelector(selectAuth);
 
   const [isChecking, setIsChecking] = useState(true);
 
-  const createQueryString = useCallback(
-    (name, value) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams],
-  );
-
   const checkPermissions = async () => {
-    if (loading) {
-      return;
-    }
-
-    if (!authenticated) {
-      const href = `${paths.auth.signIn}`;
-
-      router.replace(href);
+    if (!user) {
+      if (getAccessToken() === null) {
+        router.replace(paths.auth.signIn);
+      } else {
+        dispatch(getMeAsync());
+      }
       return;
     }
 
@@ -48,7 +37,7 @@ export function AuthGuard({ children }) {
   useEffect(() => {
     checkPermissions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authenticated, loading]);
+  }, [user, loading]);
 
   if (isChecking) {
     return <SplashScreen />;

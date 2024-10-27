@@ -1,7 +1,7 @@
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -15,6 +15,7 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { selectAuth } from 'src/state/auth/auth.slice';
 import { getMeAsync, signInAsync } from 'src/services/auth/auth.service';
 
 import { toast } from 'src/components/snackbar';
@@ -39,6 +40,8 @@ export const SignInSchema = zod.object({
 export function CenteredSignInView() {
   const router = useRouter();
 
+  const { isSignedIn } = useSelector(selectAuth);
+
   const password = useBoolean();
 
   const dispatch = useDispatch();
@@ -60,7 +63,7 @@ export function CenteredSignInView() {
       dispatch(signInAsync(data));
       dispatch(getMeAsync());
 
-      router.refresh();
+      router.replace('/');
     } catch (error) {
       console.error(error);
       toast.error('Có lỗi xảy ra, vui lòng thử lại!');
