@@ -1,21 +1,23 @@
+import { useSelector } from 'react-redux';
+
 import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
 
-import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { useTabs } from 'src/hooks/use-tabs';
 
 import { varAlpha } from 'src/theme/styles';
+import { _coursesFeatured } from 'src/_mock';
+import { selectProduct } from 'src/state/product/product.slice';
 
 import { Iconify } from 'src/components/iconify';
 import { EmptyContent } from 'src/components/empty-content';
+import { MyCarousel } from 'src/components/my-carousel/my-carousel';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import { CartIcon } from '../components/cart-icon';
@@ -26,29 +28,9 @@ import { ProductDetailsSummary } from '../product-details-summary';
 import { ProductDetailsCarousel } from '../product-details-carousel';
 import { ProductDetailsDescription } from '../product-details-description';
 
-// ----------------------------------------------------------------------
-
-const SUMMARY = [
-  {
-    title: '100% original',
-    description: 'Chocolate bar candy canes ice cream toffee cookie halvah.',
-    icon: 'solar:verified-check-bold',
-  },
-  {
-    title: '10 days replacement',
-    description: 'Marshmallow biscuit donut dragée fruitcake wafer.',
-    icon: 'solar:clock-circle-bold',
-  },
-  {
-    title: 'Year warranty',
-    description: 'Cotton candy gingerbread cake I love sugar sweet.',
-    icon: 'solar:shield-check-bold',
-  },
-];
-
-// ----------------------------------------------------------------------
-
 export function ProductShopDetailsView({ product, error, loading }) {
+  const { ratings } = useSelector(selectProduct);
+
   const checkout = useCheckoutContext();
 
   const tabs = useTabs('description');
@@ -66,15 +48,15 @@ export function ProductShopDetailsView({ product, error, loading }) {
       <Container sx={{ mt: 5, mb: 10 }}>
         <EmptyContent
           filled
-          title="Product not found!"
+          title="Không tìm thấy sản phẩm!"
           action={
             <Button
               component={RouterLink}
-              href={paths.product.root}
+              href="/"
               startIcon={<Iconify width={16} icon="eva:arrow-ios-back-fill" />}
               sx={{ mt: 3 }}
             >
-              Back to list
+              Trở về danh sách
             </Button>
           }
           sx={{ py: 10 }}
@@ -99,49 +81,29 @@ export function ProductShopDetailsView({ product, error, loading }) {
 
       <Grid container spacing={{ xs: 3, md: 5, lg: 8 }}>
         <Grid xs={12} md={6} lg={7}>
-          <ProductDetailsCarousel
-            images={[
-              'https://images.unsplash.com/photo-1723204576658-e44be93f5e0b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-              'https://images.unsplash.com/photo-1641492516424-0348c3072884?q=80&w=1987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            ]}
-          />
+          <ProductDetailsCarousel images={product?.largeImageUrls} />
         </Grid>
 
         <Grid xs={12} md={6} lg={5}>
           {product && (
             <ProductDetailsSummary
               product={product}
-              items={checkout.items}
-              onAddCart={checkout.onAddToCart}
-              onGotoStep={checkout.onGotoStep}
-              disableActions={!product?.available}
+              // items={checkout.items}
+              // onAddCart={checkout.onAddToCart}
+              // onGotoStep={checkout.onGotoStep}
+              // disableActions={!product?.available}
             />
           )}
         </Grid>
       </Grid>
 
-      <Box
-        gap={5}
-        display="grid"
-        gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)' }}
-        sx={{ my: 10 }}
-      >
-        {SUMMARY.map((item) => (
-          <Box key={item.title} sx={{ textAlign: 'center', px: 5 }}>
-            <Iconify icon={item.icon} width={32} sx={{ color: 'primary.main' }} />
+      <MyCarousel
+        title="Khuyến mãi và Giảm giá vận chuyển đang áp dụng"
+        list={_coursesFeatured}
+        sx={{ mt: 5 }}
+      />
 
-            <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }}>
-              {item.title}
-            </Typography>
-
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {item.description}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
-
-      <Card>
+      <Card sx={{ mt: 5 }}>
         <Tabs
           value={tabs.value}
           onChange={tabs.onChange}
@@ -152,8 +114,8 @@ export function ProductShopDetailsView({ product, error, loading }) {
           }}
         >
           {[
-            { value: 'description', label: 'Description' },
-            { value: 'reviews', label: `Reviews (${product?.reviews.length})` },
+            { value: 'description', label: 'Mô tả sản phẩm' },
+            { value: 'reviews', label: `Đánh giá (${ratings?.totalRating})` },
           ].map((tab) => (
             <Tab key={tab.value} value={tab.value} label={tab.label} />
           ))}
@@ -163,14 +125,7 @@ export function ProductShopDetailsView({ product, error, loading }) {
           <ProductDetailsDescription description={product?.description} />
         )}
 
-        {tabs.value === 'reviews' && (
-          <ProductDetailsReview
-            ratings={product?.ratings}
-            reviews={product?.reviews}
-            totalRatings={product?.totalRatings}
-            totalReviews={product?.totalReviews}
-          />
-        )}
+        {tabs.value === 'reviews' && <ProductDetailsReview ratings={ratings} />}
       </Card>
     </Container>
   );

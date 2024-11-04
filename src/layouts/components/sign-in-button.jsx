@@ -12,7 +12,7 @@ export function SignInButton({ sx, ...other }) {
       sx={sx}
       {...other}
     >
-      Sign in
+      Đăng nhập
     </Button>
   );
 }

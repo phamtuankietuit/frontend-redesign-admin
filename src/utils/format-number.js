@@ -83,6 +83,7 @@ export function fShortenNumber(inputValue, options) {
 // ----------------------------------------------------------------------
 
 export function fMyShortenNumber(inputValue) {
+  if (!inputValue) return '';
   if (Number(inputValue) >= 1e9) {
     return `${(Number(inputValue) / 1e9).toFixed(1).replace(/\.0$/, '')}B`; // Billions
   } if (Number(inputValue) >= 1e6) {

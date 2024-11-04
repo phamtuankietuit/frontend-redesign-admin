@@ -1,4 +1,5 @@
 import { z as zod } from 'zod';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +17,7 @@ import { RouterLink } from 'src/routes/components';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { selectAuth } from 'src/state/auth/auth.slice';
+import { getAccessToken } from 'src/services/token.service';
 import { getMeAsync, signInAsync } from 'src/services/auth/auth.service';
 
 import { toast } from 'src/components/snackbar';
@@ -40,6 +42,8 @@ export const SignInSchema = zod.object({
 export function CenteredSignInView() {
   const router = useRouter();
 
+  const { user } = useSelector(selectAuth);
+
   const password = useBoolean();
 
   const dispatch = useDispatch();
@@ -58,15 +62,39 @@ export function CenteredSignInView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await dispatch(signInAsync(data)).unwrap();
-      await dispatch(getMeAsync()).unwrap();
-
-      router.replace('/');
+      dispatch(signInAsync(data))
+        // eslint-disable-next-line consistent-return
+        .then((action) => {
+          if (signInAsync.fulfilled.match(action)) {
+            return dispatch(getMeAsync());
+          }
+        })
+        .then((action) => {
+          if (getMeAsync.fulfilled.match(action)) {
+            router.replace('/');
+          }
+        });
     } catch (error) {
       console.error(error);
       toast.error('Có lỗi xảy ra, vui lòng thử lại!');
     }
   });
+
+  useEffect(() => {
+    if (user) {
+      router.replace('/');
+      return;
+    }
+
+    if (getAccessToken()) {
+      dispatch(getMeAsync()).then((action) => {
+        if (getMeAsync.fulfilled.match(action)) {
+          router.replace('/');
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const renderLogo = <AnimateLogo2 sx={{ mb: 3, mx: 'auto' }} />;
 
@@ -103,7 +131,7 @@ export function CenteredSignInView() {
 
         <Link
           component={RouterLink}
-          href={paths.authDemo.centered.resetPassword}
+          href={paths.auth.resetPassword}
           variant="body2"
           color="inherit"
           sx={{ alignSelf: 'flex-end' }}
@@ -119,7 +147,7 @@ export function CenteredSignInView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
-        loadingIndicator="Sign in..."
+        loadingIndicator="Đăng nhập..."
       >
         Đăng nhập
       </LoadingButton>

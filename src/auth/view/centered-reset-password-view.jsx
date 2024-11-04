@@ -19,8 +19,8 @@ import { FormReturnLink } from '../components/form-return-link';
 export const ResetPasswordSchema = zod.object({
   email: zod
     .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .min(1, { message: 'Không được bỏ trống!' })
+    .email({ message: 'Email không hợp lệ!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -51,7 +51,7 @@ export function CenteredResetPasswordView() {
     <Box gap={3} display="flex" flexDirection="column">
       <Field.Text
         name="email"
-        label="Email address"
+        label="Email"
         placeholder="example@gmail.com"
         autoFocus
         InputLabelProps={{ shrink: true }}
@@ -63,9 +63,9 @@ export function CenteredResetPasswordView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
-        loadingIndicator="Send request..."
+        loadingIndicator="Đang gửi..."
       >
-        Send request
+        Gửi
       </LoadingButton>
     </Box>
   );
@@ -74,15 +74,15 @@ export function CenteredResetPasswordView() {
     <>
       <FormHead
         icon={<PasswordIcon />}
-        title="Forgot your password?"
-        description={`Please enter the email address associated with your account and we'll email you a link to reset your password.`}
+        title="Quên mật khẩu?"
+        description="Hãy nhập email để hệ thống gửi đường dẫn đặt lại mật khẩu."
       />
 
       <Form methods={methods} onSubmit={onSubmit}>
         {renderForm}
       </Form>
 
-      <FormReturnLink href={paths.authDemo.centered.signIn} />
+      <FormReturnLink label="Trở về Đăng nhập" href={paths.auth.signIn} />
     </>
   );
 }

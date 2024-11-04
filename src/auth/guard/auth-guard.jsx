@@ -8,6 +8,7 @@ import { selectAuth } from 'src/state/auth/auth.slice';
 import { getAccessToken } from 'src/services/token.service';
 import { getMeAsync } from 'src/services/auth/auth.service';
 
+import { toast } from 'src/components/snackbar';
 import { SplashScreen } from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------
@@ -26,7 +27,13 @@ export function AuthGuard({ children }) {
       if (getAccessToken() === null) {
         router.replace(paths.auth.signIn);
       } else {
-        dispatch(getMeAsync());
+        // eslint-disable-next-line consistent-return
+        dispatch(getMeAsync()).then((action) => {
+          if (getMeAsync.rejected.match(action)) {
+            toast.error('Vui lòng đăng nhập lại!');
+            router.replace(paths.auth.signIn);
+          }
+        });
       }
       return;
     }

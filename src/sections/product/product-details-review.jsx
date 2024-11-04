@@ -18,24 +18,24 @@ import { ProductReviewNewForm } from './product-review-new-form';
 
 // ----------------------------------------------------------------------
 
-export function ProductDetailsReview({ totalRatings, totalReviews, ratings = [], reviews = [] }) {
+export function ProductDetailsReview({ ratings }) {
   const review = useBoolean();
 
-  const total = sumBy(ratings, (star) => star.starCount);
+  // const total = sumBy(ratings, (star) => star.starCount);
 
   const renderSummary = (
     <Stack spacing={1} alignItems="center" justifyContent="center">
-      <Typography variant="subtitle2">Average rating</Typography>
+      <Typography variant="subtitle2">Đánh giá trung bình</Typography>
 
       <Typography variant="h2">
-        {totalRatings}
+        {ratings.averageRating}
         /5
       </Typography>
 
-      <Rating readOnly value={totalRatings} precision={0.1} />
+      <Rating readOnly value={ratings.averageRating} precision={0.1} />
 
       <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-        ({fShortenNumber(totalReviews)} reviews)
+        ({fShortenNumber(ratings.totalRating)} đánh giá)
       </Typography>
     </Stack>
   );
@@ -46,35 +46,114 @@ export function ProductDetailsReview({ totalRatings, totalReviews, ratings = [],
       sx={{
         py: 5,
         px: { xs: 3, md: 5 },
-        borderLeft: (theme) => ({ md: `dashed 1px ${theme.vars.palette.divider}` }),
-        borderRight: (theme) => ({ md: `dashed 1px ${theme.vars.palette.divider}` }),
+        borderLeft: (theme) => ({
+          md: `dashed 1px ${theme.vars.palette.divider}`,
+        }),
+        borderRight: (theme) => ({
+          md: `dashed 1px ${theme.vars.palette.divider}`,
+        }),
       }}
     >
-      {ratings
-        .slice(0)
-        .reverse()
-        .map((rating) => (
-          <Stack key={rating.name} direction="row" alignItems="center">
-            <Typography variant="subtitle2" component="span" sx={{ width: 42 }}>
-              {rating.name}
-            </Typography>
+      <Stack key="5 Start" direction="row" alignItems="center">
+        <Typography variant="subtitle2" component="span" sx={{ width: 42 }}>
+          5 Sao
+        </Typography>
 
-            <LinearProgress
-              color="inherit"
-              variant="determinate"
-              value={(rating.starCount / total) * 100}
-              sx={{ mx: 2, flexGrow: 1 }}
-            />
+        <LinearProgress
+          color="inherit"
+          variant="determinate"
+          value={(ratings.total5StarRating / ratings.totalRating) * 100}
+          sx={{ mx: 2, flexGrow: 1 }}
+        />
 
-            <Typography
-              variant="body2"
-              component="span"
-              sx={{ minWidth: 48, color: 'text.secondary' }}
-            >
-              {fShortenNumber(rating.reviewCount)}
-            </Typography>
-          </Stack>
-        ))}
+        <Typography
+          variant="body2"
+          component="span"
+          sx={{ minWidth: 48, color: 'text.secondary' }}
+        >
+          {fShortenNumber(ratings.total5StarRating)}
+        </Typography>
+      </Stack>
+      <Stack key="4 Start" direction="row" alignItems="center">
+        <Typography variant="subtitle2" component="span" sx={{ width: 42 }}>
+          4 Sao
+        </Typography>
+
+        <LinearProgress
+          color="inherit"
+          variant="determinate"
+          value={(ratings.total4StarRating / ratings.totalRating) * 100}
+          sx={{ mx: 2, flexGrow: 1 }}
+        />
+
+        <Typography
+          variant="body2"
+          component="span"
+          sx={{ minWidth: 48, color: 'text.secondary' }}
+        >
+          {fShortenNumber(ratings.total4StarRating)}
+        </Typography>
+      </Stack>
+      <Stack key="3 Start" direction="row" alignItems="center">
+        <Typography variant="subtitle2" component="span" sx={{ width: 42 }}>
+          3 Sao
+        </Typography>
+
+        <LinearProgress
+          color="inherit"
+          variant="determinate"
+          value={(ratings.total3StarRating / ratings.totalRating) * 100}
+          sx={{ mx: 2, flexGrow: 1 }}
+        />
+
+        <Typography
+          variant="body2"
+          component="span"
+          sx={{ minWidth: 48, color: 'text.secondary' }}
+        >
+          {fShortenNumber(ratings.total3StarRating)}
+        </Typography>
+      </Stack>
+      <Stack key="2 Start" direction="row" alignItems="center">
+        <Typography variant="subtitle2" component="span" sx={{ width: 42 }}>
+          2 Sao
+        </Typography>
+
+        <LinearProgress
+          color="inherit"
+          variant="determinate"
+          value={(ratings.total2StarRating / ratings.totalRating) * 100}
+          sx={{ mx: 2, flexGrow: 1 }}
+        />
+
+        <Typography
+          variant="body2"
+          component="span"
+          sx={{ minWidth: 48, color: 'text.secondary' }}
+        >
+          {fShortenNumber(ratings.total2StarRating)}
+        </Typography>
+      </Stack>
+      <Stack key="1 Start" direction="row" alignItems="center">
+        <Typography variant="subtitle2" component="span" sx={{ width: 42 }}>
+          1 Sao
+        </Typography>
+
+        <LinearProgress
+          color="inherit"
+          variant="determinate"
+          value={(ratings.total1StarRating / ratings.totalRating) * 100}
+          sx={{ mx: 2, flexGrow: 1 }}
+        />
+
+        <Typography
+          variant="body2"
+          component="span"
+          sx={{ minWidth: 48, color: 'text.secondary' }}
+        >
+          {fShortenNumber(ratings.total1StarRating)}
+        </Typography>
+      </Stack>
     </Stack>
   );
 
@@ -87,7 +166,7 @@ export function ProductDetailsReview({ totalRatings, totalReviews, ratings = [],
         onClick={review.onTrue}
         startIcon={<Iconify icon="solar:pen-bold" />}
       >
-        Write your review
+        Viết đánh giá
       </Button>
     </Stack>
   );
@@ -108,7 +187,7 @@ export function ProductDetailsReview({ totalRatings, totalReviews, ratings = [],
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-      <ProductReviewList reviews={reviews} />
+      <ProductReviewList />
 
       <ProductReviewNewForm open={review.value} onClose={review.onFalse} />
     </>

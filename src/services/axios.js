@@ -1,10 +1,9 @@
 import axios from 'axios';
 
+import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { CONFIG } from 'src/config-global';
-
-import { toast } from 'src/components/snackbar';
 
 import { setSession, getAccessToken, getRefreshToken } from './token.service';
 
@@ -47,9 +46,8 @@ AxiosInstance.interceptors.response.use(
 
                     return AxiosInstance(originalRequest);
                 } catch (refreshError) {
-                    toast.error('Refresh token expired, please login again');
                     const router = useRouter();
-                    router.replace('/auth/sign-in');
+                    router.replace(paths.auth.signIn);
                 }
             }
         }
