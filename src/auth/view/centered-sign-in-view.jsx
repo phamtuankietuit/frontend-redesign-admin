@@ -77,6 +77,7 @@ export function CenteredSignInView() {
     } catch (error) {
       console.error(error);
       toast.error('Có lỗi xảy ra, vui lòng thử lại!');
+      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
     }
   });
 
