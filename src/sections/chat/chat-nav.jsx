@@ -35,7 +35,13 @@ const NAV_WIDTH = 320;
 
 const NAV_COLLAPSE_WIDTH = 96;
 
-export function ChatNav({ loading, contacts, collapseNav, conversations, selectedConversationId }) {
+export function ChatNav({
+  loading,
+  contacts,
+  collapseNav,
+  conversations,
+  selectedConversationId,
+}) {
   const router = useRouter();
 
   const mdUp = useResponsive('up', 'md');
@@ -68,7 +74,7 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
       phoneNumber: `${user?.phoneNumber}`,
       status: 'online',
     }),
-    [user]
+    [user],
   );
 
   useEffect(() => {
@@ -98,13 +104,13 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
 
       if (inputValue) {
         const results = contacts.filter((contact) =>
-          contact.name.toLowerCase().includes(inputValue)
+          contact.name.toLowerCase().includes(inputValue),
         );
 
         setSearchContacts((prevState) => ({ ...prevState, results }));
       }
     },
-    [contacts]
+    [contacts],
   );
 
   const handleClickAwaySearch = useCallback(() => {
@@ -150,7 +156,7 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
         console.error('Error handling click result:', error);
       }
     },
-    [contacts, conversations.allIds, handleClickAwaySearch, myContact, router]
+    [contacts, conversations.allIds, handleClickAwaySearch, myContact, router],
   );
 
   const renderLoading = <ChatNavItemSkeleton />;
@@ -185,7 +191,7 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
         fullWidth
         value={searchContacts.query}
         onChange={(event) => handleSearchContacts(event.target.value)}
-        placeholder="Search contacts..."
+        placeholder="Tìm khách hàng..."
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -200,7 +206,12 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
 
   const renderContent = (
     <>
-      <Stack direction="row" alignItems="center" justifyContent="center" sx={{ p: 2.5, pb: 0 }}>
+      {/* <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="center"
+        sx={{ p: 2.5, pb: 0 }}
+      >
         {!collapseDesktop && (
           <>
             <ChatNavAccount />
@@ -210,7 +221,11 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
 
         <IconButton onClick={handleToggleNav}>
           <Iconify
-            icon={collapseDesktop ? 'eva:arrow-ios-forward-fill' : 'eva:arrow-ios-back-fill'}
+            icon={
+              collapseDesktop
+                ? 'eva:arrow-ios-forward-fill'
+                : 'eva:arrow-ios-back-fill'
+            }
           />
         </IconButton>
 
@@ -219,7 +234,7 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
             <Iconify width={24} icon="solar:user-plus-bold" />
           </IconButton>
         )}
-      </Stack>
+      </Stack> */}
 
       <Box sx={{ p: 2.5, pt: 0 }}>{!collapseDesktop && renderSearchInput}</Box>
 
@@ -227,7 +242,9 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
         renderLoading
       ) : (
         <Scrollbar sx={{ pb: 1 }}>
-          {searchContacts.query && !!conversations.allIds.length ? renderListResults : renderList}
+          {searchContacts.query && !!conversations.allIds.length
+            ? renderListResults
+            : renderList}
         </Scrollbar>
       )}
     </>

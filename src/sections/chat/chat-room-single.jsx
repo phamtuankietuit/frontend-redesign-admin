@@ -41,7 +41,10 @@ export function ChatRoomSingle({ participant }) {
           direction="row"
           sx={{ typography: 'body2', wordBreak: 'break-all' }}
         >
-          <Iconify icon={item.icon} sx={{ flexShrink: 0, color: 'text.disabled' }} />
+          <Iconify
+            icon={item.icon}
+            sx={{ flexShrink: 0, color: 'text.disabled' }}
+          />
           {item.value}
         </Stack>
       ))}
@@ -53,7 +56,7 @@ export function ChatRoomSingle({ participant }) {
       {renderInfo}
 
       <CollapseButton selected={collapse.value} onClick={collapse.onToggle}>
-        Information
+        Thông tin khách hàng
       </CollapseButton>
 
       <Collapse in={collapse.value}>{renderContact}</Collapse>

@@ -42,9 +42,16 @@ export function ChatHeaderDetail({ collapseNav, participants, loading }) {
   }, [lgUp]);
 
   const renderGroup = (
-    <AvatarGroup max={3} sx={{ [`& .${avatarGroupClasses.avatar}`]: { width: 32, height: 32 } }}>
+    <AvatarGroup
+      max={3}
+      sx={{ [`& .${avatarGroupClasses.avatar}`]: { width: 32, height: 32 } }}
+    >
       {participants.map((participant) => (
-        <Avatar key={participant.id} alt={participant.name} src={participant.avatarUrl} />
+        <Avatar
+          key={participant.id}
+          alt={participant.name}
+          src={participant.avatarUrl}
+        />
       ))}
     </AvatarGroup>
   );
@@ -55,7 +62,10 @@ export function ChatHeaderDetail({ collapseNav, participants, loading }) {
         variant={singleParticipant?.status}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Avatar src={singleParticipant?.avatarUrl} alt={singleParticipant?.name} />
+        <Avatar
+          src={singleParticipant?.avatarUrl}
+          alt={singleParticipant?.name}
+        />
       </Badge>
 
       <ListItemText
@@ -67,7 +77,9 @@ export function ChatHeaderDetail({ collapseNav, participants, loading }) {
         }
         secondaryTypographyProps={{
           component: 'span',
-          ...(singleParticipant?.status !== 'offline' && { textTransform: 'capitalize' }),
+          ...(singleParticipant?.status !== 'offline' && {
+            textTransform: 'capitalize',
+          }),
         }}
       />
     </Stack>
@@ -82,24 +94,30 @@ export function ChatHeaderDetail({ collapseNav, participants, loading }) {
       {group ? renderGroup : renderSingle}
 
       <Stack direction="row" flexGrow={1} justifyContent="flex-end">
-        <IconButton>
+        {/* <IconButton>
           <Iconify icon="solar:phone-bold" />
         </IconButton>
 
         <IconButton>
           <Iconify icon="solar:videocamera-record-bold" />
-        </IconButton>
+        </IconButton> */}
 
         <IconButton onClick={handleToggleNav}>
-          <Iconify icon={!collapseDesktop ? 'ri:sidebar-unfold-fill' : 'ri:sidebar-fold-fill'} />
+          <Iconify
+            icon={
+              !collapseDesktop
+                ? 'ri:sidebar-unfold-fill'
+                : 'ri:sidebar-fold-fill'
+            }
+          />
         </IconButton>
 
-        <IconButton onClick={popover.onOpen}>
+        {/* <IconButton onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
+        </IconButton> */}
       </Stack>
 
-      <CustomPopover open={popover.open} anchorEl={popover.anchorEl} onClose={popover.onClose}>
+      {/* <CustomPopover open={popover.open} anchorEl={popover.anchorEl} onClose={popover.onClose}>
         <MenuList>
           <MenuItem
             onClick={() => {
@@ -140,7 +158,7 @@ export function ChatHeaderDetail({ collapseNav, participants, loading }) {
             Delete
           </MenuItem>
         </MenuList>
-      </CustomPopover>
+      </CustomPopover> */}
     </>
   );
 }

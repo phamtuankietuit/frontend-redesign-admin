@@ -32,7 +32,7 @@ export function ChatRoom({ collapseNav, participants, messages, loading }) {
           <ChatRoomSingle participant={participants[0]} />
         )}
 
-        <ChatRoomAttachments attachments={attachments} />
+        {/* <ChatRoomAttachments attachments={attachments} /> */}
       </div>
     </Scrollbar>
   );

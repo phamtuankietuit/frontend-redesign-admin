@@ -7,7 +7,11 @@ import { useRouter, useSearchParams } from 'src/routes/hooks';
 
 import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useGetContacts, useGetConversation, useGetConversations } from 'src/actions/chat';
+import {
+  useGetContacts,
+  useGetConversation,
+  useGetConversations,
+} from 'src/actions/chat';
 
 import { EmptyContent } from 'src/components/empty-content';
 
@@ -39,16 +43,17 @@ export function ChatView() {
 
   const { conversations, conversationsLoading } = useGetConversations();
 
-  const { conversation, conversationError, conversationLoading } = useGetConversation(
-    `${selectedConversationId}`
-  );
+  const { conversation, conversationError, conversationLoading } =
+    useGetConversation(`${selectedConversationId}`);
 
   const roomNav = useCollapseNav();
 
   const conversationsNav = useCollapseNav();
 
   const participants = conversation
-    ? conversation.participants.filter((participant) => participant.id !== `${user?.id}`)
+    ? conversation.participants.filter(
+        (participant) => participant.id !== `${user?.id}`,
+      )
     : [];
 
   useEffect(() => {
@@ -66,10 +71,6 @@ export function ChatView() {
       maxWidth={false}
       sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column' }}
     >
-      <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
-        Chat
-      </Typography>
-
       <Layout
         sx={{
           minHeight: 0,
@@ -80,15 +81,19 @@ export function ChatView() {
           boxShadow: (theme) => theme.customShadows.card,
         }}
         slots={{
-          header: selectedConversationId ? (
+          header: selectedConversationId && (
             <ChatHeaderDetail
               collapseNav={roomNav}
               participants={participants}
               loading={conversationLoading}
             />
-          ) : (
-            <ChatHeaderCompose contacts={contacts} onAddRecipients={handleAddRecipients} />
           ),
+          // (
+          //   <ChatHeaderCompose
+          //     contacts={contacts}
+          //     onAddRecipients={handleAddRecipients}
+          //   />
+          // ),
           nav: (
             <ChatNav
               contacts={contacts}
@@ -109,8 +114,8 @@ export function ChatView() {
               ) : (
                 <EmptyContent
                   imgUrl={`${CONFIG.assetsDir}/assets/icons/empty/ic-chat-active.svg`}
-                  title="Good morning!"
-                  description="Write something awesome..."
+                  title="Xin chào!"
+                  description="Bắt đầu trao đổi ngay..."
                 />
               )}
 
