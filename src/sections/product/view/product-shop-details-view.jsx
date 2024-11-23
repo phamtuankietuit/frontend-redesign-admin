@@ -27,13 +27,14 @@ import { ProductDetailsReview } from '../product-details-review';
 import { ProductDetailsSummary } from '../product-details-summary';
 import { ProductDetailsCarousel } from '../product-details-carousel';
 import { ProductDetailsDescription } from '../product-details-description';
+import { ProductDetailsInformation } from '../product-details-information';
 
 export function ProductShopDetailsView({ product, error, loading }) {
   const { ratings } = useSelector(selectProduct);
 
   const checkout = useCheckoutContext();
 
-  const tabs = useTabs('description');
+  const tabs = useTabs('information');
 
   if (loading) {
     return (
@@ -121,12 +122,18 @@ export function ProductShopDetailsView({ product, error, loading }) {
           }}
         >
           {[
+            { value: 'information', label: 'Thông tin sản phẩm' },
             { value: 'description', label: 'Mô tả sản phẩm' },
             { value: 'reviews', label: `Đánh giá (${ratings?.totalRating})` },
           ].map((tab) => (
             <Tab key={tab.value} value={tab.value} label={tab.label} />
           ))}
         </Tabs>
+        {tabs.value === 'information' && (
+          <ProductDetailsInformation
+            productTypeAttributes={product?.productTypeAttributes}
+          />
+        )}
 
         {tabs.value === 'description' && (
           <ProductDetailsDescription description={product?.description} />
