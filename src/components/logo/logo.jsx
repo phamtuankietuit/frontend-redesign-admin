@@ -22,7 +22,7 @@ export const Logo = forwardRef(
       sx,
       ...other
     },
-    ref
+    ref,
   ) => {
     // const theme = useTheme();
 
@@ -49,7 +49,7 @@ export const Logo = forwardRef(
       <Box
         alt="Full logo"
         component="img"
-        src={`${CONFIG.assetsDir}/logo/my-logo-full.svg`}
+        src={`${CONFIG.assetsDir}/logo/my-logo-single.svg`}
         width="100%"
         height="100%"
       />
@@ -214,5 +214,5 @@ export const Logo = forwardRef(
         {isSingle ? singleLogo : fullLogo}
       </Box>
     );
-  }
+  },
 );

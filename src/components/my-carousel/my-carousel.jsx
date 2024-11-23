@@ -35,8 +35,16 @@ export function MyCarousel({ title, list, sx, ...other }) {
         }}
         sx={{ px: 0.5 }}
       >
-        {list.map((item, index) => (
-          <CarouselItem key={item.id} item={item} index={index} />
+        {list?.map((item, index) => (
+          <CarouselItem
+            sx={{
+              border: (theme) => `1px solid ${theme.palette.divider}`,
+              boxShadow: 1,
+            }}
+            key={item.id}
+            item={item}
+            index={index}
+          />
         ))}
       </Carousel>
     </Box>

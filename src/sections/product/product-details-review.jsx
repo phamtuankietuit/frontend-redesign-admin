@@ -157,32 +157,32 @@ export function ProductDetailsReview({ ratings }) {
     </Stack>
   );
 
-  const renderReviewButton = (
-    <Stack alignItems="center" justifyContent="center">
-      <Button
-        size="large"
-        variant="soft"
-        color="inherit"
-        onClick={review.onTrue}
-        startIcon={<Iconify icon="solar:pen-bold" />}
-      >
-        Viết đánh giá
-      </Button>
-    </Stack>
-  );
+  // const renderReviewButton = (
+  //   <Stack alignItems="center" justifyContent="center">
+  //     <Button
+  //       size="large"
+  //       variant="soft"
+  //       color="inherit"
+  //       onClick={review.onTrue}
+  //       startIcon={<Iconify icon="solar:pen-bold" />}
+  //     >
+  //       Viết đánh giá
+  //     </Button>
+  //   </Stack>
+  // );
 
   return (
     <>
       <Box
         display="grid"
-        gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)' }}
+        gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
         sx={{ py: { xs: 5, md: 0 } }}
       >
         {renderSummary}
 
         {renderProgress}
 
-        {renderReviewButton}
+        {/* {renderReviewButton} */}
       </Box>
 
       <Divider sx={{ borderStyle: 'dashed' }} />

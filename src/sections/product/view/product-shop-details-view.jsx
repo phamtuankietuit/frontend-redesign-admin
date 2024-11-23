@@ -98,9 +98,16 @@ export function ProductShopDetailsView({ product, error, loading }) {
       </Grid>
 
       <MyCarousel
-        title="Khuyến mãi và Giảm giá vận chuyển đang áp dụng"
+        title="Khuyến mãi và Mã giảm giá vận chuyển"
         list={_coursesFeatured}
-        sx={{ mt: 5 }}
+        sx={{
+          mt: 5,
+          bgcolor: (theme) =>
+            theme.palette.mode === 'light' ? 'white' : 'grey.800',
+          p: 2,
+          borderRadius: 1.5,
+          boxShadow: 1,
+        }}
       />
 
       <Card sx={{ mt: 5 }}>

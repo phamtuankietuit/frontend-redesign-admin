@@ -1,7 +1,10 @@
 import Stack from '@mui/material/Stack';
 
 import { BackToTop } from 'src/components/animate/back-to-top';
-import { ScrollProgress, useScrollProgress } from 'src/components/animate/scroll-progress';
+import {
+  ScrollProgress,
+  useScrollProgress,
+} from 'src/components/animate/scroll-progress';
 
 import { HomeHero } from '../home-hero';
 import { HomeFAQs } from '../home-faqs';
@@ -37,21 +40,21 @@ export function HomeView() {
 
         <HomeHugePackElements />
 
-        <HomeForDesigner />
+        {/* <HomeForDesigner /> */}
 
         <HomeHighlightFeatures />
 
-        <HomeIntegrations />
+        {/* <HomeIntegrations /> */}
 
-        <HomePricing />
+        {/* <HomePricing /> */}
 
-        <HomeTestimonials />
+        {/* <HomeTestimonials /> */}
 
         <HomeFAQs />
 
-        <HomeZoneUI />
+        {/* <HomeZoneUI /> */}
 
-        <HomeAdvertisement />
+        {/* <HomeAdvertisement /> */}
       </Stack>
     </>
   );

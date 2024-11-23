@@ -112,7 +112,7 @@ export function NavList({ data }) {
                   sx={{
                     ...paper({ theme, dropdown: true }),
                     borderRadius: 2,
-                    p: theme.spacing(5, 1, 1, 4),
+                    p: 4,
                   }}
                 >
                   <NavUl
@@ -184,7 +184,7 @@ function NavSubList({ data, subheader, sx, ...other }) {
                 active={item.path === removeLastSlash(pathname)}
               />
             </NavLi>
-          )
+          ),
         )}
       </NavUl>
     </Stack>

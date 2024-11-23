@@ -50,6 +50,7 @@ export const paths = {
   auth: {
     signIn: '/sign-in',
     signUp: '/sign-up',
+    verify: `/verify`,
     resetPassword: '/reset-password',
     updatePassword: '/update-password',
     // amplify: {

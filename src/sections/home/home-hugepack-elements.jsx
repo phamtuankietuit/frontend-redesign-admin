@@ -1,5 +1,11 @@
 import { useRef, useState, forwardRef } from 'react';
-import { m, useSpring, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
+import {
+  m,
+  useSpring,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+} from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -32,7 +38,11 @@ export function HomeHugePackElements({ sx, ...other }) {
   );
 
   return (
-    <Box component="section" sx={{ pt: 10, position: 'relative', ...sx }} {...other}>
+    <Box
+      component="section"
+      sx={{ py: 10, position: 'relative', ...sx }}
+      {...other}
+    >
       <MotionViewport>
         {renderLines}
 
@@ -44,8 +54,12 @@ export function HomeHugePackElements({ sx, ...other }) {
             columnSpacing={{ xs: 0, md: 8 }}
           >
             <Grid xs={12} md={6} lg={7}>
-              <SectionCaption title="Interface Starter Kit" />
-              <SectionTitle title="Large bundle of" txtGradient="elements" sx={{ mt: 3 }} />
+              <SectionCaption title="Hàng chục phân loại sách khác nhau" />
+              <SectionTitle
+                title="Với hàng hàng đầu"
+                txtGradient="sách"
+                sx={{ mt: 3 }}
+              />
             </Grid>
 
             <Grid xs={12} md={6} lg={5}>
@@ -58,10 +72,11 @@ export function HomeHugePackElements({ sx, ...other }) {
                   }}
                 >
                   <Box component="span" sx={{ color: 'text.primary' }}>
-                    Explore a comprehensive range of elements
+                    Khám phá bộ sưu tập đa dạng, từ sách, văn phòng phẩm, đồ
+                    chơi, ...
                   </Box>
                   <br />
-                  like menus, sliders, buttons, inputs, and others, all conveniently gathered here.
+                  Tất cả đều có tại đây!
                 </Typography>
               </m.div>
             </Grid>
@@ -78,13 +93,13 @@ export function HomeHugePackElements({ sx, ...other }) {
               endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
               sx={{ mt: 5, mx: 'auto' }}
             >
-              Browse components
+              Khám phá thêm
             </Button>
           </m.div>
         </Container>
       </MotionViewport>
 
-      <ScrollContent />
+      {/* <ScrollContent /> */}
     </Box>
   );
 }
@@ -92,7 +107,7 @@ export function HomeHugePackElements({ sx, ...other }) {
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled(
-  forwardRef((props, ref) => <Box ref={ref} component={m.div} {...props} />)
+  forwardRef((props, ref) => <Box ref={ref} component={m.div} {...props} />),
 )(({ theme }) => ({
   zIndex: 9,
   position: 'relative',
@@ -100,22 +115,29 @@ const StyledRoot = styled(
   [theme.breakpoints.up('md')]: { paddingTop: theme.spacing(15) },
 }));
 
-const StyledContainer = styled((props) => <Box component={m.div} {...props} />)(({ theme }) => ({
-  top: 0,
-  height: '100vh',
-  display: 'flex',
-  position: 'sticky',
-  overflow: 'hidden',
-  flexDirection: 'column',
-  justifyContent: 'flex-start',
-  transition: theme.transitions.create(['background-color']),
-  '&[data-scrolling="true"]': { justifyContent: 'center' },
-}));
+const StyledContainer = styled((props) => <Box component={m.div} {...props} />)(
+  ({ theme }) => ({
+    top: 0,
+    height: '100vh',
+    display: 'flex',
+    position: 'sticky',
+    overflow: 'hidden',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    transition: theme.transitions.create(['background-color']),
+    '&[data-scrolling="true"]': { justifyContent: 'center' },
+  }),
+);
 
 const StyledContent = styled(
   forwardRef((props, ref) => (
-    <Box ref={ref} component={m.div} transition={{ ease: 'linear', duration: 0.25 }} {...props} />
-  ))
+    <Box
+      ref={ref}
+      component={m.div}
+      transition={{ ease: 'linear', duration: 0.25 }}
+      {...props}
+    />
+  )),
 )(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -148,8 +170,14 @@ function ScrollContent() {
 
   const scrollRange = -scrollRect.scrollWidth + containerRect.width;
 
-  const x1 = useSpring(useTransform(scrollYProgress, [0, 1], [0, scrollRange]), physics);
-  const x2 = useSpring(useTransform(scrollYProgress, [0, 1], [scrollRange, 0]), physics);
+  const x1 = useSpring(
+    useTransform(scrollYProgress, [0, 1], [0, scrollRange]),
+    physics,
+  );
+  const x2 = useSpring(
+    useTransform(scrollYProgress, [0, 1], [scrollRange, 0]),
+    physics,
+  );
 
   const background = useTransform(
     scrollYProgress,
@@ -160,7 +188,7 @@ function ScrollContent() {
       theme.vars.palette.background.neutral,
       theme.vars.palette.background.neutral,
       theme.vars.palette.background.default,
-    ]
+    ],
   );
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
@@ -172,7 +200,10 @@ function ScrollContent() {
   });
 
   return (
-    <StyledRoot ref={containerRef} sx={{ height: scrollRect.scrollWidth, minHeight: '100vh' }}>
+    <StyledRoot
+      ref={containerRef}
+      sx={{ height: scrollRect.scrollWidth, minHeight: '100vh' }}
+    >
       <StyledContainer style={{ background }} data-scrolling={startScroll}>
         <StyledContent ref={scrollRef} layout>
           <StyledItem

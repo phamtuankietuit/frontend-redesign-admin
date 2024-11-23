@@ -3,7 +3,13 @@ import Link from '@mui/material/Link';
 
 // ----------------------------------------------------------------------
 
-export function FormResendCode({ value, disabled, onResendCode, sx, ...other }) {
+export function FormResendCode({
+  value,
+  disabled,
+  onResendCode,
+  sx,
+  ...other
+}) {
   return (
     <Box
       sx={{
@@ -14,7 +20,7 @@ export function FormResendCode({ value, disabled, onResendCode, sx, ...other }) 
       }}
       {...other}
     >
-      {`Don’t have a code? `}
+      {`Chưa nhận được mã? `}
       <Link
         variant="subtitle2"
         onClick={onResendCode}
@@ -26,7 +32,7 @@ export function FormResendCode({ value, disabled, onResendCode, sx, ...other }) 
           }),
         }}
       >
-        Resend {disabled && value && value > 0 && `(${value}s)`}
+        Gửi lại {disabled && value && value > 0 && `(${value}s)`}
       </Link>
     </Box>
   );

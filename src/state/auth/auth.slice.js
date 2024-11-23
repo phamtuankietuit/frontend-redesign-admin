@@ -7,6 +7,7 @@ import { toast } from 'src/components/snackbar';
 const initialState = {
   user: null,
   loading: true,
+  signUp: {}
 };
 
 const authSlice = createSlice({
@@ -14,8 +15,11 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     signOut: (state) => {
-      state = initialState;
+      Object.assign(state, initialState);
     },
+    setSignUp: (state, action) => {
+      state.signUp = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -29,7 +33,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { signOut } = authSlice.actions;
+export const { signOut, setSignUp } = authSlice.actions;
 
 export const selectAuth = (state) => state.auth;
 

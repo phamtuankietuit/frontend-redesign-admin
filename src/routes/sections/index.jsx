@@ -7,6 +7,7 @@ import { SplashScreen } from 'src/components/loading-screen';
 
 import { myAuthRoutes } from './my-auth';
 import { myMainRoutes } from './my-main';
+import { dashboardRoutes } from './dashboard';
 
 // ----------------------------------------------------------------------
 
@@ -34,7 +35,7 @@ export function Router() {
     // ...authDemoRoutes,
 
     // Dashboard
-    // ...dashboardRoutes,
+    ...dashboardRoutes,
 
     // Main
     // ...mainRoutes,

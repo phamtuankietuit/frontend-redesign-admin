@@ -31,17 +31,16 @@ export function HomeMinimal({ sx, ...other }) {
   const renderDescription = (
     <>
       <SectionTitle
-        caption="Visualizing Success"
-        title="What's in"
-        txtGradient="Minimal?"
-        sx={{ mb: { xs: 5, md: 8 }, textAlign: { xs: 'center', md: 'left' } }}
+        title="Có gì ở"
+        txtGradient="KKBooks?"
+        sx={{ mb: { xs: 5, md: 8 }, textAlign: { xs: 'center', md: 'center' } }}
       />
 
       <Stack
         spacing={6}
         sx={{
           maxWidth: { sm: 560, md: 400 },
-          mx: { xs: 'auto', md: 'unset' },
+          mx: { xs: 'auto', md: 'auto' },
         }}
       >
         {ITEMS.map((item) => (
@@ -57,7 +56,9 @@ export function HomeMinimal({ sx, ...other }) {
               <Typography variant="h5" component="h6">
                 {item.title}
               </Typography>
-              <Typography sx={{ color: 'text.secondary' }}>{item.description}</Typography>
+              <Typography sx={{ color: 'text.secondary' }}>
+                {item.description}
+              </Typography>
             </Stack>
           </Box>
         ))}
@@ -79,7 +80,6 @@ export function HomeMinimal({ sx, ...other }) {
           width: 720,
           borderRadius: 2,
           position: 'absolute',
-          bgcolor: 'background.default',
           boxShadow: (theme) =>
             `-40px 40px 80px 0px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
           [stylesMode.dark]: {
@@ -91,7 +91,7 @@ export function HomeMinimal({ sx, ...other }) {
         <Box
           component="img"
           alt="Home Chart"
-          src={`${CONFIG.assetsDir}/assets/images/home/home-chart.webp`}
+          src={`${CONFIG.assetsDir}/logo/my-logo-full.svg`}
           sx={{ width: 720 }}
         />
       </Box>
@@ -113,17 +113,24 @@ export function HomeMinimal({ sx, ...other }) {
         {renderLines}
 
         <Container sx={{ position: 'relative' }}>
-          <Grid container columnSpacing={{ xs: 0, md: 8 }} sx={{ position: 'relative', zIndex: 9 }}>
-            <Grid xs={12} md={6} lg={7}>
+          <Grid
+            container
+            columnSpacing={{ xs: 0, md: 8 }}
+            sx={{ position: 'relative', zIndex: 9 }}
+          >
+            <Grid xs={12} md={12} lg={12}>
               {renderDescription}
             </Grid>
 
-            <Grid md={6} lg={5} sx={{ display: { xs: 'none', md: 'block' } }}>
+            {/* <Grid md={6} lg={5} sx={{ display: { xs: 'none', md: 'block' } }}>
               {renderImg}
-            </Grid>
+            </Grid> */}
           </Grid>
 
-          <CircleSvg variants={varFade().in} sx={{ display: { xs: 'none', md: 'block' } }} />
+          <CircleSvg
+            variants={varFade().in}
+            sx={{ display: { xs: 'none', md: 'block' } }}
+          />
         </Container>
       </MotionViewport>
     </Box>
@@ -135,17 +142,20 @@ export function HomeMinimal({ sx, ...other }) {
 const ITEMS = [
   {
     icon: `${CONFIG.assetsDir}/assets/icons/home/ic-make-brand.svg`,
-    title: 'Branding',
-    description: 'Consistent design makes it easy to brand your own.',
+    title: 'Không chỉ là sách – Cả một thế giới học tập và giải trí',
+    description:
+      'Từ những cuốn sách yêu thích, văn phòng phẩm tiện dụng, đến đồ chơi sáng tạo, mọi thứ bạn cần đều có tại đây!',
   },
   {
     icon: `${CONFIG.assetsDir}/assets/icons/home/ic-design.svg`,
-    title: 'UI & UX design',
-    description: 'The kit is built on the principles of the atomic design system.',
+    title: 'Giao diện dễ dùng – Ai cũng có thể khám phá',
+    description:
+      'Thiết kế đẹp mắt, dễ thao tác, giúp bạn tìm kiếm và mua sắm nhanh chóng chỉ với vài cú click chuột.',
   },
   {
     icon: `${CONFIG.assetsDir}/assets/icons/home/ic-development.svg`,
-    title: 'Development',
-    description: 'Easy to customize and extend, saving you time and money.',
+    title: 'Theo dõi đơn hàng – Tiện lợi, không lo lắng',
+    description:
+      'Biết ngay đơn hàng của bạn đang ở đâu, khi nào đến tay – thật dễ dàng và an tâm tuyệt đối!',
   },
 ];

@@ -1,5 +1,11 @@
 import { useRef, useState } from 'react';
-import { m, useScroll, useSpring, useTransform, useMotionValueEvent } from 'framer-motion';
+import {
+  m,
+  useScroll,
+  useSpring,
+  useTransform,
+  useMotionValueEvent,
+} from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -50,7 +56,7 @@ export function HomeHero({ sx, ...other }) {
   const opacity = useTransform(
     scroll.scrollY,
     [0, 1],
-    [1, mdUp ? Number((1 - scroll.percent / 100).toFixed(1)) : 1]
+    [1, mdUp ? Number((1 - scroll.percent / 100).toFixed(1)) : 1],
   );
 
   const renderHeading = (
@@ -70,9 +76,9 @@ export function HomeHero({ sx, ...other }) {
         }}
       >
         <Box component="span" sx={{ width: 1, opacity: 0.24 }}>
-          Boost your building
+          Khám phá kho tàng tri thức
         </Box>
-        process with
+        cùng với
         <Box
           component={m.span}
           animate={{ backgroundPosition: '200% center' }}
@@ -84,13 +90,13 @@ export function HomeHero({ sx, ...other }) {
           }}
           sx={{
             ...textGradient(
-              `300deg, ${theme.vars.palette.primary.main} 0%, ${theme.vars.palette.warning.main} 25%, ${theme.vars.palette.primary.main} 50%, ${theme.vars.palette.warning.main} 75%, ${theme.vars.palette.primary.main} 100%`
+              `300deg, ${theme.vars.palette.primary.main} 0%, ${theme.vars.palette.warning.main} 25%, ${theme.vars.palette.primary.main} 50%, ${theme.vars.palette.warning.main} 75%, ${theme.vars.palette.primary.main} 100%`,
             ),
             backgroundSize: '400%',
             ml: { xs: 0.75, md: 1, xl: 1.5 },
           }}
         >
-          Minimal
+          KKBooks
         </Box>
       </Box>
     </AnimatedDiv>
@@ -106,7 +112,7 @@ export function HomeHero({ sx, ...other }) {
           [theme.breakpoints.up(lgKey)]: { fontSize: 20, lineHeight: '36px' },
         }}
       >
-        {`The starting point for your next project is based on MUI. \nEasy customization helps you build apps faster and better.`}
+        KKBooks khám phá kho tàng tri thức, kiến thức và sự sáng tạo từ sách.
       </Typography>
     </AnimatedDiv>
   );
@@ -121,7 +127,9 @@ export function HomeHero({ sx, ...other }) {
         justifyContent="center"
         sx={{ typography: 'subtitle2' }}
       >
-        <AvatarGroup sx={{ [`& .${avatarClasses.root}`]: { width: 32, height: 32 } }}>
+        <AvatarGroup
+          sx={{ [`& .${avatarClasses.root}`]: { width: 32, height: 32 } }}
+        >
           {[...Array(3)].map((_, index) => (
             <Avatar
               key={_mock.fullName(index + 1)}
@@ -130,13 +138,18 @@ export function HomeHero({ sx, ...other }) {
             />
           ))}
         </AvatarGroup>
-        160+ Happy customers
+        1,000+ Khách hàng hài lòng
       </Box>
     </AnimatedDiv>
   );
 
   const renderButtons = (
-    <Box display="flex" flexWrap="wrap" justifyContent="center" gap={{ xs: 1.5, sm: 2 }}>
+    <Box
+      display="flex"
+      flexWrap="wrap"
+      justifyContent="center"
+      gap={{ xs: 1.5, sm: 2 }}
+    >
       <AnimatedDiv>
         <Stack alignItems="center" spacing={2.5}>
           <Button
@@ -282,8 +295,8 @@ export function HomeHero({ sx, ...other }) {
             <m.div style={{ y: y2 }}>{renderText}</m.div>
           </Stack>
           <m.div style={{ y: y3 }}>{renderRatings}</m.div>
-          <m.div style={{ y: y4 }}>{renderButtons}</m.div>
-          <m.div style={{ y: y5 }}>{renderIcons}</m.div>
+          {/* <m.div style={{ y: y4 }}>{renderButtons}</m.div> */}
+          {/* <m.div style={{ y: y5 }}>{renderIcons}</m.div> */}
         </Container>
 
         <HeroBackground />

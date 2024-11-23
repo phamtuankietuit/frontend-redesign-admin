@@ -1,13 +1,13 @@
 import { Helmet } from 'react-helmet-async';
 
-import { HomeView } from 'src/sections/home/view';
+import { CONFIG } from 'src/config-global';
+
+import { CenteredUpdatePasswordView } from 'src/auth/view';
 
 // ----------------------------------------------------------------------
 
 const metadata = {
-  title: 'KKBooks',
-  description:
-    'KKBooks khám phá kho tàng tri thức, kiến thức và sự sáng tạo từ sách.',
+  title: `Update Password - ${CONFIG.appName}`,
 };
 
 export default function Page() {
@@ -15,10 +15,9 @@ export default function Page() {
     <>
       <Helmet>
         <title> {metadata.title}</title>
-        <meta name="description" content={metadata.description} />
       </Helmet>
 
-      <HomeView />
+      <CenteredUpdatePasswordView />
     </>
   );
 }
