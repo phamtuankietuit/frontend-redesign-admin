@@ -1,6 +1,7 @@
 import { paramCase } from 'src/utils/change-case';
 
 import { _id, _postTitles } from 'src/_mock/assets';
+import { updatePassword } from 'firebase/auth';
 
 // ----------------------------------------------------------------------
 
@@ -11,7 +12,7 @@ const MOCK_TITLE = _postTitles[2];
 const ROOTS = {
   AUTH: '/auth',
   AUTH_DEMO: '/auth-demo',
-  DASHBOARD: '/dashboard',
+  DASHBOARD: '/admin',
 };
 
 // ----------------------------------------------------------------------
@@ -49,6 +50,9 @@ export const paths = {
   auth: {
     signIn: '/sign-in',
     signUp: '/sign-up',
+    verify: `/verify`,
+    resetPassword: '/reset-password',
+    updatePassword: '/update-password',
     // amplify: {
     //   signIn: `${ROOTS.AUTH}/amplify/sign-in`,
     //   verify: `${ROOTS.AUTH}/amplify/verify`,

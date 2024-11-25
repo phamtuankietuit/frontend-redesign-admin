@@ -16,7 +16,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { fCurrency } from 'src/utils/format-number';
-import { fDate, fTime } from 'src/utils/format-time';
+import { fDate, fDateTime, formatStr, fTime } from 'src/utils/format-time';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -25,7 +25,13 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export function OrderTableRow({
+  row,
+  selected,
+  onViewRow,
+  onSelectRow,
+  onDeleteRow,
+}) {
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -34,16 +40,21 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
+      {/* <TableCell padding="checkbox">
         <Checkbox
           checked={selected}
           onClick={onSelectRow}
           inputProps={{ id: `row-checkbox-${row.id}`, 'aria-label': `Row checkbox` }}
         />
-      </TableCell>
+      </TableCell> */}
 
       <TableCell>
-        <Link color="inherit" onClick={onViewRow} underline="always" sx={{ cursor: 'pointer' }}>
+        <Link
+          color="inherit"
+          onClick={onViewRow}
+          underline="always"
+          sx={{ cursor: 'pointer' }}
+        >
           {row.orderNumber}
         </Link>
       </TableCell>
@@ -69,8 +80,8 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
 
       <TableCell>
         <ListItemText
-          primary={fDate(row.createdAt)}
-          secondary={fTime(row.createdAt)}
+          primary={fDateTime(row.createdAt, formatStr.myFormat.date)}
+          secondary={fDateTime(row.createdAt, formatStr.myFormat.time)}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -81,20 +92,26 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
       </TableCell>
 
       <TableCell align="center"> {row.totalQuantity} </TableCell>
-
       <TableCell> {fCurrency(row.subtotal)} </TableCell>
 
       <TableCell>
         <Label
           variant="soft"
           color={
-            (row.status === 'completed' && 'success') ||
             (row.status === 'pending' && 'warning') ||
+            (row.status === 'processing' && 'warning') ||
+            (row.status === 'shipping' && 'info') ||
+            (row.status === 'completed' && 'success') ||
             (row.status === 'cancelled' && 'error') ||
             'default'
           }
         >
-          {row.status}
+          {row.status === 'pending' && 'Chờ xác nhận'}
+          {row.status === 'processing' && 'Đang đóng hàng'}
+          {row.status === 'shipping' && 'Đang giao hàng'}
+          {row.status === 'completed' && 'Hoàn thành'}
+          {row.status === 'cancelled' && 'Đã hủy'}
+          {row.status === 'refunded' && 'Trả hàng'}
         </Label>
       </TableCell>
 
@@ -107,7 +124,10 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
           <Iconify icon="eva:arrow-ios-downward-fill" />
         </IconButton>
 
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+        <IconButton
+          color={popover.open ? 'inherit' : 'default'}
+          onClick={popover.onOpen}
+        >
           <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
       </TableCell>
@@ -132,7 +152,8 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
                 sx={{
                   p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
                   '&:not(:last-of-type)': {
-                    borderBottom: (theme) => `solid 2px ${theme.vars.palette.background.neutral}`,
+                    borderBottom: (theme) =>
+                      `solid 2px ${theme.vars.palette.background.neutral}`,
                   },
                 }}
               >
@@ -155,7 +176,9 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
 
                 <div>x{item.quantity} </div>
 
-                <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>
+                  {fCurrency(item.price)}
+                </Box>
               </Stack>
             ))}
           </Paper>

@@ -12,23 +12,33 @@ import { AuthGuard } from 'src/auth/guard';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
-const OverviewEcommercePage = lazy(() => import('src/pages/dashboard/ecommerce'));
-const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
+const OverviewEcommercePage = lazy(
+  () => import('src/pages/dashboard/ecommerce'),
+);
+const OverviewAnalyticsPage = lazy(
+  () => import('src/pages/dashboard/analytics'),
+);
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
 const OverviewFilePage = lazy(() => import('src/pages/dashboard/file'));
 const OverviewCoursePage = lazy(() => import('src/pages/dashboard/course'));
 // Product
-const ProductDetailsPage = lazy(() => import('src/pages/dashboard/product/details'));
+const ProductDetailsPage = lazy(
+  () => import('src/pages/dashboard/product/details'),
+);
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
 const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
 const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
 // Order
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
-const OrderDetailsPage = lazy(() => import('src/pages/dashboard/order/details'));
+const OrderDetailsPage = lazy(
+  () => import('src/pages/dashboard/order/details'),
+);
 // Invoice
 const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
-const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
+const InvoiceDetailsPage = lazy(
+  () => import('src/pages/dashboard/invoice/details'),
+);
 const InvoiceCreatePage = lazy(() => import('src/pages/dashboard/invoice/new'));
 const InvoiceEditPage = lazy(() => import('src/pages/dashboard/invoice/edit'));
 // User
@@ -61,7 +71,9 @@ const MailPage = lazy(() => import('src/pages/dashboard/mail'));
 const CalendarPage = lazy(() => import('src/pages/dashboard/calendar'));
 const KanbanPage = lazy(() => import('src/pages/dashboard/kanban'));
 // Test render page by role
-const PermissionDeniedPage = lazy(() => import('src/pages/dashboard/permission'));
+const PermissionDeniedPage = lazy(
+  () => import('src/pages/dashboard/permission'),
+);
 // Blank page
 const ParamsPage = lazy(() => import('src/pages/dashboard/params'));
 const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
@@ -78,8 +90,12 @@ const layoutContent = (
 
 export const dashboardRoutes = [
   {
-    path: 'dashboard',
-    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+    path: 'admin',
+    element: CONFIG.auth.skip ? (
+      <>{layoutContent}</>
+    ) : (
+      <AuthGuard>{layoutContent}</AuthGuard>
+    ),
     children: [
       { element: <IndexPage />, index: true },
       { path: 'ecommerce', element: <OverviewEcommercePage /> },

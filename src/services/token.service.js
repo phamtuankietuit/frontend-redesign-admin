@@ -19,7 +19,7 @@ export const getRefreshToken = () => {
         if (session === null) {
             return null;
         }
-        return JSON.parse(session).getRefreshToken;
+        return JSON.parse(session).refreshToken;
     } catch (error) {
         console.error('Invalid Token. Redirecting to /login');
         return null;

@@ -29,7 +29,7 @@ export function CheckoutPaymentMethods({ name, options, ...other }) {
   return (
     <>
       <Card {...other}>
-        <CardHeader title="Payment" />
+        <CardHeader title="Phương thức thanh toán" />
 
         <Controller
           name={name}
@@ -62,7 +62,12 @@ export function CheckoutPaymentMethods({ name, options, ...other }) {
         />
       </Card>
 
-      <Dialog fullWidth maxWidth="xs" open={openForm.value} onClose={openForm.onFalse}>
+      <Dialog
+        fullWidth
+        maxWidth="xs"
+        open={openForm.value}
+        onClose={openForm.onFalse}
+      >
         <DialogTitle> Add new card </DialogTitle>
 
         <DialogContent sx={{ overflow: 'unset' }}>
@@ -74,7 +79,11 @@ export function CheckoutPaymentMethods({ name, options, ...other }) {
             Cancel
           </Button>
 
-          <Button color="inherit" variant="contained" onClick={openForm.onFalse}>
+          <Button
+            color="inherit"
+            variant="contained"
+            onClick={openForm.onFalse}
+          >
             Add
           </Button>
         </DialogActions>
@@ -85,12 +94,21 @@ export function CheckoutPaymentMethods({ name, options, ...other }) {
 
 // ----------------------------------------------------------------------
 
-function OptionItem({ sx, option, onOpen, selected, isCredit, cardOptions, ...other }) {
+function OptionItem({
+  sx,
+  option,
+  onOpen,
+  selected,
+  isCredit,
+  cardOptions,
+  ...other
+}) {
   return (
     <Box
       sx={{
         borderRadius: 1.5,
-        border: (theme) => `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.24)}`,
+        border: (theme) =>
+          `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.24)}`,
         transition: (theme) =>
           theme.transitions.create(['box-shadow'], {
             easing: theme.transitions.easing.sharp,
@@ -103,7 +121,11 @@ function OptionItem({ sx, option, onOpen, selected, isCredit, cardOptions, ...ot
       }}
       {...other}
     >
-      <Box display="flex" alignItems="flex-start" sx={{ p: 2.5, cursor: 'pointer' }}>
+      <Box
+        display="flex"
+        alignItems="flex-start"
+        sx={{ p: 2.5, cursor: 'pointer' }}
+      >
         <Box
           gap={0.5}
           flexGrow={1}
@@ -112,7 +134,10 @@ function OptionItem({ sx, option, onOpen, selected, isCredit, cardOptions, ...ot
           sx={{ typography: 'subtitle1' }}
         >
           {option.label}
-          <Box component="span" sx={{ typography: 'body2', color: 'text.secondary' }}>
+          <Box
+            component="span"
+            sx={{ typography: 'body2', color: 'text.secondary' }}
+          >
             {option.description}
           </Box>
         </Box>
@@ -124,14 +149,23 @@ function OptionItem({ sx, option, onOpen, selected, isCredit, cardOptions, ...ot
               <Iconify icon="logos:visa" width={24} />
             </>
           )}
-          {option.value === 'paypal' && <Iconify icon="logos:paypal" width={24} />}
-          {option.value === 'cash' && <Iconify icon="solar:wad-of-money-bold" width={32} />}
+          {option.value === 'paypal' && (
+            <Iconify icon="logos:paypal" width={24} />
+          )}
+          {option.value === 'cash' && (
+            <Iconify icon="solar:wad-of-money-bold" width={32} />
+          )}
         </Box>
       </Box>
 
       {isCredit && (
         <Box sx={{ px: 3 }}>
-          <TextField select fullWidth label="Card" SelectProps={{ native: true }}>
+          <TextField
+            select
+            fullWidth
+            label="Card"
+            SelectProps={{ native: true }}
+          >
             {cardOptions.map((card) => (
               <option key={card.value} value={card.value}>
                 {card.label}

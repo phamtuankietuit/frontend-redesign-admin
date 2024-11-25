@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import { RouterLink } from 'src/routes/components';
 
-import { fDateTime } from 'src/utils/format-time';
+import { fDateTime, formatStr } from 'src/utils/format-time';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -27,7 +27,11 @@ export function OrderDetailsToolbar({
 
   return (
     <>
-      <Stack spacing={3} direction={{ xs: 'column', md: 'row' }} sx={{ mb: { xs: 3, md: 5 } }}>
+      <Stack
+        spacing={3}
+        direction={{ xs: 'column', md: 'row' }}
+        sx={{ mb: { xs: 3, md: 5 } }}
+      >
         <Stack spacing={1} direction="row" alignItems="flex-start">
           <IconButton component={RouterLink} href={backLink}>
             <Iconify icon="eva:arrow-ios-back-fill" />
@@ -35,22 +39,29 @@ export function OrderDetailsToolbar({
 
           <Stack spacing={0.5}>
             <Stack spacing={1} direction="row" alignItems="center">
-              <Typography variant="h4"> Order {orderNumber} </Typography>
+              <Typography variant="h4"> Đơn hàng {orderNumber} </Typography>
               <Label
                 variant="soft"
                 color={
                   (status === 'completed' && 'success') ||
                   (status === 'pending' && 'warning') ||
                   (status === 'cancelled' && 'error') ||
+                  (status === 'processing' && 'warning') ||
+                  (status === 'shipping' && 'info') ||
                   'default'
                 }
               >
-                {status}
+                {status === 'completed' && 'Hoàn thành'}
+                {status === 'pending' && 'Chờ xác nhận'}
+                {status === 'processing' && 'Đang đóng hàng'}
+                {status === 'shipping' && 'Đang giao hàng'}
+                {status === 'cancelled' && 'Đã hủy'}
+                {status === 'refunded' && 'Trả hàng'}
               </Label>
             </Stack>
 
             <Typography variant="body2" sx={{ color: 'text.disabled' }}>
-              {fDateTime(createdAt)}
+              {fDateTime(createdAt, formatStr.myFormat.dateTime)}
             </Typography>
           </Stack>
         </Stack>
@@ -67,9 +78,13 @@ export function OrderDetailsToolbar({
             variant="outlined"
             endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
             onClick={popover.onOpen}
-            sx={{ textTransform: 'capitalize' }}
           >
-            {status}
+            {status === 'completed' && 'Hoàn thành'}
+            {status === 'pending' && 'Chờ xác nhận'}
+            {status === 'processing' && 'Đang đóng hàng'}
+            {status === 'shipping' && 'Đang giao hàng'}
+            {status === 'cancelled' && 'Đã hủy'}
+            {status === 'refunded' && 'Trả hàng'}
           </Button>
 
           <Button
@@ -77,11 +92,15 @@ export function OrderDetailsToolbar({
             variant="outlined"
             startIcon={<Iconify icon="solar:printer-minimalistic-bold" />}
           >
-            Print
+            In
           </Button>
 
-          <Button color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
-            Edit
+          <Button
+            color="inherit"
+            variant="contained"
+            // startIcon={<Iconify icon="solar:pen-bold" />}
+          >
+            Lưu
           </Button>
         </Stack>
       </Stack>

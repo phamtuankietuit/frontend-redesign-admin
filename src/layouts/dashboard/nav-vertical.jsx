@@ -12,7 +12,15 @@ import { NavToggleButton } from '../components/nav-toggle-button';
 
 // ----------------------------------------------------------------------
 
-export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleNav, ...other }) {
+export function NavVertical({
+  sx,
+  data,
+  slots,
+  isNavMini,
+  layoutQuery,
+  onToggleNav,
+  ...other
+}) {
   const theme = useTheme();
 
   const renderNavVertical = (
@@ -24,9 +32,13 @@ export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleN
       )}
 
       <Scrollbar fillContent>
-        <NavSectionVertical data={data} sx={{ px: 2, flex: '1 1 auto' }} {...other} />
+        <NavSectionVertical
+          data={data}
+          sx={{ px: 2, flex: '1 1 auto' }}
+          {...other}
+        />
 
-        {slots?.bottomArea ?? <NavUpgrade />}
+        {/* {slots?.bottomArea ?? <NavUpgrade />} */}
       </Scrollbar>
     </>
   );
@@ -41,7 +53,13 @@ export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleN
 
       <NavSectionMini
         data={data}
-        sx={{ pb: 2, px: 0.5, ...hideScrollY, flex: '1 1 auto', overflowY: 'auto' }}
+        sx={{
+          pb: 2,
+          px: 0.5,
+          ...hideScrollY,
+          flex: '1 1 auto',
+          overflowY: 'auto',
+        }}
         {...other}
       />
 
@@ -60,7 +78,9 @@ export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleN
         flexDirection: 'column',
         bgcolor: 'var(--layout-nav-bg)',
         zIndex: 'var(--layout-nav-zIndex)',
-        width: isNavMini ? 'var(--layout-nav-mini-width)' : 'var(--layout-nav-vertical-width)',
+        width: isNavMini
+          ? 'var(--layout-nav-mini-width)'
+          : 'var(--layout-nav-vertical-width)',
         borderRight: `1px solid var(--layout-nav-border-color, ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)})`,
         transition: theme.transitions.create(['width'], {
           easing: 'var(--layout-transition-easing)',

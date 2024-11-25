@@ -81,8 +81,8 @@ export function AddressNewForm({ open, onClose, onCreate }) {
               row
               name="addressType"
               options={[
-                { label: 'Home', value: 'Home' },
-                { label: 'Office', value: 'Office' },
+                { label: 'Nhà ở', value: 'Home' },
+                { label: 'Văn phòng', value: 'Office' },
               ]}
             />
 
@@ -95,12 +95,12 @@ export function AddressNewForm({ open, onClose, onCreate }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="name" label="Full name" />
+              <Field.Text name="name" label="Họ và tên" />
 
-              <Field.Phone name="phoneNumber" label="Phone number" />
+              <Field.Phone name="phoneNumber" label="Số điện thoại" />
             </Box>
 
-            <Field.Text name="address" label="Address" />
+            <Field.Text name="address" label="Địa chỉ chi tiết" />
 
             <Box
               rowGap={3}
@@ -111,26 +111,34 @@ export function AddressNewForm({ open, onClose, onCreate }) {
                 sm: 'repeat(3, 1fr)',
               }}
             >
-              <Field.Text name="city" label="Town/city" />
+              <Field.Text name="city" label="Tỉnh/Thành phố" />
 
-              <Field.Text name="state" label="State" />
+              <Field.Text name="state" label="Huyện/Thành phố" />
 
-              <Field.Text name="zipCode" label="Zip/code" />
+              <Field.Text name="zipCode" label="Xã/Phường" />
             </Box>
 
-            <Field.CountrySelect name="country" label="Country" placeholder="Choose a country" />
+            {/* <Field.CountrySelect
+              name="country"
+              label="Country"
+              placeholder="Choose a country"
+            /> */}
 
-            <Field.Checkbox name="primary" label="Use this address as default." />
+            <Field.Checkbox name="primary" label="Đặt làm mặc định" />
           </Stack>
         </DialogContent>
 
         <DialogActions>
           <Button color="inherit" variant="outlined" onClick={onClose}>
-            Cancel
+            Hủy
           </Button>
 
-          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Deliver to this address
+          <LoadingButton
+            type="submit"
+            variant="contained"
+            loading={isSubmitting}
+          >
+            Giao hàng đến địa chỉ này
           </LoadingButton>
         </DialogActions>
       </Form>

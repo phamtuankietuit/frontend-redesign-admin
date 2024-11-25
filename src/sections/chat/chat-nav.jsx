@@ -35,7 +35,12 @@ const NAV_WIDTH = 320;
 
 const NAV_COLLAPSE_WIDTH = 96;
 
-export function ChatNav({ loading, contacts, collapseNav, conversations, selectedConversationId }) {
+export function ChatNav({
+  loading,
+  contacts,
+  collapseNav,
+  selectedConversationId,
+}) {
   const router = useRouter();
 
   const mdUp = useResponsive('up', 'md');
@@ -68,7 +73,7 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
       phoneNumber: `${user?.phoneNumber}`,
       status: 'online',
     }),
-    [user]
+    [user],
   );
 
   useEffect(() => {
@@ -98,94 +103,95 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
 
       if (inputValue) {
         const results = contacts.filter((contact) =>
-          contact.name.toLowerCase().includes(inputValue)
+          contact.name.toLowerCase().includes(inputValue),
         );
 
         setSearchContacts((prevState) => ({ ...prevState, results }));
       }
     },
-    [contacts]
+    [contacts],
   );
 
   const handleClickAwaySearch = useCallback(() => {
     setSearchContacts({ query: '', results: [] });
   }, []);
 
-  const handleClickResult = useCallback(
-    async (result) => {
-      handleClickAwaySearch();
+  // const handleClickResult = useCallback(
+  //   async (result) => {
+  //     handleClickAwaySearch();
 
-      const linkTo = (id) => router.push(`${paths.dashboard.chat}?id=${id}`);
+  //     const linkTo = (id) => router.push(`${paths.dashboard.chat}?id=${id}`);
 
-      try {
-        // Check if the conversation already exists
-        if (conversations.allIds.includes(result.id)) {
-          linkTo(result.id);
-          return;
-        }
+  //     try {
+  //       // Check if the conversation already exists
+  //       if (conversations.allIds.includes(result.id)) {
+  //         linkTo(result.id);
+  //         return;
+  //       }
 
-        // Find the recipient in contacts
-        const recipient = contacts.find((contact) => contact.id === result.id);
-        if (!recipient) {
-          console.error('Recipient not found');
-          return;
-        }
+  //       // Find the recipient in contacts
+  //       const recipient = contacts.find((contact) => contact.id === result.id);
+  //       if (!recipient) {
+  //         console.error('Recipient not found');
+  //         return;
+  //       }
 
-        // Prepare conversation data
-        const { conversationData } = initialConversation({
-          recipients: [recipient],
-          me: myContact,
-        });
+  //       // Prepare conversation data
+  //       const { conversationData } = initialConversation({
+  //         recipients: [recipient],
+  //         me: myContact,
+  //       });
 
-        // Create a new conversation
-        const res = await createConversation(conversationData);
+  //       // Create a new conversation
+  //       const res = await createConversation(conversationData);
 
-        if (!res || !res.conversation) {
-          console.error('Failed to create conversation');
-        }
+  //       if (!res || !res.conversation) {
+  //         console.error('Failed to create conversation');
+  //       }
 
-        // Navigate to the new conversation
-        linkTo(res.conversation.id);
-      } catch (error) {
-        console.error('Error handling click result:', error);
-      }
-    },
-    [contacts, conversations.allIds, handleClickAwaySearch, myContact, router]
-  );
+  //       // Navigate to the new conversation
+  //       linkTo(res.conversation.id);
+  //     } catch (error) {
+  //       console.error('Error handling click result:', error);
+  //     }
+  //   },
+  //   [contacts, conversations.allIds, handleClickAwaySearch, myContact, router],
+  // );
 
   const renderLoading = <ChatNavItemSkeleton />;
 
   const renderList = (
     <nav>
       <Box component="ul">
-        {conversations.allIds.map((conversationId) => (
+        {contacts?.map((contact) => (
           <ChatNavItem
-            key={conversationId}
+            key={contact.id}
             collapse={collapseDesktop}
-            conversation={conversations.byId[conversationId]}
-            selected={conversationId === selectedConversationId}
+            conversation={contact.conversation}
+            selected={contact.conversation.id === selectedConversationId}
             onCloseMobile={onCloseMobile}
+            contact={contact}
           />
         ))}
       </Box>
     </nav>
   );
 
-  const renderListResults = (
-    <ChatNavSearchResults
-      query={searchContacts.query}
-      results={searchContacts.results}
-      onClickResult={handleClickResult}
-    />
-  );
+  // const renderListResults = (
+  //   <ChatNavSearchResults
+  //     query={searchContacts.query}
+  //     results={searchContacts.results}
+  //     onClickResult={() => {}}
+  //   />
+  // );
 
   const renderSearchInput = (
     <ClickAwayListener onClickAway={handleClickAwaySearch}>
       <TextField
         fullWidth
         value={searchContacts.query}
-        onChange={(event) => handleSearchContacts(event.target.value)}
-        placeholder="Search contacts..."
+        onChange={() => {}}
+        placeholder="Tìm khách hàng..."
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -200,7 +206,12 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
 
   const renderContent = (
     <>
-      <Stack direction="row" alignItems="center" justifyContent="center" sx={{ p: 2.5, pb: 0 }}>
+      {/* <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="center"
+        sx={{ p: 2.5, pb: 0 }}
+      >
         {!collapseDesktop && (
           <>
             <ChatNavAccount />
@@ -210,7 +221,11 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
 
         <IconButton onClick={handleToggleNav}>
           <Iconify
-            icon={collapseDesktop ? 'eva:arrow-ios-forward-fill' : 'eva:arrow-ios-back-fill'}
+            icon={
+              collapseDesktop
+                ? 'eva:arrow-ios-forward-fill'
+                : 'eva:arrow-ios-back-fill'
+            }
           />
         </IconButton>
 
@@ -219,7 +234,7 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
             <Iconify width={24} icon="solar:user-plus-bold" />
           </IconButton>
         )}
-      </Stack>
+      </Stack> */}
 
       <Box sx={{ p: 2.5, pt: 0 }}>{!collapseDesktop && renderSearchInput}</Box>
 
@@ -227,7 +242,10 @@ export function ChatNav({ loading, contacts, collapseNav, conversations, selecte
         renderLoading
       ) : (
         <Scrollbar sx={{ pb: 1 }}>
-          {searchContacts.query && !!conversations.allIds.length ? renderListResults : renderList}
+          {renderList}
+          {/* {searchContacts.query && !!conversations.allIds.length
+            ? renderListResults
+            : renderList} */}
         </Scrollbar>
       )}
     </>

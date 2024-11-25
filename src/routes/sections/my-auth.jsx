@@ -10,17 +10,12 @@ import { SplashScreen } from 'src/components/loading-screen';
 const CenteredLayout = {
   SignInPage: lazy(() => import('src/pages/my-auth/sign-in')),
   SignUpPage: lazy(() => import('src/pages/my-auth/sign-up')),
-  VerifyPage: lazy(() => import('src/pages/auth-demo/centered/verify')),
-  ResetPasswordPage: lazy(
-    () => import('src/pages/auth-demo/centered/reset-password'),
-  ),
-  UpdatePasswordPage: lazy(
-    () => import('src/pages/auth-demo/centered/update-password'),
-  ),
+  VerifyPage: lazy(() => import('src/pages/my-auth/verify')),
+  ResetPasswordPage: lazy(() => import('src/pages/my-auth/reset-password')),
+  UpdatePasswordPage: lazy(() => import('src/pages/my-auth/update-password')),
 };
 
 const authCentered = {
-  path: '',
   element: (
     <AuthCenteredLayout>
       <Outlet />
@@ -37,7 +32,6 @@ const authCentered = {
 
 export const myAuthRoutes = [
   {
-    path: '',
     element: (
       <Suspense fallback={<SplashScreen />}>
         <Outlet />

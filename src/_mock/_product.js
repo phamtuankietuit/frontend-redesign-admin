@@ -30,6 +30,25 @@ export const PRODUCT_COLOR_NAME_OPTIONS = [
   { value: '#FFFFFF', label: 'White' },
 ];
 
+export const PRODUCT_AUTHOR_NAME_OPTIONS = [
+  { value: 'Nguyễn Nhật Ánh', label: 'Nguyễn Nhật Ánh' },
+  { value: 'Nam Cao', label: 'Nam Cao' },
+  { value: 'Nguyễn Du', label: 'Nguyễn Du' },
+  { value: 'Xuân Quỳnh', label: 'Xuân Quỳnh' },
+  { value: 'Ngô Tất Tố', label: 'Ngô Tất Tố' },
+  { value: 'Tô Hoài', label: 'Tô Hoài' },
+  { value: 'Nguyễn Huy Thiệp', label: 'Nguyễn Huy Thiệp' },
+  { value: 'Vũ Trọng Phụng', label: 'Vũ Trọng Phụng' },
+];
+
+export const PRODUCT_CATEGORY_NAME_OPTIONS = [
+  { value: 'Sách Tiếng Việt', label: 'Sách Tiếng Việt' },
+  { value: 'Sách nước ngoài', label: 'Sách nước ngoài' },
+  { value: 'Văn phòng phẩm', label: 'Văn phòng phẩm' },
+  { value: 'Đồ chơi', label: 'Đồ chơi' },
+  { value: 'Quà lưu niệm', label: 'Quà lưu niệm' },
+];
+
 export const PRODUCT_SIZE_OPTIONS = [
   { value: '7', label: '7' },
   { value: '8', label: '8' },
@@ -45,9 +64,9 @@ export const PRODUCT_SIZE_OPTIONS = [
 ];
 
 export const PRODUCT_STOCK_OPTIONS = [
-  { value: 'in stock', label: 'In stock' },
-  { value: 'low stock', label: 'Low stock' },
-  { value: 'out of stock', label: 'Out of stock' },
+  { value: 'in stock', label: 'Còn hàng' },
+  { value: 'low stock', label: 'Còn ít hàng' },
+  { value: 'out of stock', label: 'Hết hàng' },
 ];
 
 export const PRODUCT_PUBLISH_OPTIONS = [
@@ -56,10 +75,10 @@ export const PRODUCT_PUBLISH_OPTIONS = [
 ];
 
 export const PRODUCT_SORT_OPTIONS = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'priceDesc', label: 'Price: High - Low' },
-  { value: 'priceAsc', label: 'Price: Low - High' },
+  { value: 'featured', label: 'Tính năng' },
+  { value: 'newest', label: 'Mới nhất' },
+  { value: 'priceDesc', label: 'Giá: Cao - Thấp' },
+  { value: 'priceAsc', label: 'Giá: Thấp - Cao' },
 ];
 
 export const PRODUCT_CATEGORY_GROUP_OPTIONS = [
@@ -68,4 +87,4 @@ export const PRODUCT_CATEGORY_GROUP_OPTIONS = [
   { group: 'Accessories', classify: ['Shoes', 'Backpacks and bags', 'Bracelets', 'Face masks'] },
 ];
 
-export const PRODUCT_CHECKOUT_STEPS = ['Cart', 'Billing & address', 'Payment'];
+export const PRODUCT_CHECKOUT_STEPS = ['Giỏ hàng', 'Địa chỉ', 'Thanh toán'];

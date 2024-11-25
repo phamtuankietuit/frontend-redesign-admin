@@ -14,17 +14,28 @@ import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, onApplyDiscount }) {
+export function CheckoutSummary({
+  total,
+  onEdit,
+  discount,
+  subtotal,
+  shipping,
+  onApplyDiscount,
+}) {
   const displayShipping = shipping !== null ? 'Free' : '-';
 
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeader
-        title="Order summary"
+        title="Thông tin đơn hàng"
         action={
           onEdit && (
-            <Button size="small" onClick={onEdit} startIcon={<Iconify icon="solar:pen-bold" />}>
-              Edit
+            <Button
+              size="small"
+              onClick={onEdit}
+              startIcon={<Iconify icon="solar:pen-bold" />}
+            >
+              Sửa
             </Button>
           )
         }
@@ -37,7 +48,7 @@ export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, o
             variant="body2"
             sx={{ flexGrow: 1, color: 'text.secondary' }}
           >
-            Sub total
+            Tổng tiền hàng
           </Typography>
           <Typography component="span" variant="subtitle2">
             {fCurrency(subtotal)}
@@ -50,7 +61,7 @@ export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, o
             variant="body2"
             sx={{ flexGrow: 1, color: 'text.secondary' }}
           >
-            Discount
+            Giảm giá
           </Typography>
           <Typography component="span" variant="subtitle2">
             {discount ? fCurrency(-discount) : '-'}
@@ -63,7 +74,7 @@ export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, o
             variant="body2"
             sx={{ flexGrow: 1, color: 'text.secondary' }}
           >
-            Shipping
+            Phí vận chuyển
           </Typography>
           <Typography component="span" variant="subtitle2">
             {shipping ? fCurrency(shipping) : displayShipping}
@@ -74,7 +85,7 @@ export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, o
 
         <Box display="flex">
           <Typography component="span" variant="subtitle1" sx={{ flexGrow: 1 }}>
-            Total
+            Tổng cộng
           </Typography>
 
           <Box sx={{ textAlign: 'right' }}>
@@ -86,7 +97,7 @@ export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, o
               {fCurrency(total)}
             </Typography>
             <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
-              (VAT included if applicable)
+              (Đã bao gồm VAT 8%)
             </Typography>
           </Box>
         </Box>
@@ -99,8 +110,12 @@ export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, o
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <Button color="primary" onClick={() => onApplyDiscount(5)} sx={{ mr: -0.5 }}>
-                    Apply
+                  <Button
+                    color="primary"
+                    onClick={() => onApplyDiscount(5)}
+                    sx={{ mr: -0.5 }}
+                  >
+                    Áp dụng
                   </Button>
                 </InputAdornment>
               ),

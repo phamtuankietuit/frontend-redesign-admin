@@ -26,7 +26,9 @@ export function ProductSearch({ query, results, onSearch, loading }) {
   const handleKeyUp = (event) => {
     if (query) {
       if (event.key === 'Enter') {
-        const selectItem = results.filter((product) => product.name === query)[0];
+        const selectItem = results.filter(
+          (product) => product.name === query,
+        )[0];
 
         handleClick(selectItem.id);
       }
@@ -51,18 +53,23 @@ export function ProductSearch({ query, results, onSearch, loading }) {
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder="Search..."
+          placeholder="Tìm sản phẩm..."
           onKeyUp={handleKeyUp}
           InputProps={{
             ...params.InputProps,
             startAdornment: (
               <InputAdornment position="start">
-                <Iconify icon="eva:search-fill" sx={{ ml: 1, color: 'text.disabled' }} />
+                <Iconify
+                  icon="eva:search-fill"
+                  sx={{ ml: 1, color: 'text.disabled' }}
+                />
               </InputAdornment>
             ),
             endAdornment: (
               <>
-                {loading ? <Iconify icon="svg-spinners:8-dots-rotate" sx={{ mr: -3 }} /> : null}
+                {loading ? (
+                  <Iconify icon="svg-spinners:8-dots-rotate" sx={{ mr: -3 }} />
+                ) : null}
                 {params.InputProps.endAdornment}
               </>
             ),
@@ -74,7 +81,12 @@ export function ProductSearch({ query, results, onSearch, loading }) {
         const parts = parse(product.name, matches);
 
         return (
-          <Box component="li" {...props} onClick={() => handleClick(product.id)} key={product.id}>
+          <Box
+            component="li"
+            {...props}
+            onClick={() => handleClick(product.id)}
+            key={product.id}
+          >
             <Avatar
               key={product.id}
               alt={product.name}
@@ -97,7 +109,9 @@ export function ProductSearch({ query, results, onSearch, loading }) {
                   color={part.highlight ? 'primary' : 'textPrimary'}
                   sx={{
                     typography: 'body2',
-                    fontWeight: part.highlight ? 'fontWeightSemiBold' : 'fontWeightMedium',
+                    fontWeight: part.highlight
+                      ? 'fontWeightSemiBold'
+                      : 'fontWeightMedium',
                   }}
                 >
                   {part.text}

@@ -111,7 +111,9 @@ export function ProductDetailsView({ product, error, loading }) {
         </Grid>
 
         <Grid xs={12} md={6} lg={5}>
-          {product && <ProductDetailsSummary disableActions product={product} />}
+          {product && (
+            <ProductDetailsSummary disableActions product={product} />
+          )}
         </Grid>
       </Grid>
 
@@ -123,7 +125,11 @@ export function ProductDetailsView({ product, error, loading }) {
       >
         {SUMMARY.map((item) => (
           <Box key={item.title} sx={{ textAlign: 'center', px: 5 }}>
-            <Iconify icon={item.icon} width={32} sx={{ color: 'primary.main' }} />
+            <Iconify
+              icon={item.icon}
+              width={32}
+              sx={{ color: 'primary.main' }}
+            />
 
             <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }}>
               {item.title}

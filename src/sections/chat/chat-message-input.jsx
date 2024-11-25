@@ -45,7 +45,7 @@ export function ChatMessageInput({
       phoneNumber: `${user?.phoneNumber}`,
       status: 'online',
     }),
-    [user]
+    [user],
   );
 
   const { messageData, conversationData } = initialConversation({
@@ -85,7 +85,14 @@ export function ChatMessageInput({
         setMessage('');
       }
     },
-    [conversationData, message, messageData, onAddRecipients, router, selectedConversationId]
+    [
+      conversationData,
+      message,
+      messageData,
+      onAddRecipients,
+      router,
+      selectedConversationId,
+    ],
   );
 
   return (
@@ -98,24 +105,24 @@ export function ChatMessageInput({
         onChange={handleChangeMessage}
         placeholder="Type a message"
         disabled={disabled}
-        startAdornment={
-          <IconButton>
-            <Iconify icon="eva:smiling-face-fill" />
-          </IconButton>
-        }
-        endAdornment={
-          <Stack direction="row" sx={{ flexShrink: 0 }}>
-            <IconButton onClick={handleAttach}>
-              <Iconify icon="solar:gallery-add-bold" />
-            </IconButton>
-            <IconButton onClick={handleAttach}>
-              <Iconify icon="eva:attach-2-fill" />
-            </IconButton>
-            <IconButton>
-              <Iconify icon="solar:microphone-bold" />
-            </IconButton>
-          </Stack>
-        }
+        // startAdornment={
+        //   <IconButton>
+        //     <Iconify icon="eva:smiling-face-fill" />
+        //   </IconButton>
+        // }
+        // endAdornment={
+        //   <Stack direction="row" sx={{ flexShrink: 0 }}>
+        //     <IconButton onClick={handleAttach}>
+        //       <Iconify icon="solar:gallery-add-bold" />
+        //     </IconButton>
+        //     <IconButton onClick={handleAttach}>
+        //       <Iconify icon="eva:attach-2-fill" />
+        //     </IconButton>
+        //     <IconButton>
+        //       <Iconify icon="solar:microphone-bold" />
+        //     </IconButton>
+        //   </Stack>
+        // }
         sx={{
           px: 1,
           height: 56,

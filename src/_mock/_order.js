@@ -3,10 +3,12 @@ import { _mock } from './_mock';
 // ----------------------------------------------------------------------
 
 export const ORDER_STATUS_OPTIONS = [
-  { value: 'pending', label: 'Pending' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'cancelled', label: 'Cancelled' },
-  { value: 'refunded', label: 'Refunded' },
+  { value: 'pending', label: 'Chờ xác nhận' },
+  { value: 'processing', label: 'Đang đóng hàng' },
+  { value: 'shipping', label: 'Đang giao hàng' },
+  { value: 'completed', label: 'Hoàn thành' },
+  { value: 'cancelled', label: 'Đã hủy' },
+  { value: 'refunded', label: 'Trả hàng' },
 ];
 
 const ITEMS = [...Array(3)].map((_, index) => ({
@@ -23,7 +25,7 @@ export const _orders = [...Array(20)].map((_, index) => {
 
   const discount = 10;
 
-  const taxes = 10;
+  const taxes = 0;
 
   const items = (index % 2 && ITEMS.slice(0, 1)) || (index % 3 && ITEMS.slice(1, 3)) || ITEMS;
 
@@ -49,17 +51,17 @@ export const _orders = [...Array(20)].map((_, index) => {
     deliveryTime: _mock.time(3),
     completionTime: _mock.time(4),
     timeline: [
-      { title: 'Delivery successful', time: _mock.time(1) },
-      { title: 'Transporting to [2]', time: _mock.time(2) },
-      { title: 'Transporting to [1]', time: _mock.time(3) },
-      { title: 'The shipping unit has picked up the goods', time: _mock.time(4) },
-      { title: 'Order has been created', time: _mock.time(5) },
+      { title: 'Giao hàng thành công', time: _mock.time(1) },
+      { title: 'Đã đến kho Phú Nhuận', time: _mock.time(2) },
+      { title: 'Đã tới kho Linh Trung, Thủ Đức', time: _mock.time(3) },
+      { title: 'Shipper lấy hàng', time: _mock.time(4) },
+      { title: 'Đã đặt hàng', time: _mock.time(5) },
     ],
   };
 
   return {
     id: _mock.id(index),
-    orderNumber: `#601${index}`,
+    orderNumber: `DH601${index}`,
     createdAt: _mock.time(index),
     taxes,
     items,

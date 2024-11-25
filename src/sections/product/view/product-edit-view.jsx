@@ -12,10 +12,9 @@ export function ProductEditView({ product }) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Edit"
+        heading="Cập nhật sản phẩm"
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Product', href: paths.dashboard.product.root },
+          { name: 'Trang chủ', href: paths.dashboard.root },
           { name: product?.name },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

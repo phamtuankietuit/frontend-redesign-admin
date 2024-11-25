@@ -6,7 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import { fCurrency } from 'src/utils/format-number';
-import { fTime, fDate } from 'src/utils/format-time';
+import { fTime, fDate, fDateTime, formatStr } from 'src/utils/format-time';
 
 import { Label } from 'src/components/label';
 
@@ -20,7 +20,10 @@ export function RenderCellPrice({ params }) {
 
 export function RenderCellPublish({ params }) {
   return (
-    <Label variant="soft" color={(params.row.publish === 'published' && 'info') || 'default'}>
+    <Label
+      variant="soft"
+      color={(params.row.publish === 'published' && 'info') || 'default'}
+    >
       {params.row.publish}
     </Label>
   );
@@ -31,9 +34,14 @@ export function RenderCellPublish({ params }) {
 export function RenderCellCreatedAt({ params }) {
   return (
     <Stack spacing={0.5}>
-      <Box component="span">{fDate(params.row.createdAt)}</Box>
-      <Box component="span" sx={{ typography: 'caption', color: 'text.secondary' }}>
-        {fTime(params.row.createdAt)}
+      <Box component="span">
+        {fDateTime(params.row.createdAt, formatStr.myFormat.date)}
+      </Box>
+      <Box
+        component="span"
+        sx={{ typography: 'caption', color: 'text.secondary' }}
+      >
+        {fDateTime(params.row.createdAt, formatStr.myFormat.time)}
       </Box>
     </Stack>
   );
@@ -43,7 +51,10 @@ export function RenderCellCreatedAt({ params }) {
 
 export function RenderCellStock({ params }) {
   return (
-    <Stack justifyContent="center" sx={{ typography: 'caption', color: 'text.secondary' }}>
+    <Stack
+      justifyContent="center"
+      sx={{ typography: 'caption', color: 'text.secondary' }}
+    >
       <LinearProgress
         value={(params.row.available * 100) / params.row.quantity}
         variant="determinate"
@@ -54,7 +65,10 @@ export function RenderCellStock({ params }) {
         }
         sx={{ mb: 1, width: 1, height: 6, maxWidth: 80 }}
       />
-      {!!params.row.available && params.row.available} {params.row.inventoryType}
+      {params.row.inventoryType === 'out of stock' && 'hết hàng'}
+      {params.row.inventoryType === 'low stock' && 'còn ít hàng'}
+      {params.row.inventoryType === 'in stock' && 'còn hàng'}{' '}
+      {!!params.row.available && params.row.available}
     </Stack>
   );
 }
@@ -85,7 +99,10 @@ export function RenderCellProduct({ params, onViewRow }) {
           </Link>
         }
         secondary={
-          <Box component="div" sx={{ typography: 'body2', color: 'text.disabled' }}>
+          <Box
+            component="div"
+            sx={{ typography: 'body2', color: 'text.disabled' }}
+          >
             {params.row.category}
           </Box>
         }

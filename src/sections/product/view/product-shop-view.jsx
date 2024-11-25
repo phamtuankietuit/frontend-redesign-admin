@@ -52,7 +52,11 @@ export function ProductShopView({ products, loading }) {
 
   const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
 
-  const dataFiltered = applyFilter({ inputData: products, filters: filters.state, sortBy });
+  const dataFiltered = applyFilter({
+    inputData: products,
+    filters: filters.state,
+    sortBy,
+  });
 
   const canReset =
     filters.state.gender.length > 0 ||
@@ -103,13 +107,20 @@ export function ProductShopView({ products, loading }) {
           }}
         />
 
-        <ProductSort sort={sortBy} onSort={handleSortBy} sortOptions={PRODUCT_SORT_OPTIONS} />
+        <ProductSort
+          sort={sortBy}
+          onSort={handleSortBy}
+          sortOptions={PRODUCT_SORT_OPTIONS}
+        />
       </Stack>
     </Stack>
   );
 
   const renderResults = (
-    <ProductFiltersResult filters={filters} totalResults={dataFiltered.length} />
+    <ProductFiltersResult
+      filters={filters}
+      totalResults={dataFiltered.length}
+    />
   );
 
   const renderNotFound = <EmptyContent filled sx={{ py: 10 }} />;
@@ -119,7 +130,7 @@ export function ProductShopView({ products, loading }) {
       <CartIcon totalItems={checkout.totalItems} />
 
       <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
-        Shop
+        Sản phẩm
       </Typography>
 
       <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
@@ -161,7 +172,9 @@ function applyFilter({ inputData, filters, sortBy }) {
 
   // filters
   if (gender.length) {
-    inputData = inputData.filter((product) => product.gender.some((i) => gender.includes(i)));
+    inputData = inputData.filter((product) =>
+      product.gender.some((i) => gender.includes(i)),
+    );
   }
 
   if (category !== 'all') {
@@ -170,12 +183,14 @@ function applyFilter({ inputData, filters, sortBy }) {
 
   if (colors.length) {
     inputData = inputData.filter((product) =>
-      product.colors.some((color) => colors.includes(color))
+      product.colors.some((color) => colors.includes(color)),
     );
   }
 
   if (min !== 0 || max !== 200) {
-    inputData = inputData.filter((product) => product.price >= min && product.price <= max);
+    inputData = inputData.filter(
+      (product) => product.price >= min && product.price <= max,
+    );
   }
 
   if (rating) {

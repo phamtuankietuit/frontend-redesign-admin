@@ -16,13 +16,8 @@ import { Form, Field } from 'src/components/hook-form';
 // ----------------------------------------------------------------------
 
 export const ReviewSchema = zod.object({
-  rating: zod.number().min(1, 'Rating must be greater than or equal to 1!'),
-  name: zod.string().min(1, { message: 'Name is required!' }),
-  review: zod.string().min(1, { message: 'Review is required!' }),
-  email: zod
-    .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+  rating: zod.number().min(1, 'Bạn chưa đánh giá sao!'),
+  review: zod.string().min(1, { message: 'Không được bỏ trống!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -66,30 +61,42 @@ export function ProductReviewNewForm({ onClose, ...other }) {
   return (
     <Dialog onClose={onClose} {...other}>
       <Form methods={methods} onSubmit={onSubmit}>
-        <DialogTitle> Add Review </DialogTitle>
+        <DialogTitle> Đánh giá sản phẩm </DialogTitle>
 
         <DialogContent>
           <div>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Your review about this product:
+              Đánh giá của bạn về sản phẩm này:
             </Typography>
             <Field.Rating name="rating" />
           </div>
 
-          <Field.Text name="review" label="Review *" multiline rows={3} sx={{ mt: 3 }} />
-
-          <Field.Text name="name" label="Name *" sx={{ mt: 3 }} />
-
-          <Field.Text name="email" label="Email *" sx={{ mt: 3 }} />
+          <Field.Text
+            name="review"
+            label="Đánh giá *"
+            multiline
+            rows={3}
+            sx={{
+              mt: 3,
+              minWidth: {
+                xs: 300,
+                sm: 480,
+              },
+            }}
+          />
         </DialogContent>
 
         <DialogActions>
           <Button color="inherit" variant="outlined" onClick={onCancel}>
-            Cancel
+            Hủy
           </Button>
 
-          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Post
+          <LoadingButton
+            type="submit"
+            variant="contained"
+            loading={isSubmitting}
+          >
+            Đăng
           </LoadingButton>
         </DialogActions>
       </Form>

@@ -1,21 +1,18 @@
 import Button from '@mui/material/Button';
 
+import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
-
-import { CONFIG } from 'src/config-global';
-
-// ----------------------------------------------------------------------
 
 export function SignInButton({ sx, ...other }) {
   return (
     <Button
       component={RouterLink}
-      href={CONFIG.auth.redirectPath}
+      href={paths.auth.signIn}
       variant="outlined"
       sx={sx}
       {...other}
     >
-      Sign in
+      Đăng nhập
     </Button>
   );
 }

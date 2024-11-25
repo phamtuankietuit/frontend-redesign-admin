@@ -24,7 +24,14 @@ import { ColorPicker } from 'src/components/color-utils';
 
 // ----------------------------------------------------------------------
 
-export function ProductFilters({ open, onOpen, onClose, canReset, filters, options }) {
+export function ProductFilters({
+  open,
+  onOpen,
+  onClose,
+  canReset,
+  filters,
+  options,
+}) {
   const marksLabel = [...Array(21)].map((_, index) => {
     const value = index * 10;
 
@@ -41,42 +48,42 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
 
       filters.setState({ gender: checked });
     },
-    [filters]
+    [filters],
   );
 
   const handleFilterCategory = useCallback(
     (newValue) => {
       filters.setState({ category: newValue });
     },
-    [filters]
+    [filters],
   );
 
   const handleFilterColors = useCallback(
     (newValue) => {
       filters.setState({ colors: newValue });
     },
-    [filters]
+    [filters],
   );
 
   const handleFilterPriceRange = useCallback(
     (event, newValue) => {
       filters.setState({ priceRange: newValue });
     },
-    [filters]
+    [filters],
   );
 
   const handleFilterRating = useCallback(
     (newValue) => {
       filters.setState({ rating: newValue });
     },
-    [filters]
+    [filters],
   );
 
   const renderHead = (
     <>
       <Box display="flex" alignItems="center" sx={{ py: 2, pr: 1, pl: 2.5 }}>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Filters
+          Bộ lọc
         </Typography>
 
         <Tooltip title="Reset">
@@ -99,7 +106,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
   const renderGender = (
     <Box display="flex" flexDirection="column">
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
-        Gender
+        Giới tính
       </Typography>
       {options.genders.map((option) => (
         <FormControlLabel
@@ -119,7 +126,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
   const renderCategory = (
     <Box display="flex" flexDirection="column">
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
-        Category
+        Phân loại
       </Typography>
       {options.categories.map((option) => (
         <FormControlLabel
@@ -153,11 +160,19 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
 
   const renderPrice = (
     <Box display="flex" flexDirection="column">
-      <Typography variant="subtitle2">Price</Typography>
+      <Typography variant="subtitle2">Giá</Typography>
 
       <Box gap={5} display="flex" sx={{ my: 2 }}>
-        <InputRange type="min" value={filters.state.priceRange} onFilters={filters.setState} />
-        <InputRange type="max" value={filters.state.priceRange} onFilters={filters.setState} />
+        <InputRange
+          type="min"
+          value={filters.state.priceRange}
+          onFilters={filters.setState}
+        />
+        <InputRange
+          type="max"
+          value={filters.state.priceRange}
+          onFilters={filters.setState}
+        />
       </Box>
 
       <Slider
@@ -177,7 +192,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
   const renderRating = (
     <Box display="flex" flexDirection="column">
       <Typography variant="subtitle2" sx={{ mb: 2 }}>
-        Rating
+        Đánh giá
       </Typography>
 
       {options.ratings.map((item, index) => (
@@ -200,7 +215,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
             }),
           }}
         >
-          <Rating readOnly value={4 - index} /> & Up
+          <Rating readOnly value={4 - index} />
         </Box>
       ))}
     </Box>
@@ -218,7 +233,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
         }
         onClick={onOpen}
       >
-        Filters
+        Bộ lọc
       </Button>
 
       <Drawer
@@ -234,7 +249,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
           <Stack spacing={3}>
             {renderGender}
             {renderCategory}
-            {renderColor}
+            {/* {renderColor} */}
             {renderPrice}
             {renderRating}
           </Stack>
@@ -267,7 +282,12 @@ function InputRange({ type, value, onFilters }) {
   }, [max, min, onFilters]);
 
   return (
-    <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ width: 1 }}>
+    <Stack
+      direction="row"
+      alignItems="center"
+      justifyContent="space-between"
+      sx={{ width: 1 }}
+    >
       <Typography
         variant="caption"
         sx={{
@@ -299,7 +319,8 @@ function InputRange({ type, value, onFilters }) {
         sx={{
           maxWidth: 48,
           borderRadius: 0.75,
-          bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+          bgcolor: (theme) =>
+            varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
           [`& .${inputBaseClasses.input}`]: {
             pr: 1,
             py: 0.75,

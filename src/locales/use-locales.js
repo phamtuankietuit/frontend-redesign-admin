@@ -43,6 +43,6 @@ export function useTranslate(ns) {
     t,
     i18n,
     onChangeLang,
-    currentLang: currentLang ?? fallback,
+    currentLang: fallback,
   };
 }

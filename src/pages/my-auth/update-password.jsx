@@ -2,11 +2,13 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
 
-import { Auth0SignInView } from 'src/auth/view/auth0';
+import { CenteredUpdatePasswordView } from 'src/auth/view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Sign in | Auth0 - ${CONFIG.appName}` };
+const metadata = {
+  title: `Update Password - ${CONFIG.appName}`,
+};
 
 export default function Page() {
   return (
@@ -15,7 +17,7 @@ export default function Page() {
         <title> {metadata.title}</title>
       </Helmet>
 
-      <Auth0SignInView />
+      <CenteredUpdatePasswordView />
     </>
   );
 }

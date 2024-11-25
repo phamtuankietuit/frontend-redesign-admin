@@ -8,8 +8,12 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Accordion, { accordionClasses } from '@mui/material/Accordion';
-import AccordionDetails, { accordionDetailsClasses } from '@mui/material/AccordionDetails';
-import AccordionSummary, { accordionSummaryClasses } from '@mui/material/AccordionSummary';
+import AccordionDetails, {
+  accordionDetailsClasses,
+} from '@mui/material/AccordionDetails';
+import AccordionSummary, {
+  accordionSummaryClasses,
+} from '@mui/material/AccordionSummary';
 
 import { varAlpha } from 'src/theme/styles';
 
@@ -17,7 +21,11 @@ import { Iconify } from 'src/components/iconify';
 import { varFade, MotionViewport } from 'src/components/animate';
 
 import { SectionTitle } from './components/section-title';
-import { FloatLine, FloatPlusIcon, FloatTriangleDownIcon } from './components/svg-elements';
+import {
+  FloatLine,
+  FloatPlusIcon,
+  FloatTriangleDownIcon,
+} from './components/svg-elements';
 
 // ----------------------------------------------------------------------
 
@@ -46,11 +54,12 @@ const FAQs = [
         <li> All licenses do not apply to open source.</li>
         <li> One licenses / one end product (3 licenses / 3 products...).</li>
         <li>
-          <strong>Standard / Plus</strong> license used in free products (Internal management...).
+          <strong>Standard / Plus</strong> license used in free products
+          (Internal management...).
         </li>
         <li>
-          <strong>Extended</strong> license used in charge products, collect fees from users
-          (SAAS...).
+          <strong>Extended</strong> license used in charge products, collect
+          fees from users (SAAS...).
         </li>
         <li>
           Learn more about the
@@ -96,9 +105,10 @@ const FAQs = [
     question: 'For what kind of projects is the Standard license intended?',
     answer: (
       <Typography>
-        The Standard license is designed for internal applications in which staff will access the
-        application. An example could be the back-office dashboard of a public-facing e-commerce
-        website in which staff would sign in and manage inventory, customers, etc.
+        The Standard license is designed for internal applications in which
+        staff will access the application. An example could be the back-office
+        dashboard of a public-facing e-commerce website in which staff would
+        sign in and manage inventory, customers, etc.
       </Typography>
     ),
   },
@@ -115,8 +125,9 @@ const FAQs = [
         >
           open source
         </Link>
-        dashboard template which should give you an overview of the code quality and folder
-        structure. Keep in mind that some aspects may differ from this Paid version.
+        dashboard template which should give you an overview of the code quality
+        and folder structure. Keep in mind that some aspects may differ from
+        this Paid version.
       </Typography>
     ),
   },
@@ -165,14 +176,16 @@ export function HomeFAQs({ sx, ...other }) {
               }),
             '&::before': { display: 'none' },
             '&:hover': {
-              bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
+              bgcolor: (theme) =>
+                varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
             },
             '&:first-of-type, &:last-of-type': { borderRadius: 2 },
             [`&.${accordionClasses.expanded}`]: {
               m: 0,
               borderRadius: 2,
               boxShadow: 'none',
-              bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+              bgcolor: (theme) =>
+                varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
             },
             [`& .${accordionSummaryClasses.root}`]: {
               py: 3,
@@ -190,7 +203,11 @@ export function HomeFAQs({ sx, ...other }) {
             expandIcon={
               <Iconify
                 width={20}
-                icon={expanded === item.question ? 'mingcute:minimize-line' : 'mingcute:add-line'}
+                icon={
+                  expanded === item.question
+                    ? 'mingcute:minimize-line'
+                    : 'mingcute:add-line'
+                }
               />
             }
             aria-controls={`panel${index}bh-content`}
@@ -214,17 +231,17 @@ export function HomeFAQs({ sx, ...other }) {
         background: (theme) =>
           `linear-gradient(270deg, ${varAlpha(
             theme.vars.palette.grey['500Channel'],
-            0.08
+            0.08,
           )}, ${varAlpha(theme.vars.palette.grey['500Channel'], 0)})`,
       }}
     >
       <m.div variants={varFade().in}>
-        <Typography variant="h4">Still have questions?</Typography>
+        <Typography variant="h4">Cần hỗ trợ?</Typography>
       </m.div>
 
       <m.div variants={varFade().in}>
         <Typography sx={{ mt: 2, mb: 3, color: 'text.secondary' }}>
-          Please describe your case to receive the most accurate advice
+          Hãy liên hệ với chúng tôi để được hỗ trợ tốt nhất!
         </Typography>
       </m.div>
 
@@ -235,7 +252,7 @@ export function HomeFAQs({ sx, ...other }) {
           href="mailto:support@minimals.cc?subject=[Feedback] from Customer"
           startIcon={<Iconify icon="fluent:mail-24-filled" />}
         >
-          Contact us
+          Liên hệ ngay
         </Button>
       </m.div>
     </Stack>
@@ -247,8 +264,8 @@ export function HomeFAQs({ sx, ...other }) {
         <TopLines />
 
         <Container>
-          {renderDescription}
-          {renderContent}
+          {/* {renderDescription} */}
+          {/* {renderContent} */}
         </Container>
 
         <Stack sx={{ position: 'relative' }}>

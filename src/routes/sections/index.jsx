@@ -5,13 +5,10 @@ import { MainLayout } from 'src/layouts/main';
 
 import { SplashScreen } from 'src/components/loading-screen';
 
-import { authRoutes } from './auth';
-import { mainRoutes } from './main';
 import { myAuthRoutes } from './my-auth';
-import { authDemoRoutes } from './auth-demo';
-import { dashboardRoutes } from './dashboard';
-import { componentsRoutes } from './components';
 import { myMainRoutes } from './my-main';
+import { dashboardRoutes } from './dashboard';
+import { mainRoutes } from './main';
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +36,7 @@ export function Router() {
     // ...authDemoRoutes,
 
     // Dashboard
-    // ...dashboardRoutes,
+    ...dashboardRoutes,
 
     // Main
     // ...mainRoutes,

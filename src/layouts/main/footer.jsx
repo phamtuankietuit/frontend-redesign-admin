@@ -12,7 +12,12 @@ import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { _socials } from 'src/_mock';
-import { TwitterIcon, FacebookIcon, LinkedinIcon, InstagramIcon } from 'src/assets/icons';
+import {
+  TwitterIcon,
+  FacebookIcon,
+  LinkedinIcon,
+  InstagramIcon,
+} from 'src/assets/icons';
 
 import { Logo } from 'src/components/logo';
 
@@ -36,7 +41,10 @@ export function Footer({ layoutQuery, sx }) {
   const theme = useTheme();
 
   return (
-    <Box component="footer" sx={{ position: 'relative', bgcolor: 'background.default', ...sx }}>
+    <Box
+      component="footer"
+      sx={{ position: 'relative', bgcolor: 'background.default', ...sx }}
+    >
       <Divider />
 
       <Container
@@ -54,7 +62,9 @@ export function Footer({ layoutQuery, sx }) {
           sx={{
             mt: 3,
             justifyContent: 'center',
-            [theme.breakpoints.up(layoutQuery)]: { justifyContent: 'space-between' },
+            [theme.breakpoints.up(layoutQuery)]: {
+              justifyContent: 'space-between',
+            },
           }}
         >
           <Grid {...{ xs: 12, [layoutQuery]: 3 }}>
@@ -77,7 +87,10 @@ export function Footer({ layoutQuery, sx }) {
                 mt: 3,
                 mb: 5,
                 justifyContent: 'center',
-                [theme.breakpoints.up(layoutQuery)]: { mb: 0, justifyContent: 'flex-start' },
+                [theme.breakpoints.up(layoutQuery)]: {
+                  mb: 0,
+                  justifyContent: 'flex-start',
+                },
               }}
             >
               {_socials.map((social) => (
@@ -106,7 +119,9 @@ export function Footer({ layoutQuery, sx }) {
                   sx={{
                     width: 1,
                     alignItems: 'center',
-                    [theme.breakpoints.up(layoutQuery)]: { alignItems: 'flex-start' },
+                    [theme.breakpoints.up(layoutQuery)]: {
+                      alignItems: 'flex-start',
+                    },
                   }}
                 >
                   <Typography component="div" variant="overline">
@@ -157,7 +172,7 @@ export function HomeFooter({ sx }) {
         <Box sx={{ mt: 1, typography: 'caption' }}>
           © All rights reserved.
           <br /> made by
-          <Link href="https://minimals.cc/"> minimals.cc </Link>
+          <Link href="#"> KKBooks </Link>
         </Box>
       </Container>
     </Box>

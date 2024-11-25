@@ -6,8 +6,6 @@ import { SimpleLayout } from 'src/layouts/simple';
 
 import { SplashScreen } from 'src/components/loading-screen';
 
-import { AuthGuard } from 'src/auth/guard';
-
 // ----------------------------------------------------------------------
 
 const FaqsPage = lazy(() => import('src/pages/faqs'));
@@ -43,11 +41,9 @@ export const myMainRoutes = [
     children: [
       {
         element: (
-          <AuthGuard>
-            <MainLayout>
-              <Outlet />
-            </MainLayout>
-          </AuthGuard>
+          <MainLayout>
+            <Outlet />
+          </MainLayout>
         ),
         children: [
           {

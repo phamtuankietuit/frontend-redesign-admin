@@ -1,25 +1,24 @@
+import { useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
 import { useEffect, useCallback } from 'react';
-import { useForm, Controller } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Rating from '@mui/material/Rating';
-import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
+import { Link, Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import { formHelperTextClasses } from '@mui/material/FormHelperText';
 
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
+import { useSetState } from 'src/hooks/use-set-state';
 
 import { fCurrency, fMyShortenNumber } from 'src/utils/format-number';
 
+import { selectProduct } from 'src/state/product/product.slice';
+
 import { Label } from 'src/components/label';
+import { Form } from 'src/components/hook-form';
 import { Iconify } from 'src/components/iconify';
-import { Form, Field } from 'src/components/hook-form';
-import { ColorPicker } from 'src/components/color-utils';
+import MyOption from 'src/components/my-option/my-option';
 
 import { IncrementerButton } from './components/incrementer-button';
 
@@ -30,45 +29,22 @@ export function ProductDetailsSummary({
   product,
   onAddCart,
   onGotoStep,
-  disableActions,
   ...other
 }) {
-  const router = useRouter();
+  const { ratings } = useSelector(selectProduct);
 
-  const {
-    id,
-    name,
-    sizes,
-    price,
-    coverUrl,
-    colors,
-    newLabel,
-    available,
-    priceSale,
-    saleLabel,
-    totalRatings,
-    totalReviews,
-    inventoryType,
-    subDescription,
-  } = product;
+  const { id, name, minRecommendedRetailPrice, productVariants } = product;
 
-  const existProduct =
-    !!items?.length && items.map((item) => item.id).includes(id);
-
-  const isMaxQuantity =
-    !!items?.length &&
-    items.filter((item) => item.id === id).map((item) => item.quantity)[0] >=
-      available;
+  const { state, setState, setField, onResetState, canReset } = useSetState({
+    available: productVariants?.length === 1 ? productVariants[0].quantity : 0,
+  });
 
   const defaultValues = {
     id,
+    skuValue: '',
     name,
-    coverUrl,
-    available,
-    price,
-    colors: colors[0],
-    size: sizes[4],
-    quantity: available < 1 ? 0 : 1,
+    quantity: state.available < 1 ? 0 : 1,
+    selectedOptions: {},
   };
 
   const methods = useForm({ defaultValues });
@@ -84,20 +60,40 @@ export function ProductDetailsSummary({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
 
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-      if (!existProduct) {
-        onAddCart?.({
-          ...data,
-          colors: [values.colors],
-          subtotal: data.price * data.quantity,
-        });
+  const handleChangeOption = () => {
+    if (
+      Object.keys(values.selectedOptions)?.length ===
+      product.productVariantOptions?.length
+    ) {
+      const productVariant = productVariants.find((variant) =>
+        variant.optionValues.every(
+          (optionValue) =>
+            values.selectedOptions[optionValue.name] === optionValue.value,
+        ),
+      );
+
+      if (productVariant) {
+        setState({ available: productVariant.quantity });
       }
-      onGotoStep?.(0);
-      router.push(paths.product.checkout);
-    } catch (error) {
-      console.error(error);
     }
+  };
+
+  const onSubmit = handleSubmit(async (data) => {
+    console.log('🚀 ~ onSubmit ~ data:', data);
+    // try {
+    //  if (!existProduct) {
+    //     onAddCart?.({
+    //       ...data,
+    //       colors: [values.colors],
+    //       subtotal: data.price * data.quantity,
+    //     });
+    //   }
+    //   onGotoStep?.(0);
+    //   router.push(paths.product.checkout);
+
+    // } catch (error) {
+    // console.error(error);
+    // }
   });
 
   const handleAddCart = useCallback(() => {
@@ -113,22 +109,7 @@ export function ProductDetailsSummary({
   }, [onAddCart, values]);
 
   const renderPrice = (
-    <Box sx={{ typography: 'h5' }}>
-      {priceSale && (
-        <Box
-          component="span"
-          sx={{
-            color: 'text.disabled',
-            textDecoration: 'line-through',
-            mr: 0.5,
-          }}
-        >
-          {fCurrency(priceSale)}
-        </Box>
-      )}
-
-      {fCurrency(price)}
-    </Box>
+    <Box sx={{ typography: 'h5' }}>{fCurrency(minRecommendedRetailPrice)}</Box>
   );
 
   const renderShare = (
@@ -139,106 +120,48 @@ export function ProductDetailsSummary({
           color: 'text.secondary',
           display: 'inline-flex',
           alignItems: 'center',
-        }}
-      >
-        <Iconify icon="mingcute:add-line" width={16} sx={{ mr: 1 }} />
-        Compare
-      </Link>
-
-      <Link
-        variant="subtitle2"
-        sx={{
-          color: 'text.secondary',
-          display: 'inline-flex',
-          alignItems: 'center',
-        }}
-      >
-        <Iconify icon="solar:heart-bold" width={16} sx={{ mr: 1 }} />
-        Favorite
-      </Link>
-
-      <Link
-        variant="subtitle2"
-        sx={{
-          color: 'text.secondary',
-          display: 'inline-flex',
-          alignItems: 'center',
-        }}
-      >
-        <Iconify icon="solar:share-bold" width={16} sx={{ mr: 1 }} />
-        Share
-      </Link>
-    </Stack>
-  );
-
-  const renderColorOptions = (
-    <Stack direction="row">
-      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Màu sắc
-      </Typography>
-
-      <Controller
-        name="colors"
-        control={control}
-        render={({ field }) => (
-          <ColorPicker
-            colors={colors}
-            selected={field.value}
-            onSelectColor={(color) => field.onChange(color)}
-            limit={4}
-          />
-        )}
-      />
-    </Stack>
-  );
-
-  const renderOptions = (
-    <Stack direction="row">
-      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Tập
-      </Typography>
-
-      <Controller
-        name="colors"
-        control={control}
-        render={({ field }) => (
-          <ColorPicker
-            colors={colors}
-            selected={field.value}
-            onSelectColor={(color) => field.onChange(color)}
-            limit={4}
-          />
-        )}
-      />
-    </Stack>
-  );
-
-  const renderSizeOptions = (
-    <Stack direction="row">
-      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Size
-      </Typography>
-
-      <Field.Select
-        name="size"
-        size="small"
-        sx={{
-          maxWidth: 88,
-          [`& .${formHelperTextClasses.root}`]: {
-            mx: 0,
-            mt: 1,
-            textAlign: 'right',
+          ':hover': {
+            cursor: 'pointer',
           },
         }}
       >
-        {sizes.map((size) => (
-          <MenuItem key={size} value={size}>
-            {size}
-          </MenuItem>
-        ))}
-      </Field.Select>
+        <Iconify icon="solar:heart-bold" width={16} sx={{ mr: 1 }} />
+        Yêu Thích
+      </Link>
+
+      <Link
+        variant="subtitle2"
+        sx={{
+          color: 'text.secondary',
+          display: 'inline-flex',
+          alignItems: 'center',
+          ':hover': {
+            cursor: 'pointer',
+          },
+        }}
+      >
+        <Iconify icon="solar:share-bold" width={16} sx={{ mr: 1 }} />
+        Chia sẻ
+      </Link>
     </Stack>
   );
+
+  const renderOptions = product?.productVariantOptions?.map((option, index) => (
+    <Stack key={option.name} direction="column" gap={2.5}>
+      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
+        {option.name}
+      </Typography>
+
+      <MyOption
+        name={`selectedOptions.${option.name}`}
+        control={control}
+        values={option.values}
+        thumbnailImageUrls={option.thumbnailImageUrls}
+        largeImageUrls={option.largeImageUrls}
+        onChangeOption={handleChangeOption}
+      />
+    </Stack>
+  ));
 
   const renderQuantity = (
     <Stack direction="row">
@@ -251,7 +174,7 @@ export function ProductDetailsSummary({
           name="quantity"
           quantity={values.quantity}
           disabledDecrease={values.quantity <= 1}
-          disabledIncrease={values.quantity >= available}
+          disabledIncrease={values.quantity >= state.available}
           onIncrease={() => setValue('quantity', values.quantity + 1)}
           onDecrease={() => setValue('quantity', values.quantity - 1)}
         />
@@ -261,7 +184,7 @@ export function ProductDetailsSummary({
           component="div"
           sx={{ textAlign: 'right' }}
         >
-          Kho: {available}
+          Kho: {state.available}
         </Typography>
       </Stack>
     </Stack>
@@ -271,7 +194,7 @@ export function ProductDetailsSummary({
     <Stack direction="row" spacing={2}>
       <Button
         fullWidth
-        disabled={isMaxQuantity || disableActions}
+        disabled={!state.available}
         size="large"
         color="warning"
         variant="contained"
@@ -287,21 +210,11 @@ export function ProductDetailsSummary({
         size="large"
         type="submit"
         variant="contained"
-        disabled={disableActions}
+        disabled={!state.available}
       >
         Mua ngay
       </Button>
     </Stack>
-  );
-
-  const renderSubDescription = (
-    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-      Đội Doras đã có trận thắng tưng bừng trước đội Edogawa Boros trong một
-      trận đấu khá căng thẳng. Nhưng ngay sau đó, Kuro cùng với các bạn mình đã
-      nhận lời so tài với cầu thủ bóng đá Ronaemon ở trận đấu kết hợp giữa hai
-      môn bóng cháy và bóng đa. Đội nào thắng đây khi các luật chơi đã thay đổi
-      rất nhiều!?
-    </Typography>
   );
 
   const renderRating = (
@@ -312,19 +225,18 @@ export function ProductDetailsSummary({
     >
       <Rating
         size="small"
-        value={totalRatings}
+        value={ratings.averageRating}
         precision={0.1}
         readOnly
         sx={{ mr: 1 }}
       />
-      {`(${fMyShortenNumber(totalReviews)} đánh giá)`}
+      {`(${fMyShortenNumber(ratings.totalRating)} đánh giá)`}
     </Stack>
   );
 
-  const renderLabels = (newLabel.enabled || saleLabel.enabled) && (
+  const renderLabels = (
     <Stack direction="row" alignItems="center" spacing={1}>
-      {newLabel.enabled && <Label color="info">NEW</Label>}
-      {saleLabel.enabled && <Label color="error">SALE</Label>}
+      <Label color="info">MỚI</Label>
     </Stack>
   );
 
@@ -333,15 +245,11 @@ export function ProductDetailsSummary({
       component="span"
       sx={{
         typography: 'overline',
-        color:
-          (inventoryType === 'out of stock' && 'error.main') ||
-          (inventoryType === 'low stock' && 'warning.main') ||
-          'success.main',
+        color: (state.available < 1 && 'error.main') || 'success.main',
       }}
     >
-      {inventoryType === 'out of stock' && 'Hết hàng'}
-      {inventoryType === 'low stock' && 'Còn ít hàng'}
-      {inventoryType === 'in stock' && 'Còn hàng'}
+      {state.available < 1 && 'Hết hàng'}
+      {state.available > 0 && 'Còn hàng'}
     </Box>
   );
 
@@ -353,24 +261,16 @@ export function ProductDetailsSummary({
 
           {renderInventoryType}
 
-          <Typography variant="h5">Đội Quân Doraemon Đặc Biệt</Typography>
+          <Typography variant="h5">{name}</Typography>
 
           {renderRating}
 
           {renderPrice}
-
-          {renderSubDescription}
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         {renderOptions}
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
-        {renderColorOptions}
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
 
         {renderQuantity}
 

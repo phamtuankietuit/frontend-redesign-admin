@@ -1,7 +1,14 @@
 import { useRef, useState, forwardRef } from 'react';
-import { m, useSpring, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
+import {
+  m,
+  useSpring,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+} from 'framer-motion';
 
 import Box from '@mui/material/Box';
+import { Link } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Container from '@mui/material/Container';
@@ -53,7 +60,7 @@ export function HomeHighlightFeatures({ sx, ...other }) {
             alignItems={{ xs: 'center', md: 'flex-start' }}
             sx={{ textAlign: { xs: 'center', md: 'left' } }}
           >
-            <SectionTitle caption="App Features" title="Highlight" txtGradient="features" />
+            <SectionTitle caption="Sale" title="Sale" txtGradient="off" />
 
             <SvgIcon
               component={m.svg}
@@ -83,7 +90,7 @@ export function HomeHighlightFeatures({ sx, ...other }) {
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled(
-  forwardRef((props, ref) => <Box ref={ref} component={m.div} {...props} />)
+  forwardRef((props, ref) => <Box ref={ref} component={m.div} {...props} />),
 )(({ theme }) => ({
   zIndex: 9,
   position: 'relative',
@@ -91,22 +98,29 @@ const StyledRoot = styled(
   [theme.breakpoints.up('md')]: { paddingTop: theme.spacing(8) },
 }));
 
-const StyledContainer = styled((props) => <Box component={m.div} {...props} />)(({ theme }) => ({
-  top: 0,
-  height: '100vh',
-  display: 'flex',
-  position: 'sticky',
-  overflow: 'hidden',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  transition: theme.transitions.create(['background-color']),
-  '&[data-scrolling="true"]': { justifyContent: 'center' },
-}));
+const StyledContainer = styled((props) => <Box component={m.div} {...props} />)(
+  ({ theme }) => ({
+    top: 0,
+    height: '100vh',
+    display: 'flex',
+    position: 'sticky',
+    overflow: 'hidden',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    transition: theme.transitions.create(['background-color']),
+    '&[data-scrolling="true"]': { justifyContent: 'center' },
+  }),
+);
 
 const StyledContent = styled(
   forwardRef((props, ref) => (
-    <Box ref={ref} component={m.div} transition={{ ease: 'linear', duration: 0.25 }} {...props} />
-  ))
+    <Box
+      ref={ref}
+      component={m.div}
+      transition={{ ease: 'linear', duration: 0.25 }}
+      {...props}
+    />
+  )),
 )(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(5),
@@ -137,7 +151,10 @@ function ScrollContent({ containerRoot }) {
 
   const scrollRange = -scrollRect.scrollWidth + containeRect.width / 2;
 
-  const x = useSpring(useTransform(scrollYProgress, [0, 1], [0, scrollRange]), physics);
+  const x = useSpring(
+    useTransform(scrollYProgress, [0, 1], [0, scrollRange]),
+    physics,
+  );
 
   const background = useTransform(
     scrollYProgress,
@@ -151,7 +168,7 @@ function ScrollContent({ containerRoot }) {
       `linear-gradient(180deg, ${PRIMARY_COLOR.orange.light}, ${PRIMARY_COLOR.orange.dark})`,
       `linear-gradient(180deg, ${PRIMARY_COLOR.red.light}, ${PRIMARY_COLOR.red.dark})`,
       `linear-gradient(180deg, ${theme.palette.background.neutral}, ${theme.palette.background.neutral})`,
-    ]
+    ],
   );
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
@@ -163,11 +180,24 @@ function ScrollContent({ containerRoot }) {
   });
 
   return (
-    <StyledRoot ref={containerRef} sx={{ height: scrollRect.scrollWidth, minHeight: '100vh' }}>
+    <StyledRoot
+      ref={containerRef}
+      sx={{ height: scrollRect.scrollWidth, minHeight: '100vh' }}
+    >
       <StyledContainer style={{ background }} data-scrolling={startScroll}>
-        <StyledContent ref={scrollRef} style={{ x }} layout sx={{ ml: `${containerRoot.left}px` }}>
-          {ITEMS.map((item) => (
-            <Item key={item.title} item={item} />
+        <StyledContent
+          ref={scrollRef}
+          style={{ x }}
+          layout
+          sx={{ ml: `${containerRoot.left}px` }}
+        >
+          {ITEMS.map((item, index) => (
+            <Item
+              href={item.path[index]}
+              key={item.title}
+              item={item}
+              sx={{ cursor: 'pointer' }}
+            />
           ))}
         </StyledContent>
       </StyledContainer>
@@ -177,20 +207,23 @@ function ScrollContent({ containerRoot }) {
 
 // ----------------------------------------------------------------------
 
-function Item({ item, sx, ...other }) {
+function Item({ item, sx, href, ...other }) {
   return (
     <Box sx={{ flexShrink: 0, ...sx }} {...other}>
       <Stack direction="row" spacing={2} sx={{ mb: 6 }}>
         <Iconify width={28} icon={item.icon} sx={{ mt: '10px' }} />
         <Stack spacing={2}>
           <Typography variant="h3">{item.title}</Typography>
-          <Typography sx={{ color: 'text.secondary' }}>{item.subtitle}</Typography>
+          <Typography sx={{ color: 'text.secondary' }}>
+            {item.subtitle}
+          </Typography>
         </Stack>
       </Stack>
 
       <Stack direction="row" spacing={{ xs: 5, md: 8 }}>
         {item.imgUrl.map((url) => (
-          <Box
+          <Link
+            href={href}
             key={url}
             sx={{
               borderRadius: 2,
@@ -212,12 +245,12 @@ function Item({ item, sx, ...other }) {
                   xs: 480,
                   sm: 640,
                   md: 800,
-                  lg: 1140,
-                  xl: 1280,
+                  lg: 900,
+                  xl: 1000,
                 },
               }}
             />
-          </Box>
+          </Link>
         ))}
       </Stack>
     </Box>
@@ -228,27 +261,22 @@ function Item({ item, sx, ...other }) {
 
 const ITEMS = [
   {
-    title: 'Dark mode',
-    subtitle: 'A dark theme that feels easier on the eyes.',
-    icon: 'solar:cloudy-moon-bold-duotone',
-    imgUrl: [`${CONFIG.assetsDir}/assets/images/home/highlight-darkmode.webp`],
-  },
-  {
-    title: 'Color presets',
-    subtitle: 'Express your own style with just one click.',
+    title: 'Chương trình đang diễn ra',
+    subtitle: 'Mua sắm không giới hạn!',
     icon: 'solar:pallete-2-bold-duotone',
     imgUrl: [
-      `${CONFIG.assetsDir}/assets/images/home/highlight-presets-1.webp`,
-      `${CONFIG.assetsDir}/assets/images/home/highlight-presets-2.webp`,
-      `${CONFIG.assetsDir}/assets/images/home/highlight-presets-3.webp`,
-      `${CONFIG.assetsDir}/assets/images/home/highlight-presets-4.webp`,
-      `${CONFIG.assetsDir}/assets/images/home/highlight-presets-5.webp`,
+      `${CONFIG.assetsDir}/assets/images/home/main_banner_1.webp`,
+      `${CONFIG.assetsDir}/assets/images/home/main_banner_2.webp`,
+      `${CONFIG.assetsDir}/assets/images/home/main_banner_3.webp`,
+      `${CONFIG.assetsDir}/assets/images/home/main_banner_4.webp`,
+      `${CONFIG.assetsDir}/assets/images/home/main_banner_5.webp`,
     ],
-  },
-  {
-    title: 'Right-to-left',
-    subtitle: 'Support languages such as Arabic, Persian, and Hebrew.',
-    icon: 'solar:align-right-bold-duotone',
-    imgUrl: [`${CONFIG.assetsDir}/assets/images/home/highlight-rtl.webp`],
+    path: [
+      'https://www.google.com',
+      'https://www.google.com',
+      'https://www.google.com',
+      'https://www.google.com',
+      'https://www.google.com',
+    ],
   },
 ];

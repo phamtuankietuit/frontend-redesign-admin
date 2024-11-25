@@ -22,7 +22,7 @@ export function OrderTableToolbar({ filters, onResetPage, dateError }) {
       onResetPage();
       filters.setState({ name: event.target.value });
     },
-    [filters, onResetPage]
+    [filters, onResetPage],
   );
 
   const handleFilterStartDate = useCallback(
@@ -30,7 +30,7 @@ export function OrderTableToolbar({ filters, onResetPage, dateError }) {
       onResetPage();
       filters.setState({ startDate: newValue });
     },
-    [filters, onResetPage]
+    [filters, onResetPage],
   );
 
   const handleFilterEndDate = useCallback(
@@ -38,7 +38,7 @@ export function OrderTableToolbar({ filters, onResetPage, dateError }) {
       onResetPage();
       filters.setState({ endDate: newValue });
     },
-    [filters, onResetPage]
+    [filters, onResetPage],
   );
 
   return (
@@ -50,7 +50,7 @@ export function OrderTableToolbar({ filters, onResetPage, dateError }) {
         sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
         <DatePicker
-          label="Start date"
+          label="Ngày bắt đầu"
           value={filters.state.startDate}
           onChange={handleFilterStartDate}
           slotProps={{ textField: { fullWidth: true } }}
@@ -58,16 +58,20 @@ export function OrderTableToolbar({ filters, onResetPage, dateError }) {
         />
 
         <DatePicker
-          label="End date"
+          label="Ngày kết thúc"
           value={filters.state.endDate}
           onChange={handleFilterEndDate}
           slotProps={{
             textField: {
               fullWidth: true,
               error: dateError,
-              helperText: dateError ? 'End date must be later than start date' : null,
+              helperText: dateError
+                ? 'Ngày kết thúc không thể trước ngày bắt đầu'
+                : null,
             },
           }}
+          format="DD/MM/YYYY"
+          localeText="vi-VN"
           sx={{
             maxWidth: { md: 200 },
             [`& .${formHelperTextClasses.root}`]: {
@@ -77,16 +81,25 @@ export function OrderTableToolbar({ filters, onResetPage, dateError }) {
           }}
         />
 
-        <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={2}
+          flexGrow={1}
+          sx={{ width: 1 }}
+        >
           <TextField
             fullWidth
             value={filters.state.name}
             onChange={handleFilterName}
-            placeholder="Search customer or order number..."
+            placeholder="Tìm khách hàng hoặc mã đơn hàng..."
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                  <Iconify
+                    icon="eva:search-fill"
+                    sx={{ color: 'text.disabled' }}
+                  />
                 </InputAdornment>
               ),
             }}

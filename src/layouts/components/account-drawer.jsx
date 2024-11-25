@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -8,17 +9,15 @@ import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { paths } from 'src/routes/paths';
 import { useRouter, usePathname } from 'src/routes/hooks';
 
 import { varAlpha } from 'src/theme/styles';
+import { selectAuth } from 'src/state/auth/auth.slice';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { AnimateAvatar } from 'src/components/animate';
-
-import { useMockedUser } from 'src/auth/hooks';
 
 import { AccountButton } from './account-button';
 import { SignOutButton } from './sign-out-button';
@@ -32,7 +31,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
 
   const pathname = usePathname();
 
-  const { user } = useMockedUser();
+  const { user } = useSelector(selectAuth);
 
   const [open, setOpen] = useState(false);
 
@@ -56,7 +55,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
     <AnimateAvatar
       width={96}
       slotProps={{
-        avatar: { src: user?.photoURL, alt: user?.displayName },
+        avatar: { src: user?.imageUrl, alt: user?.fullName },
         overlay: {
           border: 2,
           spacing: 3,
@@ -64,7 +63,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
         },
       }}
     >
-      {user?.displayName?.charAt(0).toUpperCase()}
+      {user?.fullName?.charAt(0).toUpperCase()}
     </AnimateAvatar>
   );
 
@@ -72,8 +71,8 @@ export function AccountDrawer({ data = [], sx, ...other }) {
     <>
       <AccountButton
         onClick={handleOpenDrawer}
-        photoURL={user?.photoURL}
-        displayName={user?.displayName}
+        photoURL={user?.imageUrl}
+        displayName={user?.fullName}
         sx={sx}
         {...other}
       />
@@ -97,7 +96,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
             {renderAvatar}
 
             <Typography variant="subtitle1" noWrap sx={{ mt: 2 }}>
-              {user?.displayName}
+              {user?.fullName}
             </Typography>
 
             <Typography
@@ -117,44 +116,30 @@ export function AccountDrawer({ data = [], sx, ...other }) {
               borderBottom: `dashed 1px ${theme.vars.palette.divider}`,
             }}
           >
-            {data.map((option) => {
-              const rootLabel = pathname.includes('/dashboard')
-                ? 'Home'
-                : 'Dashboard';
+            {data.map((option) => (
+              <MenuItem
+                key={option.label}
+                onClick={() => handleClickItem(option.href)}
+                sx={{
+                  py: 1,
+                  color: 'text.secondary',
+                  '& svg': { width: 24, height: 24 },
+                  '&:hover': { color: 'text.primary' },
+                }}
+              >
+                {option.icon}
 
-              const rootHref = pathname.includes('/dashboard')
-                ? '/'
-                : paths.dashboard.root;
+                <Box component="span" sx={{ ml: 2 }}>
+                  {option.label}
+                </Box>
 
-              return (
-                <MenuItem
-                  key={option.label}
-                  onClick={() =>
-                    handleClickItem(
-                      option.label === 'Home' ? rootHref : option.href,
-                    )
-                  }
-                  sx={{
-                    py: 1,
-                    color: 'text.secondary',
-                    '& svg': { width: 24, height: 24 },
-                    '&:hover': { color: 'text.primary' },
-                  }}
-                >
-                  {option.icon}
-
-                  <Box component="span" sx={{ ml: 2 }}>
-                    {option.label === 'Home' ? rootLabel : option.label}
-                  </Box>
-
-                  {option.info && (
-                    <Label color="error" sx={{ ml: 1 }}>
-                      {option.info}
-                    </Label>
-                  )}
-                </MenuItem>
-              );
-            })}
+                {option.info && (
+                  <Label color="error" sx={{ ml: 1 }}>
+                    {option.info}
+                  </Label>
+                )}
+              </MenuItem>
+            ))}
           </Stack>
         </Scrollbar>
 
