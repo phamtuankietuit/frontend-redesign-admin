@@ -3,10 +3,12 @@ import { _mock } from './_mock';
 // ----------------------------------------------------------------------
 
 export const ORDER_STATUS_OPTIONS = [
-  { value: 'pending', label: 'Pending' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'cancelled', label: 'Cancelled' },
-  { value: 'refunded', label: 'Refunded' },
+  { value: 'pending', label: 'Chờ xác nhận' },
+  { value: 'processing', label: 'Đang đóng hàng' },
+  { value: 'shipping', label: 'Đang giao hàng' },
+  { value: 'completed', label: 'Hoàn thành' },
+  { value: 'cancelled', label: 'Đã hủy' },
+  { value: 'refunded', label: 'Trả hàng' },
 ];
 
 const ITEMS = [...Array(3)].map((_, index) => ({
@@ -23,7 +25,7 @@ export const _orders = [...Array(20)].map((_, index) => {
 
   const discount = 10;
 
-  const taxes = 10;
+  const taxes = 0;
 
   const items = (index % 2 && ITEMS.slice(0, 1)) || (index % 3 && ITEMS.slice(1, 3)) || ITEMS;
 
@@ -59,7 +61,7 @@ export const _orders = [...Array(20)].map((_, index) => {
 
   return {
     id: _mock.id(index),
-    orderNumber: `#601${index}`,
+    orderNumber: `DH601${index}`,
     createdAt: _mock.time(index),
     taxes,
     items,

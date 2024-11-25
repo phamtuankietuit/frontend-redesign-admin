@@ -69,7 +69,8 @@ export function ProductListView() {
 
   const [filterButtonEl, setFilterButtonEl] = useState(null);
 
-  const [columnVisibilityModel, setColumnVisibilityModel] = useState(HIDE_COLUMNS);
+  const [columnVisibilityModel, setColumnVisibilityModel] =
+    useState(HIDE_COLUMNS);
 
   useEffect(() => {
     if (products.length) {
@@ -77,9 +78,13 @@ export function ProductListView() {
     }
   }, [products]);
 
-  const canReset = filters.state.publish.length > 0 || filters.state.stock.length > 0;
+  const canReset =
+    filters.state.publish.length > 0 || filters.state.stock.length > 0;
 
-  const dataFiltered = applyFilter({ inputData: tableData, filters: filters.state });
+  const dataFiltered = applyFilter({
+    inputData: tableData,
+    filters: filters.state,
+  });
 
   const handleDeleteRow = useCallback(
     (id) => {
@@ -89,11 +94,13 @@ export function ProductListView() {
 
       setTableData(deleteRow);
     },
-    [tableData]
+    [tableData],
   );
 
   const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !selectedRowIds.includes(row.id));
+    const deleteRows = tableData.filter(
+      (row) => !selectedRowIds.includes(row.id),
+    );
 
     toast.success('Delete success!');
 
@@ -104,14 +111,14 @@ export function ProductListView() {
     (id) => {
       router.push(paths.dashboard.product.edit(id));
     },
-    [router]
+    [router],
   );
 
   const handleViewRow = useCallback(
     (id) => {
       router.push(paths.dashboard.product.details(id));
     },
-    [router]
+    [router],
   );
 
   const CustomToolbarCallback = useCallback(
@@ -126,30 +133,33 @@ export function ProductListView() {
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filters.state, selectedRowIds]
+    [filters.state, selectedRowIds],
   );
 
   const columns = [
     { field: 'category', headerName: 'Category', filterable: false },
     {
       field: 'name',
-      headerName: 'Product',
+      headerName: 'Sản phẩm',
       flex: 1,
       minWidth: 360,
       hideable: false,
       renderCell: (params) => (
-        <RenderCellProduct params={params} onViewRow={() => handleViewRow(params.row.id)} />
+        <RenderCellProduct
+          params={params}
+          onViewRow={() => handleViewRow(params.row.id)}
+        />
       ),
     },
     {
       field: 'createdAt',
-      headerName: 'Create at',
+      headerName: 'Ngày tạo',
       width: 160,
       renderCell: (params) => <RenderCellCreatedAt params={params} />,
     },
     {
       field: 'inventoryType',
-      headerName: 'Stock',
+      headerName: 'Tồn kho',
       width: 160,
       type: 'singleSelect',
       valueOptions: PRODUCT_STOCK_OPTIONS,
@@ -157,7 +167,7 @@ export function ProductListView() {
     },
     {
       field: 'price',
-      headerName: 'Price',
+      headerName: 'Giá bán',
       width: 140,
       editable: true,
       renderCell: (params) => <RenderCellPrice params={params} />,
@@ -214,13 +224,14 @@ export function ProductListView() {
 
   return (
     <>
-      <DashboardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+      <DashboardContent
+        sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}
+      >
         <CustomBreadcrumbs
-          heading="List"
+          heading="Danh sách sản phẩm"
           links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Product', href: paths.dashboard.product.root },
-            { name: 'List' },
+            { name: 'Trang chủ', href: '#' },
+            { name: 'Danh sách sản phẩm' },
           ]}
           action={
             <Button
@@ -229,7 +240,7 @@ export function ProductListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New product
+              Thêm sản phẩm
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -252,9 +263,13 @@ export function ProductListView() {
             getRowHeight={() => 'auto'}
             pageSizeOptions={[5, 10, 25]}
             initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
-            onRowSelectionModelChange={(newSelectionModel) => setSelectedRowIds(newSelectionModel)}
+            onRowSelectionModelChange={(newSelectionModel) =>
+              setSelectedRowIds(newSelectionModel)
+            }
             columnVisibilityModel={columnVisibilityModel}
-            onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
+            onColumnVisibilityModelChange={(newModel) =>
+              setColumnVisibilityModel(newModel)
+            }
             slots={{
               toolbar: CustomToolbarCallback,
               noRowsOverlay: () => <EmptyContent />,
@@ -265,7 +280,12 @@ export function ProductListView() {
               toolbar: { setFilterButtonEl },
               columnsManagement: { getTogglableColumns },
             }}
-            sx={{ [`& .${gridClasses.cell}`]: { alignItems: 'center', display: 'inline-flex' } }}
+            sx={{
+              [`& .${gridClasses.cell}`]: {
+                alignItems: 'center',
+                display: 'inline-flex',
+              },
+            }}
           />
         </Card>
       </DashboardContent>
@@ -276,7 +296,8 @@ export function ProductListView() {
         title="Delete"
         content={
           <>
-            Are you sure want to delete <strong> {selectedRowIds.length} </strong> items?
+            Bạn có chắc chắn muốn xóa
+            <strong> {selectedRowIds.length} </strong> sản phẩm?
           </>
         }
         action={
@@ -288,7 +309,7 @@ export function ProductListView() {
               confirmRows.onFalse();
             }}
           >
-            Delete
+            Xóa
           </Button>
         }
       />
@@ -328,7 +349,7 @@ function CustomToolbar({
               startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
               onClick={onOpenConfirmDeleteRows}
             >
-              Delete ({selectedRowIds.length})
+              Xóa ({selectedRowIds.length})
             </Button>
           )}
 
@@ -353,11 +374,15 @@ function applyFilter({ inputData, filters }) {
   const { stock, publish } = filters;
 
   if (stock.length) {
-    inputData = inputData.filter((product) => stock.includes(product.inventoryType));
+    inputData = inputData.filter((product) =>
+      stock.includes(product.inventoryType),
+    );
   }
 
   if (publish.length) {
-    inputData = inputData.filter((product) => publish.includes(product.publish));
+    inputData = inputData.filter((product) =>
+      publish.includes(product.publish),
+    );
   }
 
   return inputData;

@@ -21,18 +21,26 @@ export function ProductSort({ sort, onSort, sortOptions }) {
         onClick={popover.onOpen}
         endIcon={
           <Iconify
-            icon={popover.open ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
+            icon={
+              popover.open
+                ? 'eva:arrow-ios-upward-fill'
+                : 'eva:arrow-ios-downward-fill'
+            }
           />
         }
         sx={{ fontWeight: 'fontWeightSemiBold' }}
       >
-        Sort by:
+        Sắp xếp theo:
         <Box component="span" sx={{ ml: 0.5, fontWeight: 'fontWeightBold' }}>
           {sortLabel}
         </Box>
       </Button>
 
-      <CustomPopover open={popover.open} anchorEl={popover.anchorEl} onClose={popover.onClose}>
+      <CustomPopover
+        open={popover.open}
+        anchorEl={popover.anchorEl}
+        onClose={popover.onClose}
+      >
         <MenuList>
           {sortOptions.map((option) => (
             <MenuItem

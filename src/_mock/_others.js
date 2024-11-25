@@ -28,7 +28,7 @@ export const _addressBooks = [...Array(24)].map((_, index) => ({
   fullAddress: _mock.fullAddress(index),
   phoneNumber: _mock.phoneNumber(index),
   company: _mock.companyNames(index + 1),
-  addressType: index === 0 ? 'Home' : 'Office',
+  addressType: index === 0 ? 'Nhà ở' : 'Văn phòng',
 }));
 
 // ----------------------------------------------------------------------

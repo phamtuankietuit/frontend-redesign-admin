@@ -47,23 +47,27 @@ export const navData = [
   /**
    * Overview
    */
-  // {
-  //   subheader: 'Overview',
-  //   items: [
-  //     { title: 'App', path: paths.dashboard.root, icon: ICONS.dashboard },
-  //     { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
-  //     { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
-  //     { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },
-  //     { title: 'Booking', path: paths.dashboard.general.booking, icon: ICONS.booking },
-  //     { title: 'File', path: paths.dashboard.general.file, icon: ICONS.file },
-  //     { title: 'Course', path: paths.dashboard.general.course, icon: ICONS.course },
-  //   ],
-  // },
+  {
+    subheader: 'Tổng quan',
+    items: [
+      // { title: 'App', path: paths.dashboard.root, icon: ICONS.dashboard },
+      // { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
+      {
+        title: 'Báo cáo',
+        path: paths.dashboard.general.analytics,
+        icon: ICONS.analytics,
+      },
+      // { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },
+      // { title: 'Booking', path: paths.dashboard.general.booking, icon: ICONS.booking },
+      // { title: 'File', path: paths.dashboard.general.file, icon: ICONS.file },
+      // { title: 'Course', path: paths.dashboard.general.course, icon: ICONS.course },
+    ],
+  },
   /**
    * Management
    */
   {
-    subheader: 'Management',
+    subheader: 'Quản lý',
     items: [
       // {
       //   title: 'User',
@@ -79,27 +83,27 @@ export const navData = [
       //   ],
       // },
       {
-        title: 'Product',
+        title: 'Sản phẩm',
         path: paths.dashboard.product.root,
         icon: ICONS.product,
         children: [
-          { title: 'List', path: paths.dashboard.product.root },
-          { title: 'Details', path: paths.dashboard.product.demo.details },
-          { title: 'Create', path: paths.dashboard.product.new },
-          { title: 'Edit', path: paths.dashboard.product.demo.edit },
+          { title: 'Danh sách sản phẩm', path: paths.dashboard.product.root },
+          // { title: 'Details', path: paths.dashboard.product.demo.details },
+          // { title: 'Create', path: paths.dashboard.product.new },
+          // { title: 'Edit', path: paths.dashboard.product.demo.edit },
         ],
       },
       {
-        title: 'Order',
+        title: 'Đơn hàng',
         path: paths.dashboard.order.root,
         icon: ICONS.order,
         children: [
-          { title: 'List', path: paths.dashboard.order.root },
-          { title: 'Details', path: paths.dashboard.order.demo.details },
+          { title: 'Danh sách đơn hàng', path: paths.dashboard.order.root },
+          // { title: 'Details', path: paths.dashboard.order.demo.details },
         ],
       },
       {
-        title: 'Invoice',
+        title: 'Hóa đơn',
         path: paths.dashboard.invoice.root,
         icon: ICONS.invoice,
         children: [

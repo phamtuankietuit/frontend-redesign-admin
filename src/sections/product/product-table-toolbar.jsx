@@ -31,9 +31,11 @@ export function ProductTableToolbar({ filters, options }) {
         target: { value },
       } = event;
 
-      local.setState({ stock: typeof value === 'string' ? value.split(',') : value });
+      local.setState({
+        stock: typeof value === 'string' ? value.split(',') : value,
+      });
     },
-    [local]
+    [local],
   );
 
   const handleChangePublish = useCallback(
@@ -42,9 +44,11 @@ export function ProductTableToolbar({ filters, options }) {
         target: { value },
       } = event;
 
-      local.setState({ publish: typeof value === 'string' ? value.split(',') : value });
+      local.setState({
+        publish: typeof value === 'string' ? value.split(',') : value,
+      });
     },
-    [local]
+    [local],
   );
 
   const handleFilterStock = useCallback(() => {
@@ -58,7 +62,9 @@ export function ProductTableToolbar({ filters, options }) {
   return (
     <>
       <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-        <InputLabel htmlFor="product-filter-stock-select-label">Stock</InputLabel>
+        <InputLabel htmlFor="product-filter-stock-select-label">
+          Tồn kho
+        </InputLabel>
 
         <Select
           multiple
@@ -87,16 +93,19 @@ export function ProductTableToolbar({ filters, options }) {
               fontWeight: (theme) => theme.typography.button,
               border: (theme) =>
                 `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
-              bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+              bgcolor: (theme) =>
+                varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
             }}
           >
-            Apply
+            Áp dụng
           </MenuItem>
         </Select>
       </FormControl>
 
       <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-        <InputLabel htmlFor="product-filter-publish-select-label">Publish</InputLabel>
+        <InputLabel htmlFor="product-filter-publish-select-label">
+          Publish
+        </InputLabel>
         <Select
           multiple
           value={local.state.publish}
@@ -127,10 +136,11 @@ export function ProductTableToolbar({ filters, options }) {
               fontWeight: (theme) => theme.typography.button,
               border: (theme) =>
                 `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
-              bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+              bgcolor: (theme) =>
+                varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
             }}
           >
-            Apply
+            Áp dụng
           </MenuItem>
         </Select>
       </FormControl>

@@ -39,7 +39,6 @@ export function ChatNav({
   loading,
   contacts,
   collapseNav,
-  conversations,
   selectedConversationId,
 }) {
   const router = useRouter();
@@ -117,80 +116,81 @@ export function ChatNav({
     setSearchContacts({ query: '', results: [] });
   }, []);
 
-  const handleClickResult = useCallback(
-    async (result) => {
-      handleClickAwaySearch();
+  // const handleClickResult = useCallback(
+  //   async (result) => {
+  //     handleClickAwaySearch();
 
-      const linkTo = (id) => router.push(`${paths.dashboard.chat}?id=${id}`);
+  //     const linkTo = (id) => router.push(`${paths.dashboard.chat}?id=${id}`);
 
-      try {
-        // Check if the conversation already exists
-        if (conversations.allIds.includes(result.id)) {
-          linkTo(result.id);
-          return;
-        }
+  //     try {
+  //       // Check if the conversation already exists
+  //       if (conversations.allIds.includes(result.id)) {
+  //         linkTo(result.id);
+  //         return;
+  //       }
 
-        // Find the recipient in contacts
-        const recipient = contacts.find((contact) => contact.id === result.id);
-        if (!recipient) {
-          console.error('Recipient not found');
-          return;
-        }
+  //       // Find the recipient in contacts
+  //       const recipient = contacts.find((contact) => contact.id === result.id);
+  //       if (!recipient) {
+  //         console.error('Recipient not found');
+  //         return;
+  //       }
 
-        // Prepare conversation data
-        const { conversationData } = initialConversation({
-          recipients: [recipient],
-          me: myContact,
-        });
+  //       // Prepare conversation data
+  //       const { conversationData } = initialConversation({
+  //         recipients: [recipient],
+  //         me: myContact,
+  //       });
 
-        // Create a new conversation
-        const res = await createConversation(conversationData);
+  //       // Create a new conversation
+  //       const res = await createConversation(conversationData);
 
-        if (!res || !res.conversation) {
-          console.error('Failed to create conversation');
-        }
+  //       if (!res || !res.conversation) {
+  //         console.error('Failed to create conversation');
+  //       }
 
-        // Navigate to the new conversation
-        linkTo(res.conversation.id);
-      } catch (error) {
-        console.error('Error handling click result:', error);
-      }
-    },
-    [contacts, conversations.allIds, handleClickAwaySearch, myContact, router],
-  );
+  //       // Navigate to the new conversation
+  //       linkTo(res.conversation.id);
+  //     } catch (error) {
+  //       console.error('Error handling click result:', error);
+  //     }
+  //   },
+  //   [contacts, conversations.allIds, handleClickAwaySearch, myContact, router],
+  // );
 
   const renderLoading = <ChatNavItemSkeleton />;
 
   const renderList = (
     <nav>
       <Box component="ul">
-        {conversations.allIds.map((conversationId) => (
+        {contacts?.map((contact) => (
           <ChatNavItem
-            key={conversationId}
+            key={contact.id}
             collapse={collapseDesktop}
-            conversation={conversations.byId[conversationId]}
-            selected={conversationId === selectedConversationId}
+            conversation={contact.conversation}
+            selected={contact.conversation.id === selectedConversationId}
             onCloseMobile={onCloseMobile}
+            contact={contact}
           />
         ))}
       </Box>
     </nav>
   );
 
-  const renderListResults = (
-    <ChatNavSearchResults
-      query={searchContacts.query}
-      results={searchContacts.results}
-      onClickResult={handleClickResult}
-    />
-  );
+  // const renderListResults = (
+  //   <ChatNavSearchResults
+  //     query={searchContacts.query}
+  //     results={searchContacts.results}
+  //     onClickResult={() => {}}
+  //   />
+  // );
 
   const renderSearchInput = (
     <ClickAwayListener onClickAway={handleClickAwaySearch}>
       <TextField
         fullWidth
         value={searchContacts.query}
-        onChange={(event) => handleSearchContacts(event.target.value)}
+        onChange={() => {}}
         placeholder="Tìm khách hàng..."
         InputProps={{
           startAdornment: (
@@ -242,9 +242,10 @@ export function ChatNav({
         renderLoading
       ) : (
         <Scrollbar sx={{ pb: 1 }}>
-          {searchContacts.query && !!conversations.allIds.length
+          {renderList}
+          {/* {searchContacts.query && !!conversations.allIds.length
             ? renderListResults
-            : renderList}
+            : renderList} */}
         </Scrollbar>
       )}
     </>

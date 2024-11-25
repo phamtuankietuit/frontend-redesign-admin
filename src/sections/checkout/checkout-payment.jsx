@@ -25,19 +25,19 @@ const DELIVERY_OPTIONS = [
 
 const PAYMENT_OPTIONS = [
   {
-    value: 'paypal',
-    label: 'Pay with Paypal',
-    description: 'You will be redirected to PayPal website to complete your purchase securely.',
+    value: 'vnpay',
+    label: 'VNPay',
+    description: 'Bạn sẽ được điều hướng tới VNPay để hoàn tất thanh toán.',
   },
   {
-    value: 'creditcard',
-    label: 'Credit / Debit card',
-    description: 'We support Mastercard, Visa, Discover and Stripe.',
+    value: 'momo',
+    label: 'MOMO',
+    description: 'Bạn sẽ được điều hướng tới MOMO để hoàn tất thanh toán.',
   },
   {
     value: 'cash',
-    label: 'Cash',
-    description: 'Pay with cash when your order is delivered.',
+    label: 'COD',
+    description: 'Thanh toán khi nhận hàng.',
   },
 ];
 
@@ -84,11 +84,11 @@ export function CheckoutPayment() {
     <Form methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         <Grid xs={12} md={8}>
-          <CheckoutDelivery
+          {/* <CheckoutDelivery
             name="delivery"
             onApplyShipping={checkout.onApplyShipping}
             options={DELIVERY_OPTIONS}
-          />
+          /> */}
 
           <CheckoutPaymentMethods
             name="payment"
@@ -105,12 +105,15 @@ export function CheckoutPayment() {
             onClick={checkout.onBackStep}
             startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
           >
-            Back
+            Trở lại
           </Button>
         </Grid>
 
         <Grid xs={12} md={4}>
-          <CheckoutBillingInfo billing={checkout.billing} onBackStep={checkout.onBackStep} />
+          <CheckoutBillingInfo
+            billing={checkout.billing}
+            onBackStep={checkout.onBackStep}
+          />
 
           <CheckoutSummary
             total={checkout.total}
@@ -127,7 +130,7 @@ export function CheckoutPayment() {
             variant="contained"
             loading={isSubmitting}
           >
-            Complete order
+            Thanh toán
           </LoadingButton>
         </Grid>
       </Grid>

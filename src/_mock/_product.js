@@ -45,9 +45,9 @@ export const PRODUCT_SIZE_OPTIONS = [
 ];
 
 export const PRODUCT_STOCK_OPTIONS = [
-  { value: 'in stock', label: 'In stock' },
-  { value: 'low stock', label: 'Low stock' },
-  { value: 'out of stock', label: 'Out of stock' },
+  { value: 'in stock', label: 'Còn hàng' },
+  { value: 'low stock', label: 'Còn ít hàng' },
+  { value: 'out of stock', label: 'Hết hàng' },
 ];
 
 export const PRODUCT_PUBLISH_OPTIONS = [
@@ -56,10 +56,10 @@ export const PRODUCT_PUBLISH_OPTIONS = [
 ];
 
 export const PRODUCT_SORT_OPTIONS = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'priceDesc', label: 'Price: High - Low' },
-  { value: 'priceAsc', label: 'Price: Low - High' },
+  { value: 'featured', label: 'Tính năng' },
+  { value: 'newest', label: 'Mới nhất' },
+  { value: 'priceDesc', label: 'Giá: Cao - Thấp' },
+  { value: 'priceAsc', label: 'Giá: Thấp - Cao' },
 ];
 
 export const PRODUCT_CATEGORY_GROUP_OPTIONS = [
@@ -68,4 +68,4 @@ export const PRODUCT_CATEGORY_GROUP_OPTIONS = [
   { group: 'Accessories', classify: ['Shoes', 'Backpacks and bags', 'Bracelets', 'Face masks'] },
 ];
 
-export const PRODUCT_CHECKOUT_STEPS = ['Cart', 'Billing & address', 'Payment'];
+export const PRODUCT_CHECKOUT_STEPS = ['Giỏ hàng', 'Địa chỉ', 'Thanh toán'];

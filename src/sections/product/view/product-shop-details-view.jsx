@@ -131,20 +131,20 @@ export function ProductShopDetailsView({ product, error, loading }) {
           ))}
         </Tabs>
         {tabs.value === 'information' && (
-          //   <ProductDetailsInformation
-          //     productTypeAttributes={product?.productTypeAttributes}
-          //   />
-
-          <CatalogItemCard
-            name="Sample Product"
-            thumbnailUrl="https://cdn0.fahasa.com/media/catalog/product/i/m/image_187010.jpg"
-            minPrice={50000}
-            maxPrice={50000}
-            minDiscountPrice={50000}
-            maxDiscountPrice={50000}
-            rating={4.5}
-            soldAmount={15}
+          <ProductDetailsInformation
+            productTypeAttributes={product?.productTypeAttributes}
           />
+
+          // <CatalogItemCard
+          //   name="Sample Product"
+          //   thumbnailUrl="https://cdn0.fahasa.com/media/catalog/product/i/m/image_187010.jpg"
+          //   minPrice={50000}
+          //   maxPrice={50000}
+          //   minDiscountPrice={50000}
+          //   maxDiscountPrice={50000}
+          //   rating={4.5}
+          //   soldAmount={15}
+          // />
         )}
 
         {tabs.value === 'description' && (

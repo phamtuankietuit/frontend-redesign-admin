@@ -46,20 +46,23 @@ import { OrderTableFiltersResult } from '../order-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
+const STATUS_OPTIONS = [
+  { value: 'all', label: 'Tất cả' },
+  ...ORDER_STATUS_OPTIONS,
+];
 
 const TABLE_HEAD = [
-  { id: 'orderNumber', label: 'Order', width: 88 },
-  { id: 'name', label: 'Customer' },
-  { id: 'createdAt', label: 'Date', width: 140 },
+  { id: 'orderNumber', label: 'Mã đơn hàng', width: 150 },
+  { id: 'name', label: 'Khách hàng' },
+  { id: 'createdAt', label: 'Ngày đặt hàng', width: 140 },
   {
     id: 'totalQuantity',
-    label: 'Items',
+    label: 'Sản phẩm',
     width: 120,
     align: 'center',
   },
-  { id: 'totalAmount', label: 'Price', width: 140 },
-  { id: 'status', label: 'Status', width: 110 },
+  { id: 'totalAmount', label: 'Tổng thanh toán', width: 140 },
+  { id: 'status', label: 'Trạng thái', width: 110 },
   { id: '', width: 88 },
 ];
 
@@ -109,11 +112,13 @@ export function OrderListView() {
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, table, tableData]
+    [dataInPage.length, table, tableData],
   );
 
   const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
+    const deleteRows = tableData.filter(
+      (row) => !table.selected.includes(row.id),
+    );
 
     toast.success('Delete success!');
 
@@ -129,7 +134,7 @@ export function OrderListView() {
     (id) => {
       router.push(paths.dashboard.order.details(id));
     },
-    [router]
+    [router],
   );
 
   const handleFilterStatus = useCallback(
@@ -137,18 +142,17 @@ export function OrderListView() {
       table.onResetPage();
       filters.setState({ status: newValue });
     },
-    [filters, table]
+    [filters, table],
   );
 
   return (
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="List"
+          heading="Danh sách đơn hàng"
           links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Order', href: paths.dashboard.order.root },
-            { name: 'List' },
+            { name: 'Trang chủ', href: '#' },
+            { name: 'Danh sách đơn hàng' },
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
@@ -172,18 +176,30 @@ export function OrderListView() {
                 icon={
                   <Label
                     variant={
-                      ((tab.value === 'all' || tab.value === filters.state.status) && 'filled') ||
+                      ((tab.value === 'all' ||
+                        tab.value === filters.state.status) &&
+                        'filled') ||
                       'soft'
                     }
                     color={
                       (tab.value === 'completed' && 'success') ||
                       (tab.value === 'pending' && 'warning') ||
                       (tab.value === 'cancelled' && 'error') ||
+                      (tab.value === 'processing' && 'warning') ||
+                      (tab.value === 'shipping' && 'info') ||
                       'default'
                     }
                   >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
+                    {[
+                      'pending',
+                      'processing',
+                      'shipping',
+                      'completed',
+                      'cancelled',
+                      'refunded',
+                    ].includes(tab.value)
+                      ? tableData.filter((user) => user.status === tab.value)
+                          .length
                       : tableData.length}
                   </Label>
                 }
@@ -207,54 +223,57 @@ export function OrderListView() {
           )}
 
           <Box sx={{ position: 'relative' }}>
-            <TableSelectedAction
+            {/* <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
               rowCount={dataFiltered.length}
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  dataFiltered.map((row) => row.id)
+                  dataFiltered.map((row) => row.id),
                 )
               }
               action={
-                <Tooltip title="Delete">
+                <Tooltip title="Xóa">
                   <IconButton color="primary" onClick={confirm.onTrue}>
                     <Iconify icon="solar:trash-bin-trash-bold" />
                   </IconButton>
                 </Tooltip>
               }
-            />
+            /> */}
 
             <Scrollbar sx={{ minHeight: 444 }}>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+              <Table
+                size={table.dense ? 'small' : 'medium'}
+                sx={{ minWidth: 960 }}
+              >
                 <TableHeadCustom
                   order={table.order}
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={dataFiltered.length}
-                  numSelected={table.selected.length}
+                  // numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id),
+                  //   )
+                  // }
                 />
 
                 <TableBody>
                   {dataFiltered
                     .slice(
                       table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
+                      table.page * table.rowsPerPage + table.rowsPerPage,
                     )
                     .map((row) => (
                       <OrderTableRow
                         key={row.id}
                         row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
+                        // selected={table.selected.includes(row.id)}
+                        // onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
                       />
@@ -262,7 +281,11 @@ export function OrderListView() {
 
                   <TableEmptyRows
                     height={table.dense ? 56 : 56 + 20}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                    emptyRows={emptyRows(
+                      table.page,
+                      table.rowsPerPage,
+                      dataFiltered.length,
+                    )}
                   />
 
                   <TableNoData notFound={notFound} />
@@ -289,7 +312,8 @@ export function OrderListView() {
         title="Delete"
         content={
           <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
+            Are you sure want to delete{' '}
+            <strong> {table.selected.length} </strong> items?
           </>
         }
         action={
@@ -327,7 +351,7 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
       (order) =>
         order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1,
     );
   }
 
@@ -337,7 +361,9 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter((order) => fIsBetween(order.createdAt, startDate, endDate));
+      inputData = inputData.filter((order) =>
+        fIsBetween(order.createdAt, startDate, endDate),
+      );
     }
   }
 

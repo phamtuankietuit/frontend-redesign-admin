@@ -24,14 +24,17 @@ export function AddressItem({ address, action, sx, ...other }) {
         <Stack direction="row" alignItems="center">
           <Typography variant="subtitle2">
             {address.name}
-            <Box component="span" sx={{ ml: 0.5, typography: 'body2', color: 'text.secondary' }}>
+            <Box
+              component="span"
+              sx={{ ml: 0.5, typography: 'body2', color: 'text.secondary' }}
+            >
               ({address.addressType})
             </Box>
           </Typography>
 
           {address.primary && (
             <Label color="info" sx={{ ml: 1 }}>
-              Default
+              Mặc định
             </Label>
           )}
         </Stack>

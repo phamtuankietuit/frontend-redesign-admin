@@ -87,9 +87,8 @@ export function HomeHugePackElements({ sx, ...other }) {
               size="large"
               color="inherit"
               variant="outlined"
-              target="_blank"
               rel="noopener"
-              href={paths.components}
+              href={paths.product.root}
               endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
               sx={{ mt: 5, mx: 'auto' }}
             >

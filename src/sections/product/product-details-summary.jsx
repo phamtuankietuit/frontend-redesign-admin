@@ -36,7 +36,7 @@ export function ProductDetailsSummary({
   const { id, name, minRecommendedRetailPrice, productVariants } = product;
 
   const { state, setState, setField, onResetState, canReset } = useSetState({
-    available: productVariants.length === 1 ? productVariants[0].quantity : 0,
+    available: productVariants?.length === 1 ? productVariants[0].quantity : 0,
   });
 
   const defaultValues = {
@@ -62,8 +62,8 @@ export function ProductDetailsSummary({
 
   const handleChangeOption = () => {
     if (
-      Object.keys(values.selectedOptions).length ===
-      product.productVariantOptions.length
+      Object.keys(values.selectedOptions)?.length ===
+      product.productVariantOptions?.length
     ) {
       const productVariant = productVariants.find((variant) =>
         variant.optionValues.every(

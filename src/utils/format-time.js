@@ -22,6 +22,11 @@ export const formatStr = {
     dateTime: 'DD-MM-YYYY h:mm a', // 17-04-2022 12:00 am
     date: 'DD-MM-YYYY', // 17-04-2022
   },
+  myFormat: {
+    date: 'DD/MM/YYYY', // 17/04/2022
+    dateTime: 'DD/MM/YYYY HH:mm', // 17/04/2022 12:00
+    time: 'HH:mm', // 12:00
+  },
 };
 
 export function today(format) {

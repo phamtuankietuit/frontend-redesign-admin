@@ -23,8 +23,10 @@ export function TablePaginationCustom({
 
       {onChangeDense && (
         <FormControlLabel
-          label="Dense"
-          control={<Switch name="dense" checked={dense} onChange={onChangeDense} />}
+          label="Thu gọn"
+          control={
+            <Switch name="dense" checked={dense} onChange={onChangeDense} />
+          }
           sx={{
             pl: 2,
             py: 1.5,

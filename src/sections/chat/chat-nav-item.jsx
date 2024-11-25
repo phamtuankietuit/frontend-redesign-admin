@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import AvatarGroup from '@mui/material/AvatarGroup';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 
@@ -16,27 +16,18 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { fToNow } from 'src/utils/format-time';
 
-import { clickConversation } from 'src/actions/chat';
-
-import { useMockedUser } from 'src/auth/hooks';
-
-import { getNavItem } from './utils/get-nav-item';
+import { setAdminContact } from 'src/state/chat/chat.slice';
 
 // ----------------------------------------------------------------------
 
-export function ChatNavItem({ selected, collapse, conversation, onCloseMobile }) {
-  const { user } = useMockedUser();
-
+export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
   const mdUp = useResponsive('up', 'md');
 
   const router = useRouter();
 
-  const { group, displayName, displayText, participants, lastActivity, hasOnlineInGroup } =
-    getNavItem({ conversation, currentUserId: `${user?.id}` });
+  const { name, avatarUrl, status, lastMessage, conversation } = contact;
 
-  const singleParticipant = participants[0];
-
-  const { name, avatarUrl, status } = singleParticipant;
+  const dispatch = useDispatch();
 
   const handleClickConversation = useCallback(async () => {
     try {
@@ -44,29 +35,20 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile })
         onCloseMobile();
       }
 
-      await clickConversation(conversation.id);
+      dispatch(setAdminContact(contact));
 
-      router.push(`${paths.dashboard.chat}?id=${conversation.id}`);
+      router.push(`${paths.dashboard.chat}?id=${conversation._id}`);
     } catch (error) {
       console.error(error);
     }
-  }, [conversation.id, mdUp, onCloseMobile, router]);
-
-  const renderGroup = (
-    <Badge
-      variant={hasOnlineInGroup ? 'online' : 'invisible'}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-    >
-      <AvatarGroup variant="compact" sx={{ width: 48, height: 48 }}>
-        {participants.slice(0, 2).map((participant) => (
-          <Avatar key={participant.id} alt={participant.name} src={participant.avatarUrl} />
-        ))}
-      </AvatarGroup>
-    </Badge>
-  );
+  }, [conversation._id, mdUp, onCloseMobile, router, contact, dispatch]);
 
   const renderSingle = (
-    <Badge key={status} variant={status} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+    <Badge
+      key={status}
+      variant={status}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+    >
       <Avatar alt={name} src={avatarUrl} sx={{ width: 48, height: 48 }} />
     </Badge>
   );
@@ -87,20 +69,26 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile })
           overlap="circular"
           badgeContent={collapse ? conversation.unreadCount : 0}
         >
-          {group ? renderGroup : renderSingle}
+          {renderSingle}
         </Badge>
 
         {!collapse && (
           <>
             <ListItemText
-              primary={displayName}
-              primaryTypographyProps={{ noWrap: true, component: 'span', variant: 'subtitle2' }}
-              secondary={displayText}
+              primary={name}
+              primaryTypographyProps={{
+                noWrap: true,
+                component: 'span',
+                variant: 'subtitle2',
+              }}
+              secondary={lastMessage?.body}
               secondaryTypographyProps={{
                 noWrap: true,
                 component: 'span',
                 variant: conversation.unreadCount ? 'subtitle2' : 'body2',
-                color: conversation.unreadCount ? 'text.primary' : 'text.secondary',
+                color: conversation.unreadCount
+                  ? 'text.primary'
+                  : 'text.secondary',
               }}
             />
 
@@ -111,7 +99,7 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile })
                 component="span"
                 sx={{ mb: 1.5, fontSize: 12, color: 'text.disabled' }}
               >
-                {fToNow(lastActivity)}
+                {fToNow(lastMessage?.updatedAt)}
               </Typography>
 
               {!!conversation.unreadCount && (

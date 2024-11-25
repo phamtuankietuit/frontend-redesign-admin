@@ -37,20 +37,22 @@ export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) {
           px: { xs: 2, sm: 0 },
         }}
       >
-        <Typography variant="h4">Thank you for your purchase!</Typography>
+        <Typography variant="h4">Đặt hàng thành công!</Typography>
 
         <OrderCompleteIllustration />
 
         <Typography>
-          Thanks for placing order
+          Cảm ơn bạn đã đặt hàng tại KKBooks
           <br />
           <br />
           <Link>01dc1370-3df6-11eb-b378-0242ac130002</Link>
           <br />
           <br />
-          We will send you a notification within 5 days when it ships.
-          <br /> If you have any question or queries then fell to get in contact us. <br />
-          All the best,
+          Chúng tôi sẽ gửi thông báo và email về trạng thái đơn hàng.
+          <br /> Nếu bạn có thắc mắc hoặc vấn đề về đơn hàng vui lòng liên hệ:
+          <br />
+          <span className="font-bold">1800 6236</span>
+          <br />
         </Typography>
 
         <Divider sx={{ width: 1, borderStyle: 'dashed' }} />
@@ -63,16 +65,7 @@ export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) {
             onClick={onReset}
             startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
           >
-            Continue shopping
-          </Button>
-
-          <Button
-            size="large"
-            variant="contained"
-            startIcon={<Iconify icon="eva:cloud-download-fill" />}
-            onClick={onDownloadPDF}
-          >
-            Download as PDF
+            Tiếp tục mua hàng
           </Button>
         </Box>
       </Box>

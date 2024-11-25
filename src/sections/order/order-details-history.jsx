@@ -52,7 +52,11 @@ export function OrderDetailsHistory({ history }) {
 
   const renderTimeline = (
     <Timeline
-      sx={{ p: 0, m: 0, [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 } }}
+      sx={{
+        p: 0,
+        m: 0,
+        [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 },
+      }}
     >
       {history?.timeline.map((item, index) => {
         const firstTimeline = index === 0;
@@ -69,7 +73,9 @@ export function OrderDetailsHistory({ history }) {
             <TimelineContent>
               <Typography variant="subtitle2">{item.title}</Typography>
 
-              <Box sx={{ color: 'text.disabled', typography: 'caption', mt: 0.5 }}>
+              <Box
+                sx={{ color: 'text.disabled', typography: 'caption', mt: 0.5 }}
+              >
                 {fDateTime(item.time)}
               </Box>
             </TimelineContent>
@@ -81,7 +87,7 @@ export function OrderDetailsHistory({ history }) {
 
   return (
     <Card>
-      <CardHeader title="History" />
+      <CardHeader title="Lịch sử" />
       <Stack
         spacing={3}
         alignItems={{ md: 'flex-start' }}
