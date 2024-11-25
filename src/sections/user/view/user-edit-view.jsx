@@ -12,10 +12,9 @@ export function UserEditView({ user: currentUser }) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Edit"
+        heading="Cập nhật khách hàng"
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
+          { name: 'Trang chủ', href: paths.dashboard.root },
           { name: currentUser?.name },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

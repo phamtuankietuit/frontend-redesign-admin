@@ -70,7 +70,7 @@ export function UserNewEditForm({ currentUser }) {
       company: currentUser?.company || '',
       role: currentUser?.role || '',
     }),
-    [currentUser]
+    [currentUser],
   );
 
   const methods = useForm({
@@ -153,7 +153,9 @@ export function UserNewEditForm({ currentUser }) {
                         {...field}
                         checked={field.value !== 'active'}
                         onChange={(event) =>
-                          field.onChange(event.target.checked ? 'banned' : 'active')
+                          field.onChange(
+                            event.target.checked ? 'banned' : 'active',
+                          )
                         }
                       />
                     )}
@@ -162,10 +164,13 @@ export function UserNewEditForm({ currentUser }) {
                 label={
                   <>
                     <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
+                      Khóa
                     </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
+                    <Typography
+                      variant="body2"
+                      sx={{ color: 'text.secondary' }}
+                    >
+                      Khóa người dùng
                     </Typography>
                   </>
                 }
@@ -178,26 +183,27 @@ export function UserNewEditForm({ currentUser }) {
               />
             )}
 
-            <Field.Switch
+            {/* <Field.Switch
               name="isVerified"
               labelPlacement="start"
               label={
                 <>
                   <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email verified
+                    Đã xác thực email
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
+                    Disabling this will automatically send the user a
+                    verification email
                   </Typography>
                 </>
               }
               sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-            />
+            /> */}
 
             {currentUser && (
               <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
                 <Button variant="soft" color="error">
-                  Delete user
+                  Xóa người dùng
                 </Button>
               </Stack>
             )}
@@ -215,28 +221,32 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="name" label="Full name" />
-              <Field.Text name="email" label="Email address" />
-              <Field.Phone name="phoneNumber" label="Phone number" />
+              <Field.Text name="name" label="Họ tên" />
+              <Field.Text name="email" label="Email" />
+              <Field.Phone name="phoneNumber" label="Số điện thoại" />
 
-              <Field.CountrySelect
+              {/* <Field.CountrySelect
                 fullWidth
                 name="country"
                 label="Country"
                 placeholder="Choose a country"
-              />
+              /> */}
 
-              <Field.Text name="state" label="State/region" />
+              {/* <Field.Text name="state" label="State/region" />
               <Field.Text name="city" label="City" />
               <Field.Text name="address" label="Address" />
               <Field.Text name="zipCode" label="Zip/code" />
               <Field.Text name="company" label="Company" />
-              <Field.Text name="role" label="Role" />
+              <Field.Text name="role" label="Role" /> */}
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? 'Create user' : 'Save changes'}
+              <LoadingButton
+                type="submit"
+                variant="contained"
+                loading={isSubmitting}
+              >
+                {!currentUser ? 'Tạo người dùng' : 'Lưu'}
               </LoadingButton>
             </Stack>
           </Card>

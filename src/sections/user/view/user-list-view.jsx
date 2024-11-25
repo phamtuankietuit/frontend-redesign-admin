@@ -45,14 +45,17 @@ import { UserTableFiltersResult } from '../user-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
+const STATUS_OPTIONS = [
+  { value: 'all', label: 'Tất cả' },
+  ...USER_STATUS_OPTIONS,
+];
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
-  { id: 'role', label: 'Role', width: 180 },
-  { id: 'status', label: 'Status', width: 100 },
+  { id: 'name', label: 'Tên' },
+  { id: 'phoneNumber', label: 'Số điện thoại' },
+  // { id: 'company', label: 'Company', width: 220 },
+  // { id: 'role', label: 'Role', width: 180 },
+  { id: 'status', label: 'Trạng thái' },
   { id: '', width: 88 },
 ];
 
@@ -78,7 +81,9 @@ export function UserListView() {
   const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
 
   const canReset =
-    !!filters.state.name || filters.state.role.length > 0 || filters.state.status !== 'all';
+    !!filters.state.name ||
+    filters.state.role.length > 0 ||
+    filters.state.status !== 'all';
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
@@ -92,11 +97,13 @@ export function UserListView() {
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, table, tableData]
+    [dataInPage.length, table, tableData],
   );
 
   const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
+    const deleteRows = tableData.filter(
+      (row) => !table.selected.includes(row.id),
+    );
 
     toast.success('Delete success!');
 
@@ -112,7 +119,7 @@ export function UserListView() {
     (id) => {
       router.push(paths.dashboard.user.edit(id));
     },
-    [router]
+    [router],
   );
 
   const handleFilterStatus = useCallback(
@@ -120,29 +127,19 @@ export function UserListView() {
       table.onResetPage();
       filters.setState({ status: newValue });
     },
-    [filters, table]
+    [filters, table],
   );
 
   return (
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="List"
+          heading="Danh sách khách hàng"
           links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'User', href: paths.dashboard.user.root },
-            { name: 'List' },
+            { name: 'Trang chủ', href: paths.dashboard.root },
+            { name: 'Danh sách khách hàng' },
           ]}
-          action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.user.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New user
-            </Button>
-          }
+          // s
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 
@@ -165,7 +162,9 @@ export function UserListView() {
                 icon={
                   <Label
                     variant={
-                      ((tab.value === 'all' || tab.value === filters.state.status) && 'filled') ||
+                      ((tab.value === 'all' ||
+                        tab.value === filters.state.status) &&
+                        'filled') ||
                       'soft'
                     }
                     color={
@@ -175,8 +174,11 @@ export function UserListView() {
                       'default'
                     }
                   >
-                    {['active', 'pending', 'banned', 'rejected'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
+                    {['active', 'pending', 'banned', 'rejected'].includes(
+                      tab.value,
+                    )
+                      ? tableData.filter((user) => user.status === tab.value)
+                          .length
                       : tableData.length}
                   </Label>
                 }
@@ -207,7 +209,7 @@ export function UserListView() {
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  dataFiltered.map((row) => row.id)
+                  dataFiltered.map((row) => row.id),
                 )
               }
               action={
@@ -220,7 +222,10 @@ export function UserListView() {
             />
 
             <Scrollbar>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+              <Table
+                size={table.dense ? 'small' : 'medium'}
+                sx={{ minWidth: 960 }}
+              >
                 <TableHeadCustom
                   order={table.order}
                   orderBy={table.orderBy}
@@ -231,7 +236,7 @@ export function UserListView() {
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
-                      dataFiltered.map((row) => row.id)
+                      dataFiltered.map((row) => row.id),
                     )
                   }
                 />
@@ -240,7 +245,7 @@ export function UserListView() {
                   {dataFiltered
                     .slice(
                       table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
+                      table.page * table.rowsPerPage + table.rowsPerPage,
                     )
                     .map((row) => (
                       <UserTableRow
@@ -255,7 +260,11 @@ export function UserListView() {
 
                   <TableEmptyRows
                     height={table.dense ? 56 : 56 + 20}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                    emptyRows={emptyRows(
+                      table.page,
+                      table.rowsPerPage,
+                      dataFiltered.length,
+                    )}
                   />
 
                   <TableNoData notFound={notFound} />
@@ -282,7 +291,8 @@ export function UserListView() {
         title="Delete"
         content={
           <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
+            Are you sure want to delete{' '}
+            <strong> {table.selected.length} </strong> items?
           </>
         }
         action={
@@ -317,7 +327,7 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) => user.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
     );
   }
 

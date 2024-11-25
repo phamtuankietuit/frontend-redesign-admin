@@ -51,11 +51,11 @@ export const _orders = [...Array(20)].map((_, index) => {
     deliveryTime: _mock.time(3),
     completionTime: _mock.time(4),
     timeline: [
-      { title: 'Delivery successful', time: _mock.time(1) },
-      { title: 'Transporting to [2]', time: _mock.time(2) },
-      { title: 'Transporting to [1]', time: _mock.time(3) },
-      { title: 'The shipping unit has picked up the goods', time: _mock.time(4) },
-      { title: 'Order has been created', time: _mock.time(5) },
+      { title: 'Giao hàng thành công', time: _mock.time(1) },
+      { title: 'Đã đến kho Phú Nhuận', time: _mock.time(2) },
+      { title: 'Đã tới kho Linh Trung, Thủ Đức', time: _mock.time(3) },
+      { title: 'Shipper lấy hàng', time: _mock.time(4) },
+      { title: 'Đã đặt hàng', time: _mock.time(5) },
     ],
   };
 

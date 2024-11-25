@@ -30,6 +30,25 @@ export const PRODUCT_COLOR_NAME_OPTIONS = [
   { value: '#FFFFFF', label: 'White' },
 ];
 
+export const PRODUCT_AUTHOR_NAME_OPTIONS = [
+  { value: 'Nguyễn Nhật Ánh', label: 'Nguyễn Nhật Ánh' },
+  { value: 'Nam Cao', label: 'Nam Cao' },
+  { value: 'Nguyễn Du', label: 'Nguyễn Du' },
+  { value: 'Xuân Quỳnh', label: 'Xuân Quỳnh' },
+  { value: 'Ngô Tất Tố', label: 'Ngô Tất Tố' },
+  { value: 'Tô Hoài', label: 'Tô Hoài' },
+  { value: 'Nguyễn Huy Thiệp', label: 'Nguyễn Huy Thiệp' },
+  { value: 'Vũ Trọng Phụng', label: 'Vũ Trọng Phụng' },
+];
+
+export const PRODUCT_CATEGORY_NAME_OPTIONS = [
+  { value: 'Sách Tiếng Việt', label: 'Sách Tiếng Việt' },
+  { value: 'Sách nước ngoài', label: 'Sách nước ngoài' },
+  { value: 'Văn phòng phẩm', label: 'Văn phòng phẩm' },
+  { value: 'Đồ chơi', label: 'Đồ chơi' },
+  { value: 'Quà lưu niệm', label: 'Quà lưu niệm' },
+];
+
 export const PRODUCT_SIZE_OPTIONS = [
   { value: '7', label: '7' },
   { value: '8', label: '8' },

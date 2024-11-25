@@ -49,7 +49,7 @@ export function OrderDetailsItems({
       </Stack>
 
       <Stack direction="row" sx={{ typography: 'subtitle1' }}>
-        <div>Total</div>
+        <div>Tổng cộng</div>
         <Box sx={{ width: 160 }}>{fCurrency(totalAmount) || '-'}</Box>
       </Stack>
     </Stack>
@@ -59,11 +59,11 @@ export function OrderDetailsItems({
     <Card>
       <CardHeader
         title="Chi tiết đơn hàng"
-        action={
-          <IconButton>
-            <Iconify icon="solar:pen-bold" />
-          </IconButton>
-        }
+        // action={
+        //   <IconButton>
+        //     <Iconify icon="solar:pen-bold" />
+        //   </IconButton>
+        // }
       />
 
       <Scrollbar>

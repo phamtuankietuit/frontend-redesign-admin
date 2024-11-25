@@ -22,7 +22,13 @@ import { UserQuickEditForm } from './user-quick-edit-form';
 
 // ----------------------------------------------------------------------
 
-export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+export function UserTableRow({
+  row,
+  selected,
+  onEditRow,
+  onSelectRow,
+  onDeleteRow,
+}) {
   const confirm = useBoolean();
 
   const popover = usePopover();
@@ -40,8 +46,18 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
           <Stack spacing={2} direction="row" alignItems="center">
             <Avatar alt={row.name} src={row.avatarUrl} />
 
-            <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-              <Link color="inherit" onClick={onEditRow} sx={{ cursor: 'pointer' }}>
+            <Stack
+              sx={{
+                typography: 'body2',
+                flex: '1 1 auto',
+                alignItems: 'flex-start',
+              }}
+            >
+              <Link
+                color="inherit"
+                onClick={onEditRow}
+                sx={{ cursor: 'pointer' }}
+              >
                 {row.name}
               </Link>
               <Box component="span" sx={{ color: 'text.disabled' }}>
@@ -53,9 +69,9 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phoneNumber}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.company}</TableCell>
+        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.company}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.role}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.role}</TableCell> */}
 
         <TableCell>
           <Label
@@ -82,14 +98,21 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
               </IconButton>
             </Tooltip>
 
-            <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+            <IconButton
+              color={popover.open ? 'inherit' : 'default'}
+              onClick={popover.onOpen}
+            >
               <Iconify icon="eva:more-vertical-fill" />
             </IconButton>
           </Stack>
         </TableCell>
       </TableRow>
 
-      <UserQuickEditForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} />
+      <UserQuickEditForm
+        currentUser={row}
+        open={quickEdit.value}
+        onClose={quickEdit.onFalse}
+      />
 
       <CustomPopover
         open={popover.open}

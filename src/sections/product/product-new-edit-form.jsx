@@ -24,6 +24,8 @@ import {
   PRODUCT_GENDER_OPTIONS,
   PRODUCT_COLOR_NAME_OPTIONS,
   PRODUCT_CATEGORY_GROUP_OPTIONS,
+  PRODUCT_AUTHOR_NAME_OPTIONS,
+  PRODUCT_CATEGORY_NAME_OPTIONS,
 } from 'src/_mock';
 
 import { toast } from 'src/components/snackbar';
@@ -33,15 +35,28 @@ import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 export const NewProductSchema = zod.object({
   name: zod.string().min(1, { message: 'Name is required!' }),
-  description: schemaHelper.editor({ message: { required_error: 'Description is required!' } }),
-  images: schemaHelper.files({ message: { required_error: 'Images is required!' } }),
+  description: schemaHelper.editor({
+    message: { required_error: 'Description is required!' },
+  }),
+  images: schemaHelper.files({
+    message: { required_error: 'Images is required!' },
+  }),
   code: zod.string().min(1, { message: 'Product code is required!' }),
   sku: zod.string().min(1, { message: 'Product sku is required!' }),
   quantity: zod.number().min(1, { message: 'Quantity is required!' }),
-  colors: zod.string().array().nonempty({ message: 'Choose at least one option!' }),
-  sizes: zod.string().array().nonempty({ message: 'Choose at least one option!' }),
+  colors: zod
+    .string()
+    .array()
+    .nonempty({ message: 'Choose at least one option!' }),
+  sizes: zod
+    .string()
+    .array()
+    .nonempty({ message: 'Choose at least one option!' }),
   tags: zod.string().array().min(2, { message: 'Must have at least 2 items!' }),
-  gender: zod.string().array().nonempty({ message: 'Choose at least one option!' }),
+  gender: zod
+    .string()
+    .array()
+    .nonempty({ message: 'Choose at least one option!' }),
   price: zod.number().min(1, { message: 'Price should not be $0.00' }),
   // Not required
   category: zod.string(),
@@ -74,13 +89,15 @@ export function ProductNewEditForm({ currentProduct }) {
       tags: currentProduct?.tags || [],
       taxes: currentProduct?.taxes || 0,
       gender: currentProduct?.gender || [],
-      category: currentProduct?.category || PRODUCT_CATEGORY_GROUP_OPTIONS[0].classify[1],
+      category:
+        currentProduct?.category ||
+        PRODUCT_CATEGORY_GROUP_OPTIONS[0].classify[1],
       colors: currentProduct?.colors || [],
       sizes: currentProduct?.sizes || [],
       newLabel: currentProduct?.newLabel || { enabled: false, content: '' },
       saleLabel: currentProduct?.saleLabel || { enabled: false, content: '' },
     }),
-    [currentProduct]
+    [currentProduct],
   );
 
   const methods = useForm({
@@ -126,10 +143,11 @@ export function ProductNewEditForm({ currentProduct }) {
 
   const handleRemoveFile = useCallback(
     (inputFile) => {
-      const filtered = values.images && values.images?.filter((file) => file !== inputFile);
+      const filtered =
+        values.images && values.images?.filter((file) => file !== inputFile);
       setValue('images', filtered);
     },
-    [setValue, values.images]
+    [setValue, values.images],
   );
 
   const handleRemoveAllFiles = useCallback(() => {
@@ -142,22 +160,31 @@ export function ProductNewEditForm({ currentProduct }) {
 
   const renderDetails = (
     <Card>
-      <CardHeader title="Details" subheader="Title, short description, image..." sx={{ mb: 3 }} />
+      <CardHeader
+        title="Thông tin sản phẩm"
+        subheader="Tiêu đề, mô tả ngắn, hình ảnh..."
+        sx={{ mb: 3 }}
+      />
 
       <Divider />
 
       <Stack spacing={3} sx={{ p: 3 }}>
-        <Field.Text name="name" label="Product name" />
+        <Field.Text name="name" label="Tên sản phẩm" />
 
-        <Field.Text name="subDescription" label="Sub description" multiline rows={4} />
+        <Field.Text
+          name="subDescription"
+          label="Mô tả ngắn"
+          multiline
+          rows={4}
+        />
 
         <Stack spacing={1.5}>
-          <Typography variant="subtitle2">Content</Typography>
+          <Typography variant="subtitle2">Nội dung mô tả</Typography>
           <Field.Editor name="description" sx={{ maxHeight: 480 }} />
         </Stack>
 
         <Stack spacing={1.5}>
-          <Typography variant="subtitle2">Images</Typography>
+          <Typography variant="subtitle2">Hình ảnh</Typography>
           <Field.Upload
             multiple
             thumbnail
@@ -175,8 +202,8 @@ export function ProductNewEditForm({ currentProduct }) {
   const renderProperties = (
     <Card>
       <CardHeader
-        title="Properties"
-        subheader="Additional functions and attributes..."
+        title="Thuộc tính sản phẩm"
+        subheader="Thuộc tính..."
         sx={{ mb: 3 }}
       />
 
@@ -189,19 +216,24 @@ export function ProductNewEditForm({ currentProduct }) {
           display="grid"
           gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
         >
-          <Field.Text name="code" label="Product code" />
+          <Field.Text name="code" label="Mã sản phẩm" />
 
-          <Field.Text name="sku" label="Product SKU" />
+          <Field.Text name="sku" label="SKU" />
 
           <Field.Text
             name="quantity"
-            label="Quantity"
+            label="Số lượng"
             placeholder="0"
             type="number"
             InputLabelProps={{ shrink: true }}
           />
 
-          <Field.Select native name="category" label="Category" InputLabelProps={{ shrink: true }}>
+          <Field.Select
+            native
+            name="category"
+            label="Phân loại"
+            InputLabelProps={{ shrink: true }}
+          >
             {PRODUCT_CATEGORY_GROUP_OPTIONS.map((category) => (
               <optgroup key={category.group} label={category.group}>
                 {category.classify.map((classify) => (
@@ -216,14 +248,19 @@ export function ProductNewEditForm({ currentProduct }) {
           <Field.MultiSelect
             checkbox
             name="colors"
-            label="Colors"
-            options={PRODUCT_COLOR_NAME_OPTIONS}
+            label="Tác giả"
+            options={PRODUCT_AUTHOR_NAME_OPTIONS}
           />
 
-          <Field.MultiSelect checkbox name="sizes" label="Sizes" options={PRODUCT_SIZE_OPTIONS} />
+          <Field.MultiSelect
+            checkbox
+            name="sizes"
+            label="Phân loại"
+            options={PRODUCT_CATEGORY_NAME_OPTIONS}
+          />
         </Box>
 
-        <Field.Autocomplete
+        {/* <Field.Autocomplete
           name="tags"
           label="Tags"
           placeholder="+ Tags"
@@ -249,12 +286,17 @@ export function ProductNewEditForm({ currentProduct }) {
               />
             ))
           }
-        />
+        /> */}
 
-        <Stack spacing={1}>
-          <Typography variant="subtitle2">Gender</Typography>
-          <Field.MultiCheckbox row name="gender" options={PRODUCT_GENDER_OPTIONS} sx={{ gap: 2 }} />
-        </Stack>
+        {/* <Stack spacing={1}>
+          <Typography variant="subtitle2">G=</Typography>
+          <Field.MultiCheckbox
+            row
+            name="gender"
+            options={PRODUCT_GENDER_OPTIONS}
+            sx={{ gap: 2 }}
+          />
+        </Stack> */}
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
@@ -262,7 +304,7 @@ export function ProductNewEditForm({ currentProduct }) {
           <Field.Switch name="saleLabel.enabled" label={null} sx={{ m: 0 }} />
           <Field.Text
             name="saleLabel.content"
-            label="Sale label"
+            label="Tiêu đề Sale"
             fullWidth
             disabled={!values.saleLabel.enabled}
           />
@@ -272,7 +314,7 @@ export function ProductNewEditForm({ currentProduct }) {
           <Field.Switch name="newLabel.enabled" label={null} sx={{ m: 0 }} />
           <Field.Text
             name="newLabel.content"
-            label="New label"
+            label="Tiêu đề mới"
             fullWidth
             disabled={!values.newLabel.enabled}
           />
@@ -283,14 +325,14 @@ export function ProductNewEditForm({ currentProduct }) {
 
   const renderPricing = (
     <Card>
-      <CardHeader title="Pricing" subheader="Price related inputs" sx={{ mb: 3 }} />
+      <CardHeader title="Giá" subheader="Price related inputs" sx={{ mb: 3 }} />
 
       <Divider />
 
       <Stack spacing={3} sx={{ p: 3 }}>
         <Field.Text
           name="price"
-          label="Regular price"
+          label="Giá bán"
           placeholder="0.00"
           type="number"
           InputLabelProps={{ shrink: true }}
@@ -307,7 +349,7 @@ export function ProductNewEditForm({ currentProduct }) {
 
         <Field.Text
           name="priceSale"
-          label="Sale price"
+          label="Giá giảm"
           placeholder="0.00"
           type="number"
           InputLabelProps={{ shrink: true }}
@@ -324,15 +366,19 @@ export function ProductNewEditForm({ currentProduct }) {
 
         <FormControlLabel
           control={
-            <Switch id="toggle-taxes" checked={includeTaxes} onChange={handleChangeIncludeTaxes} />
+            <Switch
+              id="toggle-taxes"
+              checked={includeTaxes}
+              onChange={handleChangeIncludeTaxes}
+            />
           }
-          label="Price includes taxes"
+          label="Giá bao gồm thuế"
         />
 
         {!includeTaxes && (
           <Field.Text
             name="taxes"
-            label="Tax (%)"
+            label="Thuế (%)"
             placeholder="0.00"
             type="number"
             InputLabelProps={{ shrink: true }}
@@ -354,20 +400,30 @@ export function ProductNewEditForm({ currentProduct }) {
   const renderActions = (
     <Stack spacing={3} direction="row" alignItems="center" flexWrap="wrap">
       <FormControlLabel
-        control={<Switch defaultChecked inputProps={{ id: 'publish-switch' }} />}
+        control={
+          <Switch defaultChecked inputProps={{ id: 'publish-switch' }} />
+        }
         label="Publish"
         sx={{ pl: 3, flexGrow: 1 }}
       />
 
-      <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
-        {!currentProduct ? 'Create product' : 'Save changes'}
+      <LoadingButton
+        type="submit"
+        variant="contained"
+        size="large"
+        loading={isSubmitting}
+      >
+        {!currentProduct ? 'Tạo sản phẩm' : 'Lưu'}
       </LoadingButton>
     </Stack>
   );
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
-      <Stack spacing={{ xs: 3, md: 5 }} sx={{ mx: 'auto', maxWidth: { xs: 720, xl: 880 } }}>
+      <Stack
+        spacing={{ xs: 3, md: 5 }}
+        sx={{ mx: 'auto', maxWidth: { xs: 720, xl: 880 } }}
+      >
         {renderDetails}
 
         {renderProperties}

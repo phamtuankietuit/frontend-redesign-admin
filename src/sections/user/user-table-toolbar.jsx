@@ -25,18 +25,20 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
       onResetPage();
       filters.setState({ name: event.target.value });
     },
-    [filters, onResetPage]
+    [filters, onResetPage],
   );
 
   const handleFilterRole = useCallback(
     (event) => {
       const newValue =
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
+        typeof event.target.value === 'string'
+          ? event.target.value.split(',')
+          : event.target.value;
 
       onResetPage();
       filters.setState({ role: newValue });
     },
-    [filters, onResetPage]
+    [filters, onResetPage],
   );
 
   return (
@@ -47,7 +49,7 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
         direction={{ xs: 'column', md: 'row' }}
         sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
-        <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
+        {/* <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
           <InputLabel htmlFor="user-filter-role-select-label">Role</InputLabel>
           <Select
             multiple
@@ -69,18 +71,27 @@ export function UserTableToolbar({ filters, options, onResetPage }) {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
 
-        <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={2}
+          flexGrow={1}
+          sx={{ width: 1 }}
+        >
           <TextField
             fullWidth
             value={filters.state.name}
             onChange={handleFilterName}
-            placeholder="Search..."
+            placeholder="Tìm khách hàng..."
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                  <Iconify
+                    icon="eva:search-fill"
+                    sx={{ color: 'text.disabled' }}
+                  />
                 </InputAdornment>
               ),
             }}
