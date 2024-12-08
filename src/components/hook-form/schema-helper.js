@@ -109,7 +109,7 @@ export const schemaHelper = {
       } else if (data.length < minFiles) {
         ctx.addIssue({
           code: zod.ZodIssueCode.custom,
-          message: `Must have at least ${minFiles} items!`,
+          message: `Ít nhất ${minFiles} file!`,
         });
       }
 

@@ -24,7 +24,7 @@ export function RenderCellPublish({ params }) {
       variant="soft"
       color={(params.row.publish === 'published' && 'info') || 'default'}
     >
-      {params.row.publish}
+      {params.row.publish === 'published' ? 'Hiển thị' : 'Ẩn'}
     </Label>
   );
 }

@@ -42,7 +42,7 @@ export function fCurrency(inputValue, options) {
     ...options,
   }).format(number);
 
-  return fm;
+  return fm.replace(locale.currency, '').trim().replace(/\./g, ',');
 }
 
 // ----------------------------------------------------------------------

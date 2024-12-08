@@ -94,6 +94,17 @@ export const navData = [
         ],
       },
       {
+        title: 'Tồn kho',
+        path: paths.dashboard.product.root,
+        icon: ICONS.blog,
+        children: [
+          { title: 'Danh sách sản phẩm', path: paths.dashboard.product.root },
+          // { title: 'Details', path: paths.dashboard.product.demo.details },
+          // { title: 'Create', path: paths.dashboard.product.new },
+          // { title: 'Edit', path: paths.dashboard.product.demo.edit },
+        ],
+      },
+      {
         title: 'Đơn hàng',
         path: paths.dashboard.order.root,
         icon: ICONS.order,

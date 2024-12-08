@@ -28,6 +28,7 @@ import { CartIcon } from '../components/cart-icon';
 import { ProductFilters } from '../product-filters';
 import { useCheckoutContext } from '../../checkout/context';
 import { ProductFiltersResult } from '../product-filters-result';
+import { ChatIcon } from '../components/chat-icon';
 
 // ----------------------------------------------------------------------
 
@@ -127,7 +128,8 @@ export function ProductShopView({ products, loading }) {
 
   return (
     <Container sx={{ mb: 15 }}>
-      <CartIcon totalItems={checkout.totalItems} />
+      {/* <CartIcon totalItems={checkout.totalItems} /> */}
+      <ChatIcon totalItems={checkout.totalItems} />
 
       <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
         Sản phẩm

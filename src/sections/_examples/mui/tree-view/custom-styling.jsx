@@ -1,39 +1,15 @@
+import { useSelector } from 'react-redux';
+import { Controller } from 'react-hook-form';
+
 import { styled } from '@mui/material/styles';
+import { FormHelperText } from '@mui/material';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 
 import { varAlpha, stylesMode } from 'src/theme/styles';
+import { selectProductType } from 'src/state/product-type/product-type.slice';
 
 // ----------------------------------------------------------------------
-
-const ITEMS = [
-  {
-    id: '1',
-    label: 'Main',
-    children: [
-      { id: '2', label: 'Hello' },
-      {
-        id: '3',
-        label: 'Subtree with children',
-        children: [
-          { id: '6', label: 'Hello' },
-          {
-            id: '7',
-            label: 'Sub-subtree with children',
-            children: [
-              { id: '9', label: 'Child 1' },
-              { id: '10', label: 'Child 2' },
-              { id: '11', label: 'Child 3' },
-            ],
-          },
-          { id: '8', label: 'Hello' },
-        ],
-      },
-      { id: '4', label: 'World' },
-      { id: '5', label: 'Something something' },
-    ],
-  },
-];
 
 const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
   color: theme.vars.palette.grey[800],
@@ -59,16 +35,29 @@ const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
   },
 }));
 
-// ----------------------------------------------------------------------
-
-export function CustomStyling() {
+export function CustomStyling({ name, items, control, ...other }) {
   return (
-    <RichTreeView
-      aria-label="customized"
-      defaultExpandedItems={['1']}
-      sx={{ overflowX: 'hidden', minHeight: 240, width: 1 }}
-      slots={{ item: StyledTreeItem }}
-      items={ITEMS}
+    <Controller
+      name={name}
+      control={control}
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
+        <>
+          <RichTreeView
+            aria-label="customized"
+            sx={{ overflowX: 'hidden', minHeight: 240, width: 1 }}
+            slots={{ item: StyledTreeItem }}
+            items={items}
+            selectedItems={value}
+            onSelectedItemsChange={(_, itemId) => {
+              onChange(itemId);
+            }}
+            {...other}
+          />
+          <FormHelperText error={!!error} sx={{ textAlign: 'left' }}>
+            {error?.message}
+          </FormHelperText>
+        </>
+      )}
     />
   );
 }

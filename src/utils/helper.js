@@ -3,6 +3,10 @@
  * https://github.com/you-dont-need-x/you-dont-need-lodash
  */
 
+import { paths } from "src/routes/paths";
+
+import { Iconify } from "src/components/iconify";
+
 // ----------------------------------------------------------------------
 
 export function flattenArray(list, key = 'children') {
@@ -123,3 +127,54 @@ export const merge = (target, ...sources) => {
 
   return merge(target, ...sources);
 };
+
+// ----------------------------------------------------------------------
+
+export const transformProductTypes = (productTypes) => {
+  const map = new Map();
+
+  productTypes.forEach(({ id, displayName }) => {
+    map.set(String(id), { id: String(id), label: displayName, children: [] });
+  });
+
+  const result = [];
+
+  productTypes.forEach(({ id, parentProductTypeId }) => {
+    const current = map.get(String(id));
+    if (parentProductTypeId) {
+      const parent = map.get(String(parentProductTypeId));
+      parent?.children.push(current);
+    } else if (current) {
+      result.push(current);
+    }
+  });
+
+  return result;
+};
+
+export const rowsWithId = (rows) => rows.map((row, index) => ({
+  ...row,
+  id: row.id || index,
+}));
+
+export function generateCombinations(variants) {
+  // eslint-disable-next-line no-shadow
+  function combine(variants, index = 0, current = []) {
+    if (index === variants.length) {
+      result.push(current);
+      return;
+    }
+
+    const variant = variants[index];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const value of variant.values) {
+      combine(variants, index + 1, [...current, value]);
+    }
+  }
+
+  const result = [];
+  combine(variants);
+
+  return result;
+}

@@ -39,7 +39,7 @@ export const SignInSchema = zod.object({
 
 // ----------------------------------------------------------------------
 
-export function CenteredSignInView() {
+export function CenteredSignInView({ isAdmin = false }) {
   const router = useRouter();
 
   const { user } = useSelector(selectAuth);
@@ -62,7 +62,7 @@ export function CenteredSignInView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      dispatch(signInAsync(data))
+      dispatch(signInAsync({ ...data, signInSource: isAdmin ? 2 : 1 }))
         // eslint-disable-next-line consistent-return
         .then((action) => {
           if (signInAsync.fulfilled.match(action)) {
@@ -71,7 +71,11 @@ export function CenteredSignInView() {
         })
         .then((action) => {
           if (getMeAsync.fulfilled.match(action)) {
-            router.replace('/');
+            if (isAdmin) {
+              router.replace(paths.dashboard.general.analytics);
+            } else {
+              router.replace('/');
+            }
           }
         });
     } catch (error) {

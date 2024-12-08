@@ -29,6 +29,7 @@ import { ProductDetailsSummary } from '../product-details-summary';
 import { ProductDetailsCarousel } from '../product-details-carousel';
 import { ProductDetailsDescription } from '../product-details-description';
 import { ProductDetailsInformation } from '../product-details-information';
+import { ChatIcon } from '../components/chat-icon';
 
 export function ProductShopDetailsView({ product, error, loading }) {
   const { ratings } = useSelector(selectProduct);

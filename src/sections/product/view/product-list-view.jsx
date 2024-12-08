@@ -44,8 +44,8 @@ import {
 // ----------------------------------------------------------------------
 
 const PUBLISH_OPTIONS = [
-  { value: 'published', label: 'Published' },
-  { value: 'draft', label: 'Draft' },
+  { value: 'published', label: 'Hiển thị' },
+  { value: 'draft', label: 'Ẩn' },
 ];
 
 const HIDE_COLUMNS = { category: false };
@@ -174,7 +174,7 @@ export function ProductListView() {
     },
     {
       field: 'publish',
-      headerName: 'Publish',
+      headerName: 'Hiển thị',
       width: 110,
       type: 'singleSelect',
       editable: true,
@@ -273,7 +273,7 @@ export function ProductListView() {
             slots={{
               toolbar: CustomToolbarCallback,
               noRowsOverlay: () => <EmptyContent />,
-              noResultsOverlay: () => <EmptyContent title="No results found" />,
+              noResultsOverlay: () => <EmptyContent title="Không có dữ liệu" />,
             }}
             slotProps={{
               panel: { anchorEl: filterButtonEl },

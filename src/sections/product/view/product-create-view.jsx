@@ -15,7 +15,7 @@ export function ProductCreateView() {
         heading="Tạo mới sản phẩm"
         links={[
           { name: 'Trang chủ', href: paths.dashboard.root },
-          { name: 'Sản phẩm mới' },
+          { name: 'Tạo mới sản phẩm' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />

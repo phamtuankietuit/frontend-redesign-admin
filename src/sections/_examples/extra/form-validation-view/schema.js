@@ -43,10 +43,10 @@ export const FormSchema = zod
       message: { required_error: 'Autocomplete is required!' },
     }),
     singleCountry: zod.string().min(1, { message: 'Single country is required!' }),
-    multiCountry: zod.string().array().min(2, { message: 'Must have at least 2 items!' }),
+    multiCountry: zod.string().array().min(1, { message: 'Must have at least 2 items!' }),
     //
     singleSelect: zod.string().min(1, { message: 'Single select is required!' }),
-    multiSelect: zod.string().array().min(2, { message: 'Must have at least 2 items!' }),
+    multiSelect: zod.string().array().min(1, { message: 'Must have at least 2 items!' }),
     //
     rating: zod.number().min(1, { message: 'Rating is required!' }),
     radioGroup: zod.string().min(1, { message: 'Choose at least one option!' }),

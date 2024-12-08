@@ -65,3 +65,22 @@ export const navData = [
     ],
   },
 ];
+
+export const getConfigNavMain = (productTypes) => {
+  const children = productTypes.map((productType) => ({
+    subheader: productType.displayName,
+    items: productType.childProductTypes.map((childProductType) => ({
+      title: childProductType.displayName,
+      path: paths.about,
+    })),
+  }));
+
+  return [
+    {
+      title: 'DANH MỤC',
+      path: '/pages',
+      icon: <Iconify width={22} icon="solar:file-bold-duotone" />,
+      children,
+    },
+  ];
+};

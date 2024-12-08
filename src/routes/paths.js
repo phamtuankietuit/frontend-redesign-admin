@@ -46,40 +46,12 @@ export const paths = {
     details: (title) => `/post/${paramCase(title)}`,
     demo: { details: `/post/${paramCase(MOCK_TITLE)}` },
   },
-  // AUTH
   auth: {
     signIn: '/sign-in',
     signUp: '/sign-up',
     verify: `/verify`,
     resetPassword: '/reset-password',
     updatePassword: '/update-password',
-    // amplify: {
-    //   signIn: `${ROOTS.AUTH}/amplify/sign-in`,
-    //   verify: `${ROOTS.AUTH}/amplify/verify`,
-    //   signUp: `${ROOTS.AUTH}/amplify/sign-up`,
-    //   updatePassword: `${ROOTS.AUTH}/amplify/update-password`,
-    //   resetPassword: `${ROOTS.AUTH}/amplify/reset-password`,
-    // },
-    // jwt: {
-    //   signIn: `${ROOTS.AUTH}/jwt/sign-in`,
-    //   signUp: `${ROOTS.AUTH}/jwt/sign-up`,
-    // },
-    // firebase: {
-    //   signIn: `${ROOTS.AUTH}/firebase/sign-in`,
-    //   verify: `${ROOTS.AUTH}/firebase/verify`,
-    //   signUp: `${ROOTS.AUTH}/firebase/sign-up`,
-    //   resetPassword: `${ROOTS.AUTH}/firebase/reset-password`,
-    // },
-    // auth0: {
-    //   signIn: `${ROOTS.AUTH}/auth0/sign-in`,
-    // },
-    // supabase: {
-    //   signIn: `${ROOTS.AUTH}/supabase/sign-in`,
-    //   verify: `${ROOTS.AUTH}/supabase/verify`,
-    //   signUp: `${ROOTS.AUTH}/supabase/sign-up`,
-    //   updatePassword: `${ROOTS.AUTH}/supabase/update-password`,
-    //   resetPassword: `${ROOTS.AUTH}/supabase/reset-password`,
-    // },
   },
   authDemo: {
     split: {
@@ -100,6 +72,7 @@ export const paths = {
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
+    signIn: `${ROOTS.DASHBOARD}/sign-in`,
     mail: `${ROOTS.DASHBOARD}/mail`,
     chat: `${ROOTS.DASHBOARD}/chat`,
     blank: `${ROOTS.DASHBOARD}/blank`,

@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
-import { useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
@@ -13,6 +13,9 @@ import { useDebounce } from 'src/hooks/use-debounce';
 import { _notifications } from 'src/_mock';
 import { selectAuth } from 'src/state/auth/auth.slice';
 import { useSearchProducts } from 'src/actions/product';
+import { getMeAsync } from 'src/services/auth/auth.service';
+import { selectProductType } from 'src/state/product-type/product-type.slice';
+import { getProductTypesAsync } from 'src/services/product-type/product-type.service';
 
 import { Logo } from 'src/components/logo';
 
@@ -21,10 +24,10 @@ import { NavMobile } from './nav/mobile';
 import { NavDesktop } from './nav/desktop';
 import { Footer, HomeFooter } from './footer';
 import { _account } from '../config-nav-account';
+import { getConfigNavMain } from '../config-nav-main';
 import { MenuButton } from '../components/menu-button';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
-import { navData as mainNavData } from '../config-nav-main';
 import { SignInButton } from '../components/sign-in-button';
 import { AccountDrawer } from '../components/account-drawer';
 import { SettingsButton } from '../components/settings-button';
@@ -44,10 +47,6 @@ export function MainLayout({ sx, data, children, header }) {
 
   const layoutQuery = 'sm';
 
-  const navData = data?.nav ?? mainNavData;
-
-  const { user } = useSelector(selectAuth);
-
   // SearchHome
   const [searchQuery, setSearchQuery] = useState('');
   const handleSearch = useCallback((inputValue) => {
@@ -55,6 +54,23 @@ export function MainLayout({ sx, data, children, header }) {
   }, []);
   const debouncedQuery = useDebounce(searchQuery);
   const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
+
+  const dispatch = useDispatch();
+
+  const { user } = useSelector(selectAuth);
+  const { productTypes } = useSelector(selectProductType);
+
+  useEffect(() => {
+    if (productTypes.length === 0) {
+      dispatch(getProductTypesAsync());
+    }
+
+    if (!user) {
+      dispatch(getMeAsync());
+    }
+  }, [dispatch, productTypes, user]);
+
+  const navData = getConfigNavMain(productTypes);
 
   return (
     <LayoutSection

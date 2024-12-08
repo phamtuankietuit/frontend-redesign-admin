@@ -11,7 +11,10 @@ import { uploadClasses } from './classes';
 import { UploadPlaceholder } from './components/placeholder';
 import { RejectionFiles } from './components/rejection-files';
 import { MultiFilePreview } from './components/preview-multi-file';
-import { DeleteButton, SingleFilePreview } from './components/preview-single-file';
+import {
+  DeleteButton,
+  SingleFilePreview,
+} from './components/preview-single-file';
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +33,13 @@ export function Upload({
   multiple = false,
   ...other
 }) {
-  const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    isDragReject,
+    fileRejections,
+  } = useDropzone({
     multiple,
     disabled,
     ...other,
@@ -46,13 +55,23 @@ export function Upload({
 
   const renderMultiPreview = hasFiles && (
     <>
-      <MultiFilePreview files={value} thumbnail={thumbnail} onRemove={onRemove} sx={{ my: 3 }} />
+      <MultiFilePreview
+        files={value}
+        thumbnail={thumbnail}
+        onRemove={onRemove}
+        sx={{ my: 3 }}
+      />
 
       {(onRemoveAll || onUpload) && (
         <Box gap={1.5} display="flex" justifyContent="flex-end">
           {onRemoveAll && (
-            <Button color="inherit" variant="outlined" size="small" onClick={onRemoveAll}>
-              Remove all
+            <Button
+              color="inherit"
+              variant="outlined"
+              size="small"
+              onClick={onRemoveAll}
+            >
+              Xóa tất cả
             </Button>
           )}
 
@@ -63,7 +82,7 @@ export function Upload({
               onClick={onUpload}
               startIcon={<Iconify icon="eva:cloud-upload-fill" />}
             >
-              Upload
+              Tải lên
             </Button>
           )}
         </Box>
@@ -85,16 +104,20 @@ export function Upload({
           cursor: 'pointer',
           overflow: 'hidden',
           position: 'relative',
-          bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
-          border: (theme) => `1px dashed ${varAlpha(theme.vars.palette.grey['500Channel'], 0.2)}`,
-          transition: (theme) => theme.transitions.create(['opacity', 'padding']),
+          bgcolor: (theme) =>
+            varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+          border: (theme) =>
+            `1px dashed ${varAlpha(theme.vars.palette.grey['500Channel'], 0.2)}`,
+          transition: (theme) =>
+            theme.transitions.create(['opacity', 'padding']),
           '&:hover': { opacity: 0.72 },
           ...(isDragActive && { opacity: 0.72 }),
           ...(disabled && { opacity: 0.48, pointerEvents: 'none' }),
           ...(hasError && {
             color: 'error.main',
             borderColor: 'error.main',
-            bgcolor: (theme) => varAlpha(theme.vars.palette.error.mainChannel, 0.08),
+            bgcolor: (theme) =>
+              varAlpha(theme.vars.palette.error.mainChannel, 0.08),
           }),
           ...(hasFile && { padding: '28% 0' }),
         }}
