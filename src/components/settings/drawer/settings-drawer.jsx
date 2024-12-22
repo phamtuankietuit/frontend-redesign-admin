@@ -44,12 +44,12 @@ export function SettingsDrawer({
   const renderHead = (
     <Box display="flex" alignItems="center" sx={{ py: 2, pr: 1, pl: 2.5 }}>
       <Typography variant="h6" sx={{ flexGrow: 1 }}>
-        Settings
+        Cài đặt
       </Typography>
 
       <FullScreenButton />
 
-      {/* <Tooltip title="Reset">
+      <Tooltip title="Reset">
         <IconButton
           onClick={() => {
             settings.onReset();
@@ -60,9 +60,9 @@ export function SettingsDrawer({
             <Iconify icon="solar:restart-bold" />
           </Badge>
         </IconButton>
-      </Tooltip> */}
+      </Tooltip>
 
-      <Tooltip title="Close">
+      <Tooltip title="Đóng">
         <IconButton onClick={settings.onCloseDrawer}>
           <Iconify icon="mingcute:close-line" />
         </IconButton>
@@ -76,7 +76,10 @@ export function SettingsDrawer({
       icon="moon"
       selected={settings.colorScheme === 'dark'}
       onClick={() => {
-        settings.onUpdateField('colorScheme', mode === 'light' ? 'dark' : 'light');
+        settings.onUpdateField(
+          'colorScheme',
+          mode === 'light' ? 'dark' : 'light',
+        );
         setMode(mode === 'light' ? 'dark' : 'light');
       }}
     />
@@ -88,7 +91,10 @@ export function SettingsDrawer({
       icon="contrast"
       selected={settings.contrast === 'hight'}
       onClick={() =>
-        settings.onUpdateField('contrast', settings.contrast === 'default' ? 'hight' : 'default')
+        settings.onUpdateField(
+          'contrast',
+          settings.contrast === 'default' ? 'hight' : 'default',
+        )
       }
     />
   );
@@ -99,7 +105,10 @@ export function SettingsDrawer({
       icon="align-right"
       selected={settings.direction === 'rtl'}
       onClick={() =>
-        settings.onUpdateField('direction', settings.direction === 'ltr' ? 'rtl' : 'ltr')
+        settings.onUpdateField(
+          'direction',
+          settings.direction === 'ltr' ? 'rtl' : 'ltr',
+        )
       }
     />
   );
@@ -110,14 +119,18 @@ export function SettingsDrawer({
       label="Compact"
       icon="autofit-width"
       selected={settings.compactLayout}
-      onClick={() => settings.onUpdateField('compactLayout', !settings.compactLayout)}
+      onClick={() =>
+        settings.onUpdateField('compactLayout', !settings.compactLayout)
+      }
     />
   );
 
   const renderPresets = (
     <PresetsOptions
       value={settings.primaryColor}
-      onClickOption={(newValue) => settings.onUpdateField('primaryColor', newValue)}
+      onClickOption={(newValue) =>
+        settings.onUpdateField('primaryColor', newValue)
+      }
       options={[
         { name: 'default', value: COLORS.primary.main },
         { name: 'cyan', value: PRIMARY_COLOR.cyan.main },
@@ -151,8 +164,15 @@ export function SettingsDrawer({
   const renderFont = (
     <FontOptions
       value={settings.fontFamily}
-      onClickOption={(newValue) => settings.onUpdateField('fontFamily', newValue)}
-      options={[defaultFont, 'Inter Variable', 'DM Sans Variable', 'Nunito Sans Variable']}
+      onClickOption={(newValue) =>
+        settings.onUpdateField('fontFamily', newValue)
+      }
+      options={[
+        defaultFont,
+        'Inter Variable',
+        'DM Sans Variable',
+        'Nunito Sans Variable',
+      ]}
     />
   );
 

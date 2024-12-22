@@ -1,58 +1,30 @@
-import { useRef, useMemo, useState, useCallback } from 'react';
+import { useRef, useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Stack from '@mui/material/Stack';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
-
-import { today } from 'src/utils/format-time';
-
-import { sendMessage, createConversation } from 'src/actions/chat';
+import { selectAuth } from 'src/state/auth/auth.slice';
+import { selectChat } from 'src/state/chat/chat.slice';
+import { sendMessageAsync } from 'src/services/chat/chat.service';
 
 import { Iconify } from 'src/components/iconify';
 
-import { useMockedUser } from 'src/auth/hooks';
-
-import { initialConversation } from './utils/initial-conversation';
-
 // ----------------------------------------------------------------------
 
-export function CustomerChatMessageInput({
-  disabled,
-  recipients,
-  onAddRecipients,
-  selectedConversationId,
-}) {
-  const router = useRouter();
+export function CustomerChatMessageInput({ disabled }) {
+  const dispatch = useDispatch();
 
-  const { user } = useMockedUser();
+  const { user } = useSelector(selectAuth);
+
+  const { customer } = useSelector(selectChat);
+
+  const { conversation } = customer;
 
   const fileRef = useRef(null);
 
   const [message, setMessage] = useState('');
-
-  const myContact = useMemo(
-    () => ({
-      id: `${user?.id}`,
-      role: `${user?.role}`,
-      email: `${user?.email}`,
-      address: `${user?.address}`,
-      name: `${user?.displayName}`,
-      lastActivity: today(),
-      avatarUrl: `${user?.photoURL}`,
-      phoneNumber: `${user?.phoneNumber}`,
-      status: 'online',
-    }),
-    [user],
-  );
-
-  const { messageData, conversationData } = initialConversation({
-    message,
-    recipients,
-    me: myContact,
-  });
 
   const handleAttach = useCallback(() => {
     if (fileRef.current) {
@@ -69,30 +41,21 @@ export function CustomerChatMessageInput({
       if (event.key !== 'Enter' || !message) return;
 
       try {
-        if (selectedConversationId) {
-          // If the conversation already exists
-          await sendMessage(selectedConversationId, messageData);
-        } else {
-          // If the conversation does not exist
-          const res = await createConversation(conversationData);
-          router.push(`${paths.dashboard.chat}?id=${res.conversation.id}`);
-
-          onAddRecipients([]);
-        }
+        dispatch(
+          sendMessageAsync({
+            body: message,
+            senderId: user.id.toString(),
+            conversationId: conversation._id,
+          }),
+        );
       } catch (error) {
         console.error(error);
       } finally {
         setMessage('');
       }
     },
-    [
-      conversationData,
-      message,
-      messageData,
-      onAddRecipients,
-      router,
-      selectedConversationId,
-    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [message, conversation._id, dispatch],
   );
 
   return (
@@ -103,7 +66,7 @@ export function CustomerChatMessageInput({
         value={message}
         onKeyUp={handleSendMessage}
         onChange={handleChangeMessage}
-        placeholder="Type a message"
+        placeholder="Nhập tin nhắn"
         disabled={disabled}
         startAdornment={
           <IconButton>

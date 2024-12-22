@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
+import { Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -17,7 +18,7 @@ import { RouterLink } from 'src/routes/components';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { selectAuth } from 'src/state/auth/auth.slice';
-import { getAccessToken } from 'src/services/token.service';
+import { getUserRole, getAccessToken } from 'src/services/token.service';
 import { getMeAsync, signInAsync } from 'src/services/auth/auth.service';
 
 import { toast } from 'src/components/snackbar';
@@ -71,9 +72,9 @@ export function CenteredSignInView({ isAdmin = false }) {
         })
         .then((action) => {
           if (getMeAsync.fulfilled.match(action)) {
-            if (isAdmin) {
+            if (isAdmin && getUserRole() === 'Admin') {
               router.replace(paths.dashboard.general.analytics);
-            } else {
+            } else if (!isAdmin && getUserRole() === 'Customer') {
               router.replace('/');
             }
           }
@@ -86,19 +87,21 @@ export function CenteredSignInView({ isAdmin = false }) {
 
   useEffect(() => {
     if (user) {
-      router.replace('/');
+      if (isAdmin && getUserRole() === 'Admin') {
+        router.replace(paths.dashboard.general.analytics);
+      }
+
+      if (!isAdmin && getUserRole() === 'Customer') {
+        router.replace('/');
+      }
+
       return;
     }
 
     if (getAccessToken()) {
-      dispatch(getMeAsync()).then((action) => {
-        if (getMeAsync.fulfilled.match(action)) {
-          router.replace('/');
-        }
-      });
+      dispatch(getMeAsync());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, router, user, isAdmin]);
 
   const renderLogo = <AnimateLogo2 sx={{ mb: 3, mx: 'auto' }} />;
 
@@ -155,6 +158,17 @@ export function CenteredSignInView({ isAdmin = false }) {
       >
         Đăng nhập
       </LoadingButton>
+
+      {!isAdmin && (
+        <Button
+          component={RouterLink}
+          href={paths.dashboard.signIn}
+          color="inherit"
+          endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
+        >
+          Đăng nhập vào hệ thống quản lý
+        </Button>
+      )}
     </Box>
   );
 

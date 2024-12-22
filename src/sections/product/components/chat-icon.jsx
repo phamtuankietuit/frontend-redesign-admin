@@ -1,12 +1,17 @@
-import { useState, useCallback } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
-import { Badge, Grow } from '@mui/material';
-
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
+import { Grow, Badge } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+
+import { selectAuth } from 'src/state/auth/auth.slice';
+import { getMeAsync } from 'src/services/auth/auth.service';
+import {
+  getConversationsAsync,
+  getConversationByIdAsync,
+} from 'src/services/chat/chat.service';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -20,20 +25,33 @@ import { CustomerChatMessageInput } from 'src/sections/chat/customer-chat-messag
 export function ChatIcon() {
   const isOpen = useBoolean(false);
 
-  const [recipients, setRecipients] = useState([]);
-
-  const handleAddRecipients = useCallback((selected) => {
-    setRecipients(selected);
-  }, []);
-
   const handleClose = () => {
     isOpen.onFalse();
-    setRecipients([]);
   };
 
   const handleOpen = () => {
     isOpen.onTrue();
   };
+
+  const dispatch = useDispatch();
+
+  const { user } = useSelector(selectAuth);
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(getMeAsync());
+      return;
+    }
+
+    dispatch(getConversationsAsync(user.id)).then((action) => {
+      if (
+        getConversationsAsync.fulfilled.match(action) &&
+        action.payload.length > 0
+      ) {
+        dispatch(getConversationByIdAsync(action.payload[0].conversation._id));
+      }
+    });
+  }, [user, dispatch]);
 
   return (
     <Box>
@@ -86,15 +104,7 @@ export function ChatIcon() {
                 <>
                   <CustomerChatMessageList />
 
-                  <CustomerChatMessageInput
-                    recipients={recipients}
-                    onAddRecipients={handleAddRecipients}
-                    selectedConversationId="e99f09a7-dd88-49d5-b1c8-1daf80c2d7b2"
-                    disabled={
-                      !recipients.length &&
-                      !'e99f09a7-dd88-49d5-b1c8-1daf80c2d7b2'
-                    }
-                  />
+                  <CustomerChatMessageInput />
                 </>
               ),
             }}

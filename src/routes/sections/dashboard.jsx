@@ -6,7 +6,7 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 
-import { AuthGuard } from 'src/auth/guard';
+import { AuthGuard, RoleBasedGuard } from 'src/auth/guard';
 
 // ----------------------------------------------------------------------
 
@@ -94,7 +94,11 @@ export const dashboardRoutes = [
     element: CONFIG.auth.skip ? (
       <>{layoutContent}</>
     ) : (
-      <AuthGuard>{layoutContent}</AuthGuard>
+      <AuthGuard>
+        <RoleBasedGuard acceptRoles={['Admin']} hasContent>
+          {layoutContent}
+        </RoleBasedGuard>
+      </AuthGuard>
     ),
     children: [
       { element: <IndexPage />, index: true },

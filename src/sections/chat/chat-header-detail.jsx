@@ -1,13 +1,12 @@
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useEffect, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
+import { IconButton } from '@mui/material';
 import ListItemText from '@mui/material/ListItemText';
 
-import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { fToNow } from 'src/utils/format-time';
@@ -20,14 +19,12 @@ import { ChatHeaderSkeleton } from './chat-skeleton';
 
 // ----------------------------------------------------------------------
 
-export function ChatHeaderDetail({ collapseNav }) {
+export function ChatHeaderDetail({ collapseNav, loading }) {
   const lgUp = useResponsive('up', 'lg');
 
   const { admin } = useSelector(selectChat);
 
   const { contact } = admin;
-
-  const { avatarUrl, name, status, lastActivity } = contact;
 
   const { collapseDesktop, onCollapseDesktop, onOpenMobile } = collapseNav;
 
@@ -43,18 +40,22 @@ export function ChatHeaderDetail({ collapseNav }) {
   const renderSingle = (
     <Stack direction="row" alignItems="center" spacing={2}>
       <Badge
-        variant={status}
+        variant={contact?.status}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Avatar src={avatarUrl} alt={name} />
+        <Avatar src={contact?.avatarUrl} alt={contact?.name} />
       </Badge>
 
       <ListItemText
-        primary={name}
-        secondary={status === 'offline' ? fToNow(lastActivity) : status}
+        primary={contact?.name}
+        secondary={
+          contact?.status === 'offline'
+            ? fToNow(contact?.lastActivity)
+            : contact?.status
+        }
         secondaryTypographyProps={{
           component: 'span',
-          ...(status !== 'offline' && {
+          ...(contact?.status !== 'offline' && {
             textTransform: 'capitalize',
           }),
         }}
@@ -62,5 +63,25 @@ export function ChatHeaderDetail({ collapseNav }) {
     </Stack>
   );
 
-  return <>{renderSingle}</>;
+  if (loading || !contact) {
+    return <ChatHeaderSkeleton />;
+  }
+
+  return (
+    <>
+      {renderSingle}
+
+      <Stack direction="row" flexGrow={1} justifyContent="flex-end">
+        <IconButton onClick={handleToggleNav}>
+          <Iconify
+            icon={
+              !collapseDesktop
+                ? 'ri:sidebar-unfold-fill'
+                : 'ri:sidebar-fold-fill'
+            }
+          />
+        </IconButton>
+      </Stack>
+    </>
+  );
 }

@@ -45,8 +45,6 @@ export function ChatNav({
 
   const mdUp = useResponsive('up', 'md');
 
-  const { user } = useMockedUser();
-
   const {
     openMobile,
     onOpenMobile,
@@ -60,21 +58,6 @@ export function ChatNav({
     query: '',
     results: [],
   });
-
-  const myContact = useMemo(
-    () => ({
-      id: `${user?.id}`,
-      role: `${user?.role}`,
-      email: `${user?.email}`,
-      address: `${user?.address}`,
-      name: `${user?.displayName}`,
-      lastActivity: today(),
-      avatarUrl: `${user?.photoURL}`,
-      phoneNumber: `${user?.phoneNumber}`,
-      status: 'online',
-    }),
-    [user],
-  );
 
   useEffect(() => {
     if (!mdUp) {

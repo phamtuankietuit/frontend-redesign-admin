@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
@@ -10,7 +11,9 @@ import { useSetState } from 'src/hooks/use-set-state';
 
 import { orderBy } from 'src/utils/helper';
 
+import { selectAuth } from 'src/state/auth/auth.slice';
 import { useSearchProducts } from 'src/actions/product';
+import { getUserRole } from 'src/services/token.service';
 import {
   PRODUCT_SORT_OPTIONS,
   PRODUCT_COLOR_OPTIONS,
@@ -25,14 +28,16 @@ import { ProductList } from '../product-list';
 import { ProductSort } from '../product-sort';
 import { ProductSearch } from '../product-search';
 import { CartIcon } from '../components/cart-icon';
+import { ChatIcon } from '../components/chat-icon';
 import { ProductFilters } from '../product-filters';
 import { useCheckoutContext } from '../../checkout/context';
 import { ProductFiltersResult } from '../product-filters-result';
-import { ChatIcon } from '../components/chat-icon';
 
 // ----------------------------------------------------------------------
 
 export function ProductShopView({ products, loading }) {
+  const { user } = useSelector(selectAuth);
+
   const checkout = useCheckoutContext();
 
   const openFilters = useBoolean();
@@ -128,8 +133,10 @@ export function ProductShopView({ products, loading }) {
 
   return (
     <Container sx={{ mb: 15 }}>
-      {/* <CartIcon totalItems={checkout.totalItems} /> */}
-      <ChatIcon totalItems={checkout.totalItems} />
+      <CartIcon totalItems={checkout.totalItems} />
+      {user && getUserRole() === 'Customer' && (
+        <ChatIcon totalItems={checkout.totalItems} />
+      )}
 
       <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
         Sản phẩm

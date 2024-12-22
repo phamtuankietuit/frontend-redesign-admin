@@ -8,7 +8,6 @@ import { SplashScreen } from 'src/components/loading-screen';
 import { myAuthRoutes } from './my-auth';
 import { myMainRoutes } from './my-main';
 import { dashboardRoutes } from './dashboard';
-import { mainRoutes } from './main';
 
 // ----------------------------------------------------------------------
 

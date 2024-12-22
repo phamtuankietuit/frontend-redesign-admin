@@ -1,18 +1,20 @@
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useState, useEffect, useCallback } from 'react';
 
-import { paths } from 'src/routes/paths';
-import { useRouter, useSearchParams } from 'src/routes/hooks';
+import { useSearchParams } from 'src/routes/hooks';
 
 import { CONFIG } from 'src/config-global';
-import { useGetConversation } from 'src/actions/chat';
 import { selectAuth } from 'src/state/auth/auth.slice';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { selectChat, setAdminContacts } from 'src/state/chat/chat.slice';
 import {
   getAllUsers,
   getConversationsAsync,
 } from 'src/services/chat/chat.service';
+import {
+  selectChat,
+  setAdminContact,
+  setAdminContacts,
+} from 'src/state/chat/chat.slice';
 
 import { EmptyContent } from 'src/components/empty-content';
 
@@ -27,29 +29,21 @@ import { useCollapseNav } from '../hooks/use-collapse-nav';
 // ----------------------------------------------------------------------
 
 export function ChatView() {
-  const router = useRouter();
-
   const dispatch = useDispatch();
 
   const { user } = useSelector(selectAuth);
 
   const { admin } = useSelector(selectChat);
 
-  const { contacts } = admin;
+  const { contacts, contact } = admin;
 
   const searchParams = useSearchParams();
 
   const selectedConversationId = searchParams.get('id') || '';
 
-  const [recipients, setRecipients] = useState([]);
-
   const roomNav = useCollapseNav();
 
   const conversationsNav = useCollapseNav();
-
-  const handleAddRecipients = useCallback((selected) => {
-    setRecipients(selected);
-  }, []);
 
   useEffect(() => {
     dispatch(getConversationsAsync(user.id))
@@ -65,10 +59,10 @@ export function ChatView() {
       .then(({ customerIds, data }) => {
         dispatch(getAllUsers()).then((response) => {
           const customers = response.payload.items.filter((userData) =>
-            customerIds.map(Number).includes(userData.id),
+            customerIds?.map(Number).includes(userData.id),
           );
 
-          const newContacts = customers.map((customer) => {
+          const newContacts = customers?.map((customer) => {
             const index = data.findIndex((item) =>
               item.conversation.participants.includes(customer.id.toString()),
             );
@@ -79,29 +73,38 @@ export function ChatView() {
               email: customer.email,
               name: customer.fullName,
               lastActivity: new Date().toISOString(),
-              address: '235 Nguyễn Văn Cừ, Quận 5, TP.HCM',
               avatarUrl:
                 customer.imageUrl ??
                 'https://api-prod-minimal-v610.pages.dev/assets/images/avatar/avatar-1.webp',
               phoneNumber: customer.phoneNumber,
-              status: 'online',
+              status: '',
               conversation: data[index].conversation,
               lastMessage: data[index].lastMessage,
             };
           });
 
-          dispatch(setAdminContacts(newContacts));
+          newContacts.sort((a, b) => {
+            const dateA = a.lastMessage
+              ? new Date(a.lastMessage.createdAt)
+              : new Date(0);
+            const dateB = b.lastMessage
+              ? new Date(b.lastMessage.createdAt)
+              : new Date(0);
+            return dateB - dateA;
+          });
+
+          const newContact = newContacts.find(
+            (item) => item.conversation._id === selectedConversationId,
+          );
+
+          if (newContact) {
+            dispatch(setAdminContact(newContact));
+          }
+
+          dispatch(setAdminContacts(newContacts ?? []));
         });
       });
-
-    // dispatch(
-    //   sendMessageAsync({
-    //     conversationId: '674343258bb207ba7aebcde8',
-    //     senderId: '1',
-    //     body: 'Hello 2',
-    //   }),
-    // );
-  }, [user, dispatch]);
+  }, [user, dispatch, selectedConversationId]);
 
   return (
     <DashboardContent
@@ -119,7 +122,7 @@ export function ChatView() {
         }}
         slots={{
           header: selectedConversationId && (
-            <ChatHeaderDetail collapseNav={roomNav} />
+            <ChatHeaderDetail collapseNav={roomNav} loading={!contact} />
           ),
           nav: (
             <ChatNav
@@ -142,16 +145,13 @@ export function ChatView() {
               )}
 
               <ChatMessageInput
-                recipients={recipients}
-                onAddRecipients={handleAddRecipients}
                 selectedConversationId={selectedConversationId}
-                disabled={!recipients.length && !selectedConversationId}
+                disabled={!selectedConversationId}
               />
             </>
           ),
           details: selectedConversationId && (
-            <></>
-            // <ChatRoom collapseNav={roomNav} loading messages={[]} />
+            <ChatRoom collapseNav={roomNav} messages={[]} />
           ),
         }}
       />

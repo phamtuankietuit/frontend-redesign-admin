@@ -13,6 +13,7 @@ import { useDebounce } from 'src/hooks/use-debounce';
 import { _notifications } from 'src/_mock';
 import { selectAuth } from 'src/state/auth/auth.slice';
 import { useSearchProducts } from 'src/actions/product';
+import { getUserRole } from 'src/services/token.service';
 import { getMeAsync } from 'src/services/auth/auth.service';
 import { selectProductType } from 'src/state/product-type/product-type.slice';
 import { getProductTypesAsync } from 'src/services/product-type/product-type.service';
@@ -49,15 +50,19 @@ export function MainLayout({ sx, data, children, header }) {
 
   // SearchHome
   const [searchQuery, setSearchQuery] = useState('');
+
   const handleSearch = useCallback((inputValue) => {
     setSearchQuery(inputValue);
   }, []);
+
   const debouncedQuery = useDebounce(searchQuery);
+
   const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
 
   const dispatch = useDispatch();
 
   const { user } = useSelector(selectAuth);
+
   const { productTypes } = useSelector(selectProductType);
 
   useEffect(() => {
@@ -141,10 +146,14 @@ export function MainLayout({ sx, data, children, header }) {
                 alignItems="center"
                 gap={{ xs: 0, sm: 0.75, md: 1.25 }}
               >
-                {user && <NotificationsDrawer data={_notifications} />}
+                {user && getUserRole() === 'Customer' && (
+                  <NotificationsDrawer data={_notifications} />
+                )}
                 <SettingsButton />
-                {!user && <SignInButton />}
-                {user && <AccountDrawer data={_account} />}
+                {(!user || getUserRole() === 'Admin') && <SignInButton />}
+                {user && getUserRole() === 'Customer' && (
+                  <AccountDrawer data={_account} />
+                )}
               </Box>
             ),
           }}

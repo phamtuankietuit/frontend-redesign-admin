@@ -4,8 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import Stack from '@mui/material/Stack';
 import LinearProgress from '@mui/material/LinearProgress';
 
-import { useBoolean } from 'src/hooks/use-boolean';
-
 import { selectChat } from 'src/state/chat/chat.slice';
 import { getConversationByIdAsync } from 'src/services/chat/chat.service';
 
@@ -20,11 +18,12 @@ import { useMessagesScroll } from './hooks/use-messages-scroll';
 export function ChatMessageList({ conversationId }) {
   const { admin } = useSelector(selectChat);
 
-  const { messages, conversation } = admin;
+  const {
+    messages,
+    chatMessageList: { loading },
+  } = admin;
 
   const { messagesEndRef } = useMessagesScroll(messages);
-
-  const loading = useBoolean(true);
 
   const slides = messages
     .filter((message) => message.contentType === 'image')
@@ -35,30 +34,26 @@ export function ChatMessageList({ conversationId }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getConversationByIdAsync(conversationId)).then((action) => {
-      if (getConversationByIdAsync.fulfilled.match(action)) {
-        loading.onFalse();
-      }
-    });
+    dispatch(getConversationByIdAsync(conversationId));
   }, [dispatch, conversationId, loading]);
 
-  // if (loading) {
-  //   return (
-  //     <Stack sx={{ flex: '1 1 auto', position: 'relative' }}>
-  //       <LinearProgress
-  //         color="inherit"
-  //         sx={{
-  //           top: 0,
-  //           left: 0,
-  //           width: 1,
-  //           height: 2,
-  //           borderRadius: 0,
-  //           position: 'absolute',
-  //         }}
-  //       />
-  //     </Stack>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <Stack sx={{ flex: '1 1 auto', position: 'relative' }}>
+        <LinearProgress
+          color="inherit"
+          sx={{
+            top: 0,
+            left: 0,
+            width: 1,
+            height: 2,
+            borderRadius: 0,
+            position: 'absolute',
+          }}
+        />
+      </Stack>
+    );
+  }
 
   return (
     <>

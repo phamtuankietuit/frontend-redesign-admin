@@ -13,27 +13,34 @@ import { selectAuth } from 'src/state/auth/auth.slice';
 // ----------------------------------------------------------------------
 
 export function ChatMessageItem({ message, onOpenLightbox }) {
-  const { admin } = useSelector(selectChat);
+  const { body, senderId, createdAt, hasImage } = message;
+
+  const {
+    admin: { contact },
+  } = useSelector(selectChat);
+
+  const { id: contactId, name: contactFullName } = contact;
+
   const { user } = useSelector(selectAuth);
 
-  const { contact } = admin;
-  console.log('🚀 ~ ChatMessageItem ~ contact:', contact);
+  const { fullName: userFullName } = user;
 
-  // const { firstName, avatarUrl } = senderDetails;
+  const renderInfo = (
+    <Typography
+      noWrap
+      variant="caption"
+      sx={{
+        mb: 1,
+        color: 'text.disabled',
+        ...(contactId.toString() !== senderId && { mr: 'auto' }),
+      }}
+    >
+      {contactId.toString() === senderId && `${contactFullName}, `}
+      {contactId.toString() !== senderId && `${userFullName}, `}
 
-  const { body, createdAt } = message;
-
-  // const renderInfo = (
-  //   <Typography
-  //     noWrap
-  //     variant="caption"
-  //     sx={{ mb: 1, color: 'text.disabled', ...(!me && { mr: 'auto' }) }}
-  //   >
-  //     {!me && `${firstName}, `}
-
-  //     {fToNow(createdAt)}
-  //   </Typography>
-  // );
+      {fToNow(createdAt)}
+    </Typography>
+  );
 
   const renderBody = (
     <Stack
@@ -44,11 +51,32 @@ export function ChatMessageItem({ message, onOpenLightbox }) {
         borderRadius: 1,
         typography: 'body2',
         bgcolor: 'background.neutral',
-        // ...(me && { color: 'grey.800', bgcolor: 'primary.lighter' }),
-        // ...(hasImage && { p: 0, bgcolor: 'transparent' }),
+        ...(contactId.toString() !== senderId && {
+          color: 'grey.800',
+          bgcolor: 'primary.lighter',
+        }),
+        ...(hasImage && { p: 0, bgcolor: 'transparent' }),
       }}
     >
-      {body}
+      {hasImage ? (
+        <Box
+          component="img"
+          alt="attachment"
+          src={body}
+          onClick={() => onOpenLightbox(body)}
+          sx={{
+            width: 400,
+            height: 'auto',
+            borderRadius: 1.5,
+            cursor: 'pointer',
+            objectFit: 'cover',
+            aspectRatio: '16/11',
+            '&:hover': { opacity: 0.9 },
+          }}
+        />
+      ) : (
+        body
+      )}
     </Stack>
   );
 
@@ -57,17 +85,25 @@ export function ChatMessageItem({ message, onOpenLightbox }) {
   }
 
   return (
-    <Stack direction="row" justifyContent="unset" sx={{ mb: 5 }}>
-      {user.id.toString !== message.senderId && (
+    <Stack
+      direction="row"
+      justifyContent={contactId.toString() !== senderId ? 'flex-end' : 'unset'}
+      sx={{ mb: 5 }}
+    >
+      {contactId.toString() === senderId && (
         <Avatar
-          alt={contact.name}
-          src={contact.avatarUrl}
+          alt={contact?.name}
+          src={contact?.avatarUrl}
           sx={{ width: 32, height: 32, mr: 2 }}
         />
       )}
 
-      <Stack alignItems="flex-start">
-        {/* {renderInfo} */}
+      <Stack
+        alignItems={
+          contactId.toString() !== senderId ? 'flex-end' : 'flex-start'
+        }
+      >
+        {renderInfo}
 
         <Stack
           direction="row"

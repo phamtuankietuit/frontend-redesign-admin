@@ -38,6 +38,19 @@ export const getSession = () => {
     return null;
 };
 
+export const getUserRole = () => {
+    try {
+        const session = localStorage.getItem(sessionKey);
+        if (session === null) {
+            return null;
+        }
+        return JSON.parse(session).basicUserInfo.roleName;
+    } catch (error) {
+        console.error('Does not have role!');
+        return null;
+    }
+};
+
 export const deleteItem = (key) => {
     localStorage.removeItem(key);
 };

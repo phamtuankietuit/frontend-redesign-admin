@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-import { CHAT_GET, CHAT_POST } from "../chat-axios";
 import { GET } from "../axios";
+import { CHAT_GET, CHAT_POST } from "../chat-axios";
 
 export const sendMessageAsync = createAsyncThunk(
   'chat/sendMessageAsync',

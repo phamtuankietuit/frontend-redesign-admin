@@ -23,7 +23,7 @@ export function FullScreenButton() {
   }, []);
 
   return (
-    <Tooltip title={fullscreen ? 'Exit' : 'Full Screen'}>
+    <Tooltip title={fullscreen ? 'Thoát' : 'Toàn màn hình'}>
       <IconButton
         onClick={onToggleFullScreen}
         sx={{

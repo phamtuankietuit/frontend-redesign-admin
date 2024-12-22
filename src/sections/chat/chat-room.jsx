@@ -17,8 +17,6 @@ const NAV_DRAWER_WIDTH = 320;
 export function ChatRoom({ collapseNav, participants, messages, loading }) {
   const { collapseDesktop, openMobile, onCloseMobile } = collapseNav;
 
-  const isGroup = participants.length > 1;
-
   const attachments = messages.map((msg) => msg.attachments).flat(1) || [];
 
   const renderContent = loading ? (
@@ -26,13 +24,7 @@ export function ChatRoom({ collapseNav, participants, messages, loading }) {
   ) : (
     <Scrollbar>
       <div>
-        {isGroup ? (
-          <ChatRoomGroup participants={participants} />
-        ) : (
-          <ChatRoomSingle participant={participants[0]} />
-        )}
-
-        {/* <ChatRoomAttachments attachments={attachments} /> */}
+        <ChatRoomSingle />
       </div>
     </Scrollbar>
   );

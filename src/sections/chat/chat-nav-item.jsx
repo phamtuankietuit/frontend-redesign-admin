@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -10,13 +10,13 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
+import { useRouter, useSearchParams } from 'src/routes/hooks';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { fToNow } from 'src/utils/format-time';
 
-import { setAdminContact } from 'src/state/chat/chat.slice';
+import { selectChat, setAdminContact } from 'src/state/chat/chat.slice';
 
 // ----------------------------------------------------------------------
 
@@ -25,23 +25,52 @@ export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
 
   const router = useRouter();
 
-  const { name, avatarUrl, status, lastMessage, conversation } = contact;
+  const searchParams = useSearchParams();
+
+  const selectedConversationId = searchParams.get('id') || '';
+
+  const {
+    name,
+    avatarUrl,
+    status,
+    conversation,
+    lastMessage: lastMsgOnContract,
+  } = contact;
+
+  const {
+    admin: { lastMessage },
+  } = useSelector(selectChat);
+
+  const currentLastMessage =
+    selectedConversationId === conversation._id
+      ? lastMessage
+      : lastMsgOnContract;
 
   const dispatch = useDispatch();
 
   const handleClickConversation = useCallback(async () => {
     try {
-      if (!mdUp) {
-        onCloseMobile();
+      if (selectedConversationId !== conversation._id) {
+        if (!mdUp) {
+          onCloseMobile();
+        }
+
+        dispatch(setAdminContact(contact));
+
+        router.push(`${paths.dashboard.chat}?id=${conversation._id}`);
       }
-
-      dispatch(setAdminContact(contact));
-
-      router.push(`${paths.dashboard.chat}?id=${conversation._id}`);
     } catch (error) {
       console.error(error);
     }
-  }, [conversation._id, mdUp, onCloseMobile, router, contact, dispatch]);
+  }, [
+    conversation._id,
+    mdUp,
+    onCloseMobile,
+    router,
+    contact,
+    dispatch,
+    selectedConversationId,
+  ]);
 
   const renderSingle = (
     <Badge
@@ -67,7 +96,7 @@ export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
         <Badge
           color="error"
           overlap="circular"
-          badgeContent={collapse ? conversation.unreadCount : 0}
+          badgeContent={collapse ? conversation.adminUnreadCount : 0}
         >
           {renderSingle}
         </Badge>
@@ -81,12 +110,12 @@ export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
                 component: 'span',
                 variant: 'subtitle2',
               }}
-              secondary={lastMessage?.body}
+              secondary={currentLastMessage?.body}
               secondaryTypographyProps={{
                 noWrap: true,
                 component: 'span',
-                variant: conversation.unreadCount ? 'subtitle2' : 'body2',
-                color: conversation.unreadCount
+                variant: conversation.adminUnreadCount ? 'subtitle2' : 'body2',
+                color: conversation.adminUnreadCount
                   ? 'text.primary'
                   : 'text.secondary',
               }}
@@ -99,10 +128,10 @@ export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
                 component="span"
                 sx={{ mb: 1.5, fontSize: 12, color: 'text.disabled' }}
               >
-                {fToNow(lastMessage?.updatedAt)}
+                {fToNow(currentLastMessage?.createdAt)}
               </Typography>
 
-              {!!conversation.unreadCount && (
+              {!!conversation.adminUnreadCount && (
                 <Box
                   sx={{
                     width: 8,
