@@ -114,10 +114,8 @@ export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
               secondaryTypographyProps={{
                 noWrap: true,
                 component: 'span',
-                variant: conversation.adminUnreadCount ? 'subtitle2' : 'body2',
-                color: conversation.adminUnreadCount
-                  ? 'text.primary'
-                  : 'text.secondary',
+                variant: 'body2',
+                color: 'text.secondary',
               }}
             />
 
@@ -131,7 +129,7 @@ export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
                 {fToNow(currentLastMessage?.createdAt)}
               </Typography>
 
-              {!!conversation.adminUnreadCount && (
+              {/* {!!conversation.adminUnreadCount && (
                 <Box
                   sx={{
                     width: 8,
@@ -140,7 +138,7 @@ export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
                     borderRadius: '50%',
                   }}
                 />
-              )}
+              )} */}
             </Stack>
           </>
         )}

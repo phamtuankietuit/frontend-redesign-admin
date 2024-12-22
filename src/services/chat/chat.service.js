@@ -3,8 +3,17 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { GET } from "../axios";
 import { CHAT_GET, CHAT_POST } from "../chat-axios";
 
-export const sendMessageAsync = createAsyncThunk(
-  'chat/sendMessageAsync',
+export const sendAdminMessageAsync = createAsyncThunk(
+  'chat/sendAdminMessageAsync',
+  async (msg) => {
+    const response = await CHAT_POST(`/messages/addmsg`, msg);
+
+    return response.data;
+  }
+);
+
+export const sendCustomerMessageAsync = createAsyncThunk(
+  'chat/sendCustomerMessageAsync',
   async (msg) => {
     const response = await CHAT_POST(`/messages/addmsg`, msg);
 

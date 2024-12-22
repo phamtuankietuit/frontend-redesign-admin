@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 
 import { selectAuth } from 'src/state/auth/auth.slice';
 import { selectChat } from 'src/state/chat/chat.slice';
-import { sendMessageAsync } from 'src/services/chat/chat.service';
+import { sendCustomerMessageAsync } from 'src/services/chat/chat.service';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -42,7 +42,7 @@ export function CustomerChatMessageInput({ disabled }) {
 
       try {
         dispatch(
-          sendMessageAsync({
+          sendCustomerMessageAsync({
             body: message,
             senderId: user.id.toString(),
             conversationId: conversation._id,

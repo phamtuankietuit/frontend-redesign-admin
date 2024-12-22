@@ -4,10 +4,11 @@ import { socket } from "src/hooks/use-socket";
 
 import {
   getAllUsers,
-  sendMessageAsync,
+  sendAdminMessageAsync,
   getConversationsAsync,
   createConversationAsync,
-  getConversationByIdAsync
+  getConversationByIdAsync,
+  sendCustomerMessageAsync
 } from "src/services/chat/chat.service";
 
 const initialState = {
@@ -26,6 +27,7 @@ const initialState = {
   customer: {
     messages: [],
     conversation: {},
+    hasNewMessage: false,
   }
 };
 
@@ -40,13 +42,17 @@ const chatSlice = createSlice({
       state.admin.contact = action.payload;
       state.admin.lastMessage = action.payload.lastMessage;
     },
+    addAdminMessage: (state, action) => {
+      state.admin.messages.push(action.payload);
+      state.admin.lastMessage = action.payload;
+    },
     addCustomerMessage: (state, action) => {
       state.customer.messages.push(action.payload);
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(sendMessageAsync.fulfilled, (state, action) => {
+      .addCase(sendAdminMessageAsync.fulfilled, (state, action) => {
         state.admin.messages.push(action.payload);
         state.admin.lastMessage = action.payload;
 
@@ -59,6 +65,14 @@ const chatSlice = createSlice({
           state.admin.contacts.unshift(contact);
         }
 
+        const to = state.admin.conversation
+          ?.participants
+          ?.filter(
+            participant => participant !== action.payload.senderId);
+
+        socket.emit('send-msg', { to, msg: action.payload });
+      })
+      .addCase(sendCustomerMessageAsync.fulfilled, (state, action) => {
         state.customer.messages.push(action.payload);
 
         const to = state.customer.conversation
@@ -89,7 +103,7 @@ const chatSlice = createSlice({
   },
 });
 
-export const { setAdminContacts, setAdminContact, addCustomerMessage } = chatSlice.actions;
+export const { setAdminContacts, setAdminContact, addCustomerMessage, addAdminMessage } = chatSlice.actions;
 
 export const selectChat = (state) => state.chat;
 

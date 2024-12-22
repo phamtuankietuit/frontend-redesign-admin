@@ -17,13 +17,13 @@ import { CustomerChatMessageItem } from './customer-chat-message-item';
 // ----------------------------------------------------------------------
 
 export function CustomerChatMessageList() {
-  const dispatch = useDispatch();
-
   const { customer } = useSelector(selectChat);
 
   const { messages, conversation } = customer;
 
   const { messagesEndRef } = useMessagesScroll(messages);
+
+  const dispatch = useDispatch();
 
   const slides = messages
     .filter((message) => message.contentType === 'image')
@@ -65,12 +65,13 @@ export function CustomerChatMessageList() {
   return (
     <>
       <Scrollbar
+        key={conversation._id}
         ref={messagesEndRef}
         sx={{ px: 3, pt: 5, pb: 3, flex: '1 1 auto' }}
       >
-        {messages.map((message) => (
+        {messages.map((message, index) => (
           <CustomerChatMessageItem
-            key={message.id}
+            key={`${message.id}-${index}`}
             message={message}
             onOpenLightbox={() => lightbox.onOpen(message.body)}
           />

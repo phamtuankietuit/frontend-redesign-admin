@@ -75,9 +75,9 @@ export function ChatIcon() {
             '&:hover': { opacity: 0.72 },
           }}
         >
-          <Badge showZero badgeContent={1} color="error" max={99}>
-            <Iconify icon="solar:chat-line-bold" width={24} />
-          </Badge>
+          {/* <Badge showZero badgeContent={1} color="error" max={99}> */}
+          <Iconify icon="solar:chat-line-bold" width={24} />
+          {/* </Badge> */}
         </Box>
       </Grow>
 

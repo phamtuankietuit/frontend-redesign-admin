@@ -6,7 +6,7 @@ import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 
 import { selectAuth } from 'src/state/auth/auth.slice';
-import { sendMessageAsync } from 'src/services/chat/chat.service';
+import { sendAdminMessageAsync } from 'src/services/chat/chat.service';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -37,7 +37,7 @@ export function ChatMessageInput({ disabled, selectedConversationId }) {
 
       try {
         dispatch(
-          sendMessageAsync({
+          sendAdminMessageAsync({
             body: message,
             senderId: user.id.toString(),
             conversationId: selectedConversationId,
