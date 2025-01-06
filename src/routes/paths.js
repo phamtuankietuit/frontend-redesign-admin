@@ -1,7 +1,6 @@
 import { paramCase } from 'src/utils/change-case';
 
 import { _id, _postTitles } from 'src/_mock/assets';
-import { updatePassword } from 'firebase/auth';
 
 // ----------------------------------------------------------------------
 
@@ -13,6 +12,7 @@ const ROOTS = {
   AUTH: '/auth',
   AUTH_DEMO: '/auth-demo',
   DASHBOARD: '/admin',
+  PROFILE: '/customer',
 };
 
 // ----------------------------------------------------------------------
@@ -69,6 +69,11 @@ export const paths = {
       verify: `${ROOTS.AUTH_DEMO}/centered/verify`,
     },
   },
+  // PROFILE
+  profile: {
+    root: ROOTS.PROFILE,
+    order: `${ROOTS.PROFILE}/orders`,
+  },
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
@@ -111,6 +116,10 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/product/${MOCK_ID}/edit`,
       },
     },
+    inventory: {
+      root: `${ROOTS.DASHBOARD}/inventory`,
+      edit: (id) => `${ROOTS.DASHBOARD}/inventory/${id}/edit`,
+    },
     invoice: {
       root: `${ROOTS.DASHBOARD}/invoice`,
       new: `${ROOTS.DASHBOARD}/invoice/new`,
@@ -137,6 +146,9 @@ export const paths = {
       demo: {
         details: `${ROOTS.DASHBOARD}/order/${MOCK_ID}`,
       },
+    },
+    promotion: {
+      root: `${ROOTS.DASHBOARD}/promotion`,
     },
     job: {
       root: `${ROOTS.DASHBOARD}/job`,

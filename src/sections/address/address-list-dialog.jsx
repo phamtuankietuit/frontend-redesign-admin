@@ -40,7 +40,7 @@ export function AddressListDialog({
       setSearchAddress('');
       onClose();
     },
-    [onClose, onSelect]
+    [onClose, onSelect],
   );
 
   const renderList = (
@@ -71,7 +71,9 @@ export function AddressListDialog({
           </Stack>
 
           {address.company && (
-            <Box sx={{ color: 'primary.main', typography: 'caption' }}>{address.company}</Box>
+            <Box sx={{ color: 'primary.main', typography: 'caption' }}>
+              {address.company}
+            </Box>
           )}
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -105,11 +107,14 @@ export function AddressListDialog({
         <TextField
           value={searchAddress}
           onChange={handleSearchAddress}
-          placeholder="Search..."
+          placeholder="Tìm kiếm..."
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                <Iconify
+                  icon="eva:search-fill"
+                  sx={{ color: 'text.disabled' }}
+                />
               </InputAdornment>
             ),
           }}
@@ -131,7 +136,7 @@ function applyFilter({ inputData, query }) {
       (address) =>
         address.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
         address.fullAddress.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-        `${address.company}`.toLowerCase().indexOf(query.toLowerCase()) !== -1
+        `${address.company}`.toLowerCase().indexOf(query.toLowerCase()) !== -1,
     );
   }
 

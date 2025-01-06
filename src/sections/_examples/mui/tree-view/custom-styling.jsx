@@ -47,7 +47,7 @@ export function CustomStyling({ name, items, control, ...other }) {
             sx={{ overflowX: 'hidden', minHeight: 240, width: 1 }}
             slots={{ item: StyledTreeItem }}
             items={items}
-            selectedItems={value}
+            selectedItems={value.toString()}
             onSelectedItemsChange={(_, itemId) => {
               onChange(itemId);
             }}

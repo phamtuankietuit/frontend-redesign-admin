@@ -27,7 +27,7 @@ export const PhoneInput = forwardRef(
       country: inputCountryCode,
       ...other
     },
-    ref
+    ref,
   ) => {
     const defaultCountryCode = getCountryCode(value, inputCountryCode);
 
@@ -104,9 +104,11 @@ export const PhoneInput = forwardRef(
         />
       </Box>
     );
-  }
+  },
 );
 
 // ----------------------------------------------------------------------
 
-const CustomInput = forwardRef(({ ...props }, ref) => <TextField inputRef={ref} {...props} />);
+const CustomInput = forwardRef(({ ...props }, ref) => (
+  <TextField inputRef={ref} {...props} />
+));

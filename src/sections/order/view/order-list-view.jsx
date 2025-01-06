@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -68,7 +68,7 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-export function OrderListView() {
+export function OrderListView({ isCustomer = false }) {
   const table = useTable({ defaultOrderBy: 'orderNumber' });
 
   const router = useRouter();
@@ -250,7 +250,11 @@ export function OrderListView() {
                 <TableHeadCustom
                   order={table.order}
                   orderBy={table.orderBy}
-                  headLabel={TABLE_HEAD}
+                  headLabel={
+                    isCustomer
+                      ? TABLE_HEAD.filter((item) => item.id !== 'name')
+                      : TABLE_HEAD
+                  }
                   rowCount={dataFiltered.length}
                   // numSelected={table.selected.length}
                   onSort={table.onSort}
@@ -276,6 +280,7 @@ export function OrderListView() {
                         // onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        isCustomer={isCustomer}
                       />
                     ))}
 
@@ -312,8 +317,8 @@ export function OrderListView() {
         title="Delete"
         content={
           <>
-            Are you sure want to delete{' '}
-            <strong> {table.selected.length} </strong> items?
+            Bạn có chắc chắn xóa <strong> {table.selected.length} </strong> dòng
+            đã chọn?
           </>
         }
         action={

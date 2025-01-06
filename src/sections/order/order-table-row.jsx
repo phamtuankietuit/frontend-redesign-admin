@@ -31,7 +31,9 @@ export function OrderTableRow({
   onViewRow,
   onSelectRow,
   onDeleteRow,
+  isCustomer = false,
 }) {
+  console.log('🚀 ~ isCustomer:', isCustomer);
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -59,24 +61,26 @@ export function OrderTableRow({
         </Link>
       </TableCell>
 
-      <TableCell>
-        <Stack spacing={2} direction="row" alignItems="center">
-          <Avatar alt={row.customer.name} src={row.customer.avatarUrl} />
+      {!isCustomer && (
+        <TableCell>
+          <Stack spacing={2} direction="row" alignItems="center">
+            <Avatar alt={row.customer.name} src={row.customer.avatarUrl} />
 
-          <Stack
-            sx={{
-              typography: 'body2',
-              flex: '1 1 auto',
-              alignItems: 'flex-start',
-            }}
-          >
-            <Box component="span">{row.customer.name}</Box>
-            <Box component="span" sx={{ color: 'text.disabled' }}>
-              {row.customer.email}
-            </Box>
+            <Stack
+              sx={{
+                typography: 'body2',
+                flex: '1 1 auto',
+                alignItems: 'flex-start',
+              }}
+            >
+              <Box component="span">{row.customer.name}</Box>
+              <Box component="span" sx={{ color: 'text.disabled' }}>
+                {row.customer.email}
+              </Box>
+            </Stack>
           </Stack>
-        </Stack>
-      </TableCell>
+        </TableCell>
+      )}
 
       <TableCell>
         <ListItemText

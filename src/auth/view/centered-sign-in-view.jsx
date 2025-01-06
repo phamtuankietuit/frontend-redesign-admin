@@ -63,7 +63,7 @@ export function CenteredSignInView({ isAdmin = false }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      dispatch(signInAsync({ ...data, signInSource: isAdmin ? 2 : 1 }))
+      await dispatch(signInAsync({ ...data, signInSource: isAdmin ? 2 : 1 }))
         // eslint-disable-next-line consistent-return
         .then((action) => {
           if (signInAsync.fulfilled.match(action)) {
@@ -73,7 +73,7 @@ export function CenteredSignInView({ isAdmin = false }) {
         .then((action) => {
           if (getMeAsync.fulfilled.match(action)) {
             if (isAdmin && getUserRole() === 'Admin') {
-              router.replace(paths.dashboard.general.analytics);
+              router.replace(paths.dashboard.root);
             } else if (!isAdmin && getUserRole() === 'Customer') {
               router.replace('/');
             }
@@ -88,7 +88,7 @@ export function CenteredSignInView({ isAdmin = false }) {
   useEffect(() => {
     if (user) {
       if (isAdmin && getUserRole() === 'Admin') {
-        router.replace(paths.dashboard.general.analytics);
+        router.replace(paths.dashboard);
       }
 
       if (!isAdmin && getUserRole() === 'Customer') {

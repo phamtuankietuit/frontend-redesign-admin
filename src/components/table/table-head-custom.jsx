@@ -30,6 +30,7 @@ export function TableHeadCustom({
   rowCount = 0,
   numSelected = 0,
   onSelectAllRows,
+  isPromotionPage = false,
 }) {
   return (
     <TableHead sx={sx}>
@@ -62,11 +63,17 @@ export function TableHeadCustom({
                 direction={orderBy === headCell.id ? order : 'asc'}
                 onClick={() => onSort(headCell.id)}
               >
-                {headCell.label}
+                {isPromotionPage && headCell.id === 'sent'
+                  ? 'Số lượng'
+                  : isPromotionPage && headCell.id === 'invoiceNumber'
+                    ? 'Mã khuyến mãi'
+                    : headCell.label}
 
                 {orderBy === headCell.id ? (
                   <Box sx={{ ...visuallyHidden }}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                    {order === 'desc'
+                      ? 'sorted descending'
+                      : 'sorted ascending'}
                   </Box>
                 ) : null}
               </TableSortLabel>

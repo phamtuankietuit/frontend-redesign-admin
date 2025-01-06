@@ -6,7 +6,7 @@ import { AccountView } from 'src/sections/account/view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Account settings | Dashboard - ${CONFIG.appName}` };
+const metadata = { title: `Cài đặt tài khoản - ${CONFIG.appName}` };
 
 export default function Page() {
   return (

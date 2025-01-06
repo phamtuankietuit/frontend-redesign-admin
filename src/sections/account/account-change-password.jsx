@@ -21,7 +21,9 @@ export const ChangePassWordSchema = zod
       .min(1, { message: 'Password is required!' })
       .min(6, { message: 'Password must be at least 6 characters!' }),
     newPassword: zod.string().min(1, { message: 'New password is required!' }),
-    confirmNewPassword: zod.string().min(1, { message: 'Confirm password is required!' }),
+    confirmNewPassword: zod
+      .string()
+      .min(1, { message: 'Confirm password is required!' }),
   })
   .refine((data) => data.oldPassword !== data.newPassword, {
     message: 'New password must be different than old password',
@@ -37,7 +39,11 @@ export const ChangePassWordSchema = zod
 export function AccountChangePassword() {
   const password = useBoolean();
 
-  const defaultValues = { oldPassword: '', newPassword: '', confirmNewPassword: '' };
+  const defaultValues = {
+    oldPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
+  };
 
   const methods = useForm({
     mode: 'all',
@@ -68,12 +74,18 @@ export function AccountChangePassword() {
         <Field.Text
           name="oldPassword"
           type={password.value ? 'text' : 'password'}
-          label="Old password"
+          label="Mật khẩu cũ"
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton onClick={password.onToggle} edge="end">
-                  <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                  <Iconify
+                    icon={
+                      password.value
+                        ? 'solar:eye-bold'
+                        : 'solar:eye-closed-bold'
+                    }
+                  />
                 </IconButton>
               </InputAdornment>
             ),
@@ -82,21 +94,27 @@ export function AccountChangePassword() {
 
         <Field.Text
           name="newPassword"
-          label="New password"
+          label="Mật khẩu mới"
           type={password.value ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton onClick={password.onToggle} edge="end">
-                  <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                  <Iconify
+                    icon={
+                      password.value
+                        ? 'solar:eye-bold'
+                        : 'solar:eye-closed-bold'
+                    }
+                  />
                 </IconButton>
               </InputAdornment>
             ),
           }}
           helperText={
             <Stack component="span" direction="row" alignItems="center">
-              <Iconify icon="eva:info-fill" width={16} sx={{ mr: 0.5 }} /> Password must be minimum
-              6+
+              <Iconify icon="eva:info-fill" width={16} sx={{ mr: 0.5 }} /> Mật
+              khẩu phải từ 8 kí tự
             </Stack>
           }
         />
@@ -104,20 +122,31 @@ export function AccountChangePassword() {
         <Field.Text
           name="confirmNewPassword"
           type={password.value ? 'text' : 'password'}
-          label="Confirm new password"
+          label="Xác nhận mật khẩu mới"
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton onClick={password.onToggle} edge="end">
-                  <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                  <Iconify
+                    icon={
+                      password.value
+                        ? 'solar:eye-bold'
+                        : 'solar:eye-closed-bold'
+                    }
+                  />
                 </IconButton>
               </InputAdornment>
             ),
           }}
         />
 
-        <LoadingButton type="submit" variant="contained" loading={isSubmitting} sx={{ ml: 'auto' }}>
-          Save changes
+        <LoadingButton
+          type="submit"
+          variant="contained"
+          loading={isSubmitting}
+          sx={{ ml: 'auto' }}
+        >
+          Lưu
         </LoadingButton>
       </Card>
     </Form>

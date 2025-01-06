@@ -8,7 +8,7 @@ import { CONFIG } from 'src/config-global';
 import { setSession, getAccessToken, getRefreshToken } from './token.service';
 
 const AxiosInstance = axios.create({
-    baseURL: `${CONFIG.serverUrl}/api`,
+    baseURL: `${CONFIG.myServerUrl}/api`,
 });
 
 AxiosInstance.interceptors.request.use(
@@ -22,7 +22,7 @@ AxiosInstance.interceptors.request.use(
 
         return config;
     },
-    (error) => Promise.reject(error)
+    (error) => Promise.reject(new Error(error))
 );
 
 AxiosInstance.interceptors.response.use(
@@ -36,7 +36,7 @@ AxiosInstance.interceptors.response.use(
 
             if (refreshToken) {
                 try {
-                    const { data } = await axios.post(`${CONFIG.serverUrl}/auth/refresh`, {
+                    const { data } = await axios.post(`${CONFIG.myServerUrl}/auth/refresh`, {
                         refreshToken,
                     });
 
@@ -52,7 +52,7 @@ AxiosInstance.interceptors.response.use(
             }
         }
 
-        return Promise.reject(error);
+        return Promise.reject(new Error(error));
     }
 );
 
@@ -62,7 +62,7 @@ export const POST = (url, body, config) => AxiosInstance.post(url, body, config)
 
 export const PATCH = (url, body) => AxiosInstance.patch(url, body);
 
-export const PUT = (url, body) => AxiosInstance.put(url, body);
+export const PUT = (url, body, config) => AxiosInstance.put(url, body, config);
 
 export const DELETE = (url, config) => AxiosInstance.delete(url, config);
 

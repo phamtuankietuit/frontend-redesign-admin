@@ -8,6 +8,7 @@ import { SplashScreen } from 'src/components/loading-screen';
 import { myAuthRoutes } from './my-auth';
 import { myMainRoutes } from './my-main';
 import { dashboardRoutes } from './dashboard';
+import { profileRoutes } from './profile';
 
 // ----------------------------------------------------------------------
 
@@ -48,6 +49,9 @@ export function Router() {
 
     // My Main
     ...myMainRoutes,
+
+    // Profile
+    ...profileRoutes,
 
     // No match
     { path: '*', element: <Navigate to="/404" replace /> },

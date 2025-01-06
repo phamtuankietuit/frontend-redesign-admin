@@ -24,7 +24,15 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export function InvoiceTableRow({ row, selected, onSelectRow, onViewRow, onEditRow, onDeleteRow }) {
+export function InvoiceTableRow({
+  row,
+  selected,
+  onSelectRow,
+  onViewRow,
+  onEditRow,
+  onDeleteRow,
+  isPromotionPage = false,
+}) {
   const confirm = useBoolean();
 
   const popover = usePopover();
@@ -36,20 +44,29 @@ export function InvoiceTableRow({ row, selected, onSelectRow, onViewRow, onEditR
           <Checkbox
             checked={selected}
             onClick={onSelectRow}
-            inputProps={{ id: `row-checkbox-${row.id}`, 'aria-label': `Row checkbox` }}
+            inputProps={{
+              id: `row-checkbox-${row.id}`,
+              'aria-label': `Row checkbox`,
+            }}
           />
         </TableCell>
 
         <TableCell>
           <Stack spacing={2} direction="row" alignItems="center">
-            <Avatar alt={row.invoiceTo.name}>{row.invoiceTo.name.charAt(0).toUpperCase()}</Avatar>
+            {!isPromotionPage && (
+              <Avatar alt={row.invoiceTo.name}>
+                {row.invoiceTo.name?.charAt(0)?.toUpperCase()}
+              </Avatar>
+            )}
 
             <ListItemText
               disableTypography
               primary={
-                <Typography variant="body2" noWrap>
-                  {row.invoiceTo.name}
-                </Typography>
+                !isPromotionPage && (
+                  <Typography variant="body2" noWrap>
+                    {row.invoiceTo.name}
+                  </Typography>
+                )
               }
               secondary={
                 <Link
@@ -70,7 +87,11 @@ export function InvoiceTableRow({ row, selected, onSelectRow, onViewRow, onEditR
             primary={fDate(row.createDate)}
             secondary={fTime(row.createDate)}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{ mt: 0.5, component: 'span', typography: 'caption' }}
+            secondaryTypographyProps={{
+              mt: 0.5,
+              component: 'span',
+              typography: 'caption',
+            }}
           />
         </TableCell>
 
@@ -79,11 +100,17 @@ export function InvoiceTableRow({ row, selected, onSelectRow, onViewRow, onEditR
             primary={fDate(row.dueDate)}
             secondary={fTime(row.dueDate)}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{ mt: 0.5, component: 'span', typography: 'caption' }}
+            secondaryTypographyProps={{
+              mt: 0.5,
+              component: 'span',
+              typography: 'caption',
+            }}
           />
         </TableCell>
 
-        <TableCell>{fCurrency(row.totalAmount)}</TableCell>
+        {!isPromotionPage && (
+          <TableCell>{fCurrency(row.totalAmount)}</TableCell>
+        )}
 
         <TableCell align="center">{row.sent}</TableCell>
 
@@ -97,12 +124,22 @@ export function InvoiceTableRow({ row, selected, onSelectRow, onViewRow, onEditR
               'default'
             }
           >
-            {row.status}
+            {!isPromotionPage && row.status === 'paid' && 'Đã trả'}
+            {!isPromotionPage && row.status === 'pending' && 'Đang đợi'}
+            {!isPromotionPage && row.status === 'overdue' && 'Quá hạn'}
+            {!isPromotionPage && row.status === 'draft' && 'Nháp'}
+            {isPromotionPage && row.status === 'paid' && 'Đang chạy'}
+            {isPromotionPage && row.status === 'pending' && 'Đang đợi'}
+            {isPromotionPage && row.status === 'overdue' && 'Đã hủy'}
+            {isPromotionPage && row.status === 'draft' && 'Quá hạn'}
           </Label>
         </TableCell>
 
         <TableCell align="right" sx={{ px: 1 }}>
-          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+          <IconButton
+            color={popover.open ? 'inherit' : 'default'}
+            onClick={popover.onOpen}
+          >
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>

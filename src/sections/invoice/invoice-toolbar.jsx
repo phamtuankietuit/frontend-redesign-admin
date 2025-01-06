@@ -24,7 +24,12 @@ import { InvoicePDF } from './invoice-pdf';
 
 // ----------------------------------------------------------------------
 
-export function InvoiceToolbar({ invoice, currentStatus, statusOptions, onChangeStatus }) {
+export function InvoiceToolbar({
+  invoice,
+  currentStatus,
+  statusOptions,
+  onChangeStatus,
+}) {
   const router = useRouter();
 
   const view = useBoolean();
@@ -37,7 +42,11 @@ export function InvoiceToolbar({ invoice, currentStatus, statusOptions, onChange
     <NoSsr>
       <PDFDownloadLink
         document={
-          invoice ? <InvoicePDF invoice={invoice} currentStatus={currentStatus} /> : <span />
+          invoice ? (
+            <InvoicePDF invoice={invoice} currentStatus={currentStatus} />
+          ) : (
+            <span />
+          )
         }
         fileName={invoice?.invoiceNumber}
         style={{ textDecoration: 'none' }}
@@ -102,7 +111,7 @@ export function InvoiceToolbar({ invoice, currentStatus, statusOptions, onChange
         <TextField
           fullWidth
           select
-          label="Status"
+          label="Trạng thái"
           value={currentStatus}
           onChange={onChangeStatus}
           inputProps={{ id: `status-select-label` }}
@@ -127,7 +136,9 @@ export function InvoiceToolbar({ invoice, currentStatus, statusOptions, onChange
 
           <Box sx={{ flexGrow: 1, height: 1, overflow: 'hidden' }}>
             <PDFViewer width="100%" height="100%" style={{ border: 'none' }}>
-              {invoice && <InvoicePDF invoice={invoice} currentStatus={currentStatus} />}
+              {invoice && (
+                <InvoicePDF invoice={invoice} currentStatus={currentStatus} />
+              )}
             </PDFViewer>
           </Box>
         </Box>

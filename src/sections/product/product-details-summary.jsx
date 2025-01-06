@@ -225,12 +225,14 @@ export function ProductDetailsSummary({
     >
       <Rating
         size="small"
-        value={ratings.averageRating}
+        value={ratings?.averageRating}
         precision={0.1}
         readOnly
         sx={{ mr: 1 }}
       />
-      {`(${fMyShortenNumber(ratings.totalRating)} đánh giá)`}
+      {ratings
+        ? `(${fMyShortenNumber(ratings?.totalRating)} đánh giá)`
+        : `Chưa có đánh giá`}
     </Stack>
   );
 

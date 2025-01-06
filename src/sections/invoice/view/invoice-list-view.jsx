@@ -53,18 +53,18 @@ import { InvoiceTableFiltersResult } from '../invoice-table-filters-result';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'invoiceNumber', label: 'Customer' },
-  { id: 'createDate', label: 'Create' },
-  { id: 'dueDate', label: 'Due' },
-  { id: 'price', label: 'Amount' },
-  { id: 'sent', label: 'Sent', align: 'center' },
-  { id: 'status', label: 'Status' },
+  { id: 'invoiceNumber', label: 'Nhà cung cấp' },
+  { id: 'createDate', label: 'Ngày tạo' },
+  { id: 'dueDate', label: 'Ngày hết hạn' },
+  { id: 'price', label: 'Tổng tiền hàng' },
+  { id: 'sent', label: 'Đã gửi', align: 'center' },
+  { id: 'status', label: 'Trạng thái' },
   { id: '' },
 ];
 
 // ----------------------------------------------------------------------
 
-export function InvoiceListView() {
+export function InvoiceListView({ isPromotionPage = false }) {
   const theme = useTheme();
 
   const router = useRouter();
@@ -102,44 +102,46 @@ export function InvoiceListView() {
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
-  const getInvoiceLength = (status) => tableData.filter((item) => item.status === status).length;
+  const getInvoiceLength = (status) =>
+    tableData.filter((item) => item.status === status).length;
 
   const getTotalAmount = (status) =>
     sumBy(
       tableData.filter((item) => item.status === status),
-      (invoice) => invoice.totalAmount
+      (invoice) => invoice.totalAmount,
     );
 
-  const getPercentByStatus = (status) => (getInvoiceLength(status) / tableData.length) * 100;
+  const getPercentByStatus = (status) =>
+    (getInvoiceLength(status) / tableData.length) * 100;
 
   const TABS = [
     {
       value: 'all',
-      label: 'All',
+      label: 'Tất cả',
       color: 'default',
       count: tableData.length,
     },
     {
       value: 'paid',
-      label: 'Paid',
+      label: isPromotionPage ? 'Đang chạy' : 'Đã trả',
       color: 'success',
       count: getInvoiceLength('paid'),
     },
     {
       value: 'pending',
-      label: 'Pending',
+      label: 'Đang đợi',
       color: 'warning',
       count: getInvoiceLength('pending'),
     },
     {
       value: 'overdue',
-      label: 'Overdue',
+      label: isPromotionPage ? 'Đã hủy' : 'Quá hạn',
       color: 'error',
       count: getInvoiceLength('overdue'),
     },
     {
       value: 'draft',
-      label: 'Draft',
+      label: isPromotionPage ? 'Quá hạn' : 'Nháp',
       color: 'default',
       count: getInvoiceLength('draft'),
     },
@@ -155,11 +157,13 @@ export function InvoiceListView() {
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, table, tableData]
+    [dataInPage.length, table, tableData],
   );
 
   const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
+    const deleteRows = tableData.filter(
+      (row) => !table.selected.includes(row.id),
+    );
 
     toast.success('Delete success!');
 
@@ -175,14 +179,14 @@ export function InvoiceListView() {
     (id) => {
       router.push(paths.dashboard.invoice.edit(id));
     },
-    [router]
+    [router],
   );
 
   const handleViewRow = useCallback(
     (id) => {
       router.push(paths.dashboard.invoice.details(id));
     },
-    [router]
+    [router],
   );
 
   const handleFilterStatus = useCallback(
@@ -190,18 +194,23 @@ export function InvoiceListView() {
       table.onResetPage();
       filters.setState({ status: newValue });
     },
-    [filters, table]
+    [filters, table],
   );
 
   return (
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="List"
+          heading={
+            isPromotionPage ? 'Danh sách khuyến mãi' : 'Danh sách đơn nhập hàng'
+          }
           links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Invoice', href: paths.dashboard.invoice.root },
-            { name: 'List' },
+            { name: 'Trang chủ', href: paths.dashboard.root },
+            {
+              name: isPromotionPage
+                ? 'Danh sách khuyến mãi'
+                : 'Danh sách đơn nhập hàng',
+            },
           ]}
           action={
             <Button
@@ -210,66 +219,74 @@ export function InvoiceListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New invoice
+              {isPromotionPage ? 'Tạo khuyến mãi mới' : 'Tạo đơn mới'}
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 
-        <Card sx={{ mb: { xs: 3, md: 5 } }}>
-          <Scrollbar sx={{ minHeight: 108 }}>
-            <Stack
-              direction="row"
-              divider={<Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed' }} />}
-              sx={{ py: 2 }}
-            >
-              <InvoiceAnalytic
-                title="Total"
-                total={tableData.length}
-                percent={100}
-                price={sumBy(tableData, (invoice) => invoice.totalAmount)}
-                icon="solar:bill-list-bold-duotone"
-                color={theme.vars.palette.info.main}
-              />
+        {!isPromotionPage && (
+          <Card sx={{ mb: { xs: 3, md: 5 } }}>
+            <Scrollbar sx={{ minHeight: 108 }}>
+              <Stack
+                direction="row"
+                divider={
+                  <Divider
+                    orientation="vertical"
+                    flexItem
+                    sx={{ borderStyle: 'dashed' }}
+                  />
+                }
+                sx={{ py: 2 }}
+              >
+                <InvoiceAnalytic
+                  title="Tổng cộng"
+                  total={tableData.length}
+                  percent={100}
+                  price={sumBy(tableData, (invoice) => invoice.totalAmount)}
+                  icon="solar:bill-list-bold-duotone"
+                  color={theme.vars.palette.info.main}
+                />
 
-              <InvoiceAnalytic
-                title="Paid"
-                total={getInvoiceLength('paid')}
-                percent={getPercentByStatus('paid')}
-                price={getTotalAmount('paid')}
-                icon="solar:file-check-bold-duotone"
-                color={theme.vars.palette.success.main}
-              />
+                <InvoiceAnalytic
+                  title="Đã trả"
+                  total={getInvoiceLength('paid')}
+                  percent={getPercentByStatus('paid')}
+                  price={getTotalAmount('paid')}
+                  icon="solar:file-check-bold-duotone"
+                  color={theme.vars.palette.success.main}
+                />
 
-              <InvoiceAnalytic
-                title="Pending"
-                total={getInvoiceLength('pending')}
-                percent={getPercentByStatus('pending')}
-                price={getTotalAmount('pending')}
-                icon="solar:sort-by-time-bold-duotone"
-                color={theme.vars.palette.warning.main}
-              />
+                <InvoiceAnalytic
+                  title="Đang đợi"
+                  total={getInvoiceLength('pending')}
+                  percent={getPercentByStatus('pending')}
+                  price={getTotalAmount('pending')}
+                  icon="solar:sort-by-time-bold-duotone"
+                  color={theme.vars.palette.warning.main}
+                />
 
-              <InvoiceAnalytic
-                title="Overdue"
-                total={getInvoiceLength('overdue')}
-                percent={getPercentByStatus('overdue')}
-                price={getTotalAmount('overdue')}
-                icon="solar:bell-bing-bold-duotone"
-                color={theme.vars.palette.error.main}
-              />
+                <InvoiceAnalytic
+                  title="Quá hạn"
+                  total={getInvoiceLength('overdue')}
+                  percent={getPercentByStatus('overdue')}
+                  price={getTotalAmount('overdue')}
+                  icon="solar:bell-bing-bold-duotone"
+                  color={theme.vars.palette.error.main}
+                />
 
-              <InvoiceAnalytic
-                title="Draft"
-                total={getInvoiceLength('draft')}
-                percent={getPercentByStatus('draft')}
-                price={getTotalAmount('draft')}
-                icon="solar:file-corrupted-bold-duotone"
-                color={theme.vars.palette.text.secondary}
-              />
-            </Stack>
-          </Scrollbar>
-        </Card>
+                <InvoiceAnalytic
+                  title="Nháp"
+                  total={getInvoiceLength('draft')}
+                  percent={getPercentByStatus('draft')}
+                  price={getTotalAmount('draft')}
+                  icon="solar:file-corrupted-bold-duotone"
+                  color={theme.vars.palette.text.secondary}
+                />
+              </Stack>
+            </Scrollbar>
+          </Card>
+        )}
 
         <Card>
           <Tabs
@@ -289,7 +306,9 @@ export function InvoiceListView() {
                 icon={
                   <Label
                     variant={
-                      ((tab.value === 'all' || tab.value === filters.state.status) && 'filled') ||
+                      ((tab.value === 'all' ||
+                        tab.value === filters.state.status) &&
+                        'filled') ||
                       'soft'
                     }
                     color={tab.color}
@@ -305,7 +324,10 @@ export function InvoiceListView() {
             filters={filters}
             dateError={dateError}
             onResetPage={table.onResetPage}
-            options={{ services: INVOICE_SERVICE_OPTIONS.map((option) => option.name) }}
+            options={{
+              services: INVOICE_SERVICE_OPTIONS.map((option) => option.name),
+            }}
+            isPromotionPage={isPromotionPage}
           />
 
           {canReset && (
@@ -325,7 +347,7 @@ export function InvoiceListView() {
               onSelectAllRows={(checked) => {
                 table.onSelectAllRows(
                   checked,
-                  dataFiltered.map((row) => row.id)
+                  dataFiltered.map((row) => row.id),
                 );
               }}
               action={
@@ -358,27 +380,35 @@ export function InvoiceListView() {
             />
 
             <Scrollbar sx={{ minHeight: 444 }}>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
+              <Table
+                size={table.dense ? 'small' : 'medium'}
+                sx={{ minWidth: 800 }}
+              >
                 <TableHeadCustom
                   order={table.order}
                   orderBy={table.orderBy}
-                  headLabel={TABLE_HEAD}
+                  headLabel={
+                    isPromotionPage
+                      ? TABLE_HEAD.filter((item) => item.id !== 'price')
+                      : TABLE_HEAD
+                  }
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
-                      dataFiltered.map((row) => row.id)
+                      dataFiltered.map((row) => row.id),
                     )
                   }
+                  isPromotionPage={isPromotionPage}
                 />
 
                 <TableBody>
                   {dataFiltered
                     .slice(
                       table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
+                      table.page * table.rowsPerPage + table.rowsPerPage,
                     )
                     .map((row) => (
                       <InvoiceTableRow
@@ -389,12 +419,17 @@ export function InvoiceListView() {
                         onViewRow={() => handleViewRow(row.id)}
                         onEditRow={() => handleEditRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
+                        isPromotionPage={isPromotionPage}
                       />
                     ))}
 
                   <TableEmptyRows
                     height={table.dense ? 56 : 56 + 20}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                    emptyRows={emptyRows(
+                      table.page,
+                      table.rowsPerPage,
+                      dataFiltered.length,
+                    )}
                   />
 
                   <TableNoData notFound={notFound} />
@@ -421,7 +456,8 @@ export function InvoiceListView() {
         title="Delete"
         content={
           <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
+            Are you sure want to delete{' '}
+            <strong> {table.selected.length} </strong> items?
           </>
         }
         action={
@@ -433,7 +469,7 @@ export function InvoiceListView() {
               confirm.onFalse();
             }}
           >
-            Delete
+            Xóa
           </Button>
         }
       />
@@ -457,8 +493,9 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   if (name) {
     inputData = inputData.filter(
       (invoice) =>
-        invoice.invoiceNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        invoice.invoiceTo.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        invoice.invoiceNumber.toLowerCase().indexOf(name.toLowerCase()) !==
+          -1 ||
+        invoice.invoiceTo.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
     );
   }
 
@@ -468,13 +505,15 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (service.length) {
     inputData = inputData.filter((invoice) =>
-      invoice.items.some((filterItem) => service.includes(filterItem.service))
+      invoice.items.some((filterItem) => service.includes(filterItem.service)),
     );
   }
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter((invoice) => fIsBetween(invoice.createDate, startDate, endDate));
+      inputData = inputData.filter((invoice) =>
+        fIsBetween(invoice.createDate, startDate, endDate),
+      );
     }
   }
 

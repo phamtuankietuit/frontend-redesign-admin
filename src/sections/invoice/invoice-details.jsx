@@ -48,7 +48,7 @@ export function InvoiceDetails({ invoice }) {
         <TableCell colSpan={3} />
         <TableCell sx={{ color: 'text.secondary' }}>
           <Box sx={{ mt: 2 }} />
-          Subtotal
+          Tổng tiền hàng
         </TableCell>
         <TableCell width={120} sx={{ typography: 'subtitle2' }}>
           <Box sx={{ mt: 2 }} />
@@ -56,25 +56,31 @@ export function InvoiceDetails({ invoice }) {
         </TableCell>
       </StyledTableRow>
 
-      <StyledTableRow>
+      {/* <StyledTableRow>
         <TableCell colSpan={3} />
         <TableCell sx={{ color: 'text.secondary' }}>Shipping</TableCell>
-        <TableCell width={120} sx={{ color: 'error.main', typography: 'body2' }}>
+        <TableCell
+          width={120}
+          sx={{ color: 'error.main', typography: 'body2' }}
+        >
           - {fCurrency(invoice?.shipping)}
         </TableCell>
-      </StyledTableRow>
+      </StyledTableRow> */}
 
       <StyledTableRow>
         <TableCell colSpan={3} />
-        <TableCell sx={{ color: 'text.secondary' }}>Discount</TableCell>
-        <TableCell width={120} sx={{ color: 'error.main', typography: 'body2' }}>
+        <TableCell sx={{ color: 'text.secondary' }}>Giảm giá</TableCell>
+        <TableCell
+          width={120}
+          sx={{ color: 'error.main', typography: 'body2' }}
+        >
           - {fCurrency(invoice?.discount)}
         </TableCell>
       </StyledTableRow>
 
       <StyledTableRow>
         <TableCell colSpan={3} />
-        <TableCell sx={{ color: 'text.secondary' }}>Taxes</TableCell>
+        <TableCell sx={{ color: 'text.secondary' }}>Phí giao hàng</TableCell>
         <TableCell width={120}>{fCurrency(invoice?.taxes)}</TableCell>
       </StyledTableRow>
 
@@ -89,14 +95,18 @@ export function InvoiceDetails({ invoice }) {
   );
 
   const renderFooter = (
-    <Box gap={2} display="flex" alignItems="center" flexWrap="wrap" sx={{ py: 3 }}>
+    <Box
+      gap={2}
+      display="flex"
+      alignItems="center"
+      flexWrap="wrap"
+      sx={{ py: 3 }}
+    >
       <div>
         <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-          NOTES
+          GHI CHÚ
         </Typography>
-        <Typography variant="body2">
-          We appreciate your business. Should you need us to add VAT or extra notes let us know!
-        </Typography>
+        <Typography variant="body2">Chúng tôi cần VAT</Typography>
       </div>
 
       <Box flexGrow={{ md: 1 }} sx={{ textAlign: { md: 'right' } }}>
@@ -115,13 +125,13 @@ export function InvoiceDetails({ invoice }) {
           <TableRow>
             <TableCell width={40}>#</TableCell>
 
-            <TableCell sx={{ typography: 'subtitle2' }}>Description</TableCell>
+            <TableCell sx={{ typography: 'subtitle2' }}>Mô tả</TableCell>
 
-            <TableCell>Qty</TableCell>
+            <TableCell>Số lượng</TableCell>
 
-            <TableCell align="right">Unit price</TableCell>
+            <TableCell align="right">Đơn giá</TableCell>
 
-            <TableCell align="right">Total</TableCell>
+            <TableCell align="right">Tổng cộng</TableCell>
           </TableRow>
         </TableHead>
 
@@ -134,9 +144,13 @@ export function InvoiceDetails({ invoice }) {
                 <Box sx={{ maxWidth: 560 }}>
                   <Typography variant="subtitle2">{row.title}</Typography>
 
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+                  {/* <Typography
+                    variant="body2"
+                    sx={{ color: 'text.secondary' }}
+                    noWrap
+                  >
                     {row.description}
-                  </Typography>
+                  </Typography> */}
                 </Box>
               </TableCell>
 
@@ -144,7 +158,9 @@ export function InvoiceDetails({ invoice }) {
 
               <TableCell align="right">{fCurrency(row.price)}</TableCell>
 
-              <TableCell align="right">{fCurrency(row.price * row.quantity)}</TableCell>
+              <TableCell align="right">
+                {fCurrency(row.price * row.quantity)}
+              </TableCell>
             </TableRow>
           ))}
 
@@ -187,7 +203,9 @@ export function InvoiceDetails({ invoice }) {
                 'default'
               }
             >
-              {currentStatus}
+              {currentStatus === 'paid' && 'Đã trả'}
+              {currentStatus === 'pending' && 'Đang đợi'}
+              {currentStatus === 'overdue' && 'Quá hạn'}
             </Label>
 
             <Typography variant="h6">{invoice?.invoiceNumber}</Typography>
@@ -195,17 +213,17 @@ export function InvoiceDetails({ invoice }) {
 
           <Stack sx={{ typography: 'body2' }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Invoice from
+              Nhập từ
             </Typography>
             {invoice?.invoiceFrom.name}
             <br />
             {invoice?.invoiceFrom.fullAddress}
             <br />
-            Phone: {invoice?.invoiceFrom.phoneNumber}
+            ĐT: {invoice?.invoiceFrom.phoneNumber}
             <br />
           </Stack>
 
-          <Stack sx={{ typography: 'body2' }}>
+          {/* <Stack sx={{ typography: 'body2' }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               Invoice to
             </Typography>
@@ -215,18 +233,18 @@ export function InvoiceDetails({ invoice }) {
             <br />
             Phone: {invoice?.invoiceTo.phoneNumber}
             <br />
-          </Stack>
+          </Stack> */}
 
           <Stack sx={{ typography: 'body2' }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Date create
+              Ngày tạo
             </Typography>
             {fDate(invoice?.createDate)}
           </Stack>
 
           <Stack sx={{ typography: 'body2' }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Due date
+              Ngày hết hạn
             </Typography>
             {fDate(invoice?.dueDate)}
           </Stack>
@@ -236,7 +254,7 @@ export function InvoiceDetails({ invoice }) {
 
         <Divider sx={{ mt: 5, borderStyle: 'dashed' }} />
 
-        {renderFooter}
+        {/* {renderFooter} */}
       </Card>
     </>
   );

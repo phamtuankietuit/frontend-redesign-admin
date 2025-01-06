@@ -18,7 +18,8 @@ export function FileThumbnail({
   className,
   ...other
 }) {
-  const previewUrl = typeof file === 'string' ? file : URL.createObjectURL(file);
+  const previewUrl =
+    typeof file === 'string' ? file : URL.createObjectURL(file);
 
   const { name, path } = fileData(file);
 
@@ -51,7 +52,9 @@ export function FileThumbnail({
   const renderContent = (
     <Box
       component="span"
-      className={fileThumbnailClasses.root.concat(className ? ` ${className}` : '')}
+      className={fileThumbnailClasses.root.concat(
+        className ? ` ${className}` : '',
+      )}
       sx={{
         width: 36,
         height: 36,
@@ -65,7 +68,8 @@ export function FileThumbnail({
       }}
       {...other}
     >
-      {format === 'image' && imageView ? renderImg : renderIcon}
+      {/* {format === 'image' && imageView ? renderImg : renderIcon} */}
+      {renderImg}
 
       {onRemove && (
         <RemoveButton

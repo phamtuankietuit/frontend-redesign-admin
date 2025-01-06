@@ -58,7 +58,11 @@ const ProductVariants = ({ control, getValues }) => {
         spacing={2}
       >
         {fields?.map((variant, variantIndex) => (
-          <Stack key={variant.id} alignItems="flex-end" spacing={2}>
+          <Stack
+            key={`${variant.id}-${variantIndex}`}
+            alignItems="flex-end"
+            spacing={2}
+          >
             <Stack
               direction={{ xs: 'column', md: 'row' }}
               spacing={2}
@@ -74,7 +78,7 @@ const ProductVariants = ({ control, getValues }) => {
               <Stack direction="column" spacing={2} sx={{ width: '60%' }}>
                 {variant.values.map((value, valueIndex) => (
                   <Stack
-                    key={`${variant.id}-${valueIndex}`}
+                    key={`${variant.id}-${variantIndex}-${valueIndex}`}
                     direction="row"
                     spacing={2}
                     alignItems="center"
@@ -86,6 +90,7 @@ const ProductVariants = ({ control, getValues }) => {
                     />
                     {variant.values.length > 1 && (
                       <IconButton
+                        key={`${variant.id}-${variantIndex}-${valueIndex}`}
                         color="error"
                         onClick={() =>
                           handleRemoveValue(variantIndex, valueIndex)
@@ -104,7 +109,7 @@ const ProductVariants = ({ control, getValues }) => {
               spacing={2}
               width={1}
             >
-              <Stack direction="row" sx={{ width: '40%' }}>
+              <Stack key="delete" direction="row" sx={{ width: '40%' }}>
                 <Button
                   size="small"
                   color="error"
@@ -115,7 +120,7 @@ const ProductVariants = ({ control, getValues }) => {
                 </Button>
               </Stack>
 
-              <Stack direction="row" sx={{ width: '60%' }}>
+              <Stack key="addValue" direction="row" sx={{ width: '60%' }}>
                 <Button
                   size="small"
                   color="primary"

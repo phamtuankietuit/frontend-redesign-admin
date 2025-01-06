@@ -17,11 +17,12 @@ import { selectProduct } from 'src/state/product/product.slice';
 
 import { Iconify } from 'src/components/iconify';
 import { EmptyContent } from 'src/components/empty-content';
+import { CatalogItemCard } from 'src/components/catalog-item';
 import { MyCarousel } from 'src/components/my-carousel/my-carousel';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { CatalogItemCard } from 'src/components/catalog-item';
 import { CartIcon } from '../components/cart-icon';
+import { ChatIcon } from '../components/chat-icon';
 import { useCheckoutContext } from '../../checkout/context';
 import { ProductDetailsSkeleton } from '../product-skeleton';
 import { ProductDetailsReview } from '../product-details-review';
@@ -29,7 +30,6 @@ import { ProductDetailsSummary } from '../product-details-summary';
 import { ProductDetailsCarousel } from '../product-details-carousel';
 import { ProductDetailsDescription } from '../product-details-description';
 import { ProductDetailsInformation } from '../product-details-information';
-import { ChatIcon } from '../components/chat-icon';
 
 export function ProductShopDetailsView({ product, error, loading }) {
   const { ratings } = useSelector(selectProduct);
@@ -75,16 +75,17 @@ export function ProductShopDetailsView({ product, error, loading }) {
       <CustomBreadcrumbs
         links={[
           { name: 'Trang chủ', href: '/' },
-          { name: 'Sách Tiếng Việt', href: '/' },
-          { name: 'Thiếu Nhi', href: '/' },
-          { name: 'Đội Quân Doraemon Đặc Biệt' },
+          { name: product?.productType?.displayName, href: '/' },
+          { name: product?.name || 'Sản phẩm' },
         ]}
         sx={{ mb: 5 }}
       />
 
       <Grid container spacing={{ xs: 3, md: 5, lg: 8 }}>
         <Grid xs={12} md={6} lg={7}>
-          <ProductDetailsCarousel images={product?.largeImageUrls} />
+          <ProductDetailsCarousel
+            images={product?.productImages?.map((item) => item.largeImageUrl)}
+          />
         </Grid>
 
         <Grid xs={12} md={6} lg={5}>
@@ -126,14 +127,21 @@ export function ProductShopDetailsView({ product, error, loading }) {
           {[
             { value: 'information', label: 'Thông tin sản phẩm' },
             { value: 'description', label: 'Mô tả sản phẩm' },
-            { value: 'reviews', label: `Đánh giá (${ratings?.totalRating})` },
+            ...(ratings
+              ? [
+                  {
+                    value: 'reviews',
+                    label: `Đánh giá (${ratings?.totalRating})`,
+                  },
+                ]
+              : []),
           ].map((tab) => (
             <Tab key={tab.value} value={tab.value} label={tab.label} />
           ))}
         </Tabs>
         {tabs.value === 'information' && (
           <ProductDetailsInformation
-            productTypeAttributes={product?.productTypeAttributes}
+            productTypeAttributes={product?.attributeProductValues}
           />
 
           // <CatalogItemCard

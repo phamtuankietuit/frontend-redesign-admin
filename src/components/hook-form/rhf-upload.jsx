@@ -22,7 +22,12 @@ export function RHFUploadAvatar({ name, ...other }) {
 
         return (
           <div>
-            <UploadAvatar value={field.value} error={!!error} onDrop={onDrop} {...other} />
+            <UploadAvatar
+              value={field.value}
+              error={!!error}
+              onDrop={onDrop}
+              {...other}
+            />
 
             {!!error && (
               <FormHelperText error sx={{ px: 2, textAlign: 'center' }}>
@@ -70,12 +75,21 @@ export function RHFUpload({ name, multiple, helperText, ...other }) {
         };
 
         const onDrop = (acceptedFiles) => {
-          const value = multiple ? [...field.value, ...acceptedFiles] : acceptedFiles[0];
+          const value = multiple
+            ? [...field.value, ...acceptedFiles]
+            : acceptedFiles[0];
 
           setValue(name, value, { shouldValidate: true });
         };
 
-        return <Upload {...uploadProps} value={field.value} onDrop={onDrop} {...other} />;
+        return (
+          <Upload
+            {...uploadProps}
+            value={field.value}
+            onDrop={onDrop}
+            {...other}
+          />
+        );
       }}
     />
   );

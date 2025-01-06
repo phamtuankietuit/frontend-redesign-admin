@@ -54,7 +54,7 @@ const HIDE_COLUMNS_TOGGLABLE = ['category', 'actions'];
 
 // ----------------------------------------------------------------------
 
-export function ProductListView() {
+export function ProductListView({ isInventoryListPage = false }) {
   const confirmRows = useBoolean();
 
   const router = useRouter();
@@ -193,18 +193,21 @@ export function ProductListView() {
       disableColumnMenu: true,
       getActions: (params) => [
         <GridActionsCellItem
+          key={params.row.id}
           showInMenu
           icon={<Iconify icon="solar:eye-bold" />}
           label="View"
           onClick={() => handleViewRow(params.row.id)}
         />,
         <GridActionsCellItem
+          key={params.row.id + 1}
           showInMenu
           icon={<Iconify icon="solar:pen-bold" />}
           label="Edit"
           onClick={() => handleEditRow(params.row.id)}
         />,
         <GridActionsCellItem
+          key={params.row.id + 2}
           showInMenu
           icon={<Iconify icon="solar:trash-bin-trash-bold" />}
           label="Delete"
@@ -225,7 +228,11 @@ export function ProductListView() {
   return (
     <>
       <DashboardContent
-        sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}
+        sx={{
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
       >
         <CustomBreadcrumbs
           heading="Danh sách sản phẩm"
@@ -234,14 +241,16 @@ export function ProductListView() {
             { name: 'Danh sách sản phẩm' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.product.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              Thêm sản phẩm
-            </Button>
+            !isInventoryListPage && (
+              <Button
+                component={RouterLink}
+                href={paths.dashboard.product.new}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                Thêm sản phẩm
+              </Button>
+            )
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
@@ -252,6 +261,7 @@ export function ProductListView() {
             display: { md: 'flex' },
             height: { xs: 800, md: 2 },
             flexDirection: { md: 'column' },
+            minHeight: 700,
           }}
         >
           <DataGrid

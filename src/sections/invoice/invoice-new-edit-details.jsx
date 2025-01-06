@@ -30,7 +30,8 @@ export function InvoiceNewEditDetails() {
 
   const subtotal = totalOnRow.reduce((acc, num) => acc + num, 0);
 
-  const totalAmount = subtotal - values.discount - values.shipping + values.taxes;
+  const totalAmount =
+    subtotal - values.discount - values.shipping + values.taxes;
 
   useEffect(() => {
     setValue('totalAmount', totalAmount);
@@ -57,21 +58,22 @@ export function InvoiceNewEditDetails() {
       setValue(`items[${index}].price`, 0);
       setValue(`items[${index}].total`, 0);
     },
-    [setValue]
+    [setValue],
   );
 
   const handleSelectService = useCallback(
     (index, option) => {
       setValue(
         `items[${index}].price`,
-        INVOICE_SERVICE_OPTIONS.find((service) => service.name === option)?.price
+        INVOICE_SERVICE_OPTIONS.find((service) => service.name === option)
+          ?.price,
       );
       setValue(
         `items[${index}].total`,
-        values.items.map((item) => item.quantity * item.price)[index]
+        values.items.map((item) => item.quantity * item.price)[index],
       );
     },
-    [setValue, values.items]
+    [setValue, values.items],
   );
 
   const handleChangeQuantity = useCallback(
@@ -79,10 +81,10 @@ export function InvoiceNewEditDetails() {
       setValue(`items[${index}].quantity`, Number(event.target.value));
       setValue(
         `items[${index}].total`,
-        values.items.map((item) => item.quantity * item.price)[index]
+        values.items.map((item) => item.quantity * item.price)[index],
       );
     },
-    [setValue, values.items]
+    [setValue, values.items],
   );
 
   const handleChangePrice = useCallback(
@@ -90,10 +92,10 @@ export function InvoiceNewEditDetails() {
       setValue(`items[${index}].price`, Number(event.target.value));
       setValue(
         `items[${index}].total`,
-        values.items.map((item) => item.quantity * item.price)[index]
+        values.items.map((item) => item.quantity * item.price)[index],
       );
     },
-    [setValue, values.items]
+    [setValue, values.items],
   );
 
   const renderTotal = (
@@ -103,31 +105,39 @@ export function InvoiceNewEditDetails() {
       sx={{ mt: 3, textAlign: 'right', typography: 'body2' }}
     >
       <Stack direction="row">
-        <Box sx={{ color: 'text.secondary' }}>Subtotal</Box>
-        <Box sx={{ width: 160, typography: 'subtitle2' }}>{fCurrency(subtotal) || '-'}</Box>
-      </Stack>
-
-      <Stack direction="row">
-        <Box sx={{ color: 'text.secondary' }}>Shipping</Box>
-        <Box sx={{ width: 160, ...(values.shipping && { color: 'error.main' }) }}>
-          {values.shipping ? `- ${fCurrency(values.shipping)}` : '-'}
+        <Box sx={{ color: 'text.secondary' }}>Tổng tiền hàng</Box>
+        <Box sx={{ width: 160, typography: 'subtitle2' }}>
+          {fCurrency(subtotal) || '-'}
         </Box>
       </Stack>
 
+      {/* <Stack direction="row">
+        <Box sx={{ color: 'text.secondary' }}>Phí giao hàng</Box>
+        <Box
+          sx={{ width: 160, ...(values.shipping && { color: 'error.main' }) }}
+        >
+          {values.shipping ? `- ${fCurrency(values.shipping)}` : '-'}
+        </Box>
+      </Stack> */}
+
       <Stack direction="row">
-        <Box sx={{ color: 'text.secondary' }}>Discount</Box>
-        <Box sx={{ width: 160, ...(values.discount && { color: 'error.main' }) }}>
+        <Box sx={{ color: 'text.secondary' }}>Giảm giá</Box>
+        <Box
+          sx={{ width: 160, ...(values.discount && { color: 'error.main' }) }}
+        >
           {values.discount ? `- ${fCurrency(values.discount)}` : '-'}
         </Box>
       </Stack>
 
       <Stack direction="row">
-        <Box sx={{ color: 'text.secondary' }}>Taxes</Box>
-        <Box sx={{ width: 160 }}>{values.taxes ? fCurrency(values.taxes) : '-'}</Box>
+        <Box sx={{ color: 'text.secondary' }}>Phí giao hàng</Box>
+        <Box sx={{ width: 160 }}>
+          {values.taxes ? fCurrency(values.taxes) : '-'}
+        </Box>
       </Stack>
 
       <Stack direction="row" sx={{ typography: 'subtitle1' }}>
-        <div>Total</div>
+        <div>Tổng cộng</div>
         <Box sx={{ width: 160 }}>{fCurrency(totalAmount) || '-'}</Box>
       </Stack>
     </Stack>
@@ -136,28 +146,35 @@ export function InvoiceNewEditDetails() {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h6" sx={{ color: 'text.disabled', mb: 3 }}>
-        Details:
+        Chi tiết:
       </Typography>
 
-      <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={3}>
+      <Stack
+        divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />}
+        spacing={3}
+      >
         {fields.map((item, index) => (
           <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
-            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              spacing={2}
+              sx={{ width: 1 }}
+            >
               <Field.Text
                 size="small"
                 name={`items[${index}].title`}
-                label="Title"
+                label="Tiêu đề"
                 InputLabelProps={{ shrink: true }}
               />
 
               <Field.Text
                 size="small"
                 name={`items[${index}].description`}
-                label="Description"
+                label="Mô tả"
                 InputLabelProps={{ shrink: true }}
               />
 
-              <Field.Select
+              {/* <Field.Select
                 name={`items[${index}].service`}
                 size="small"
                 label="Service"
@@ -183,13 +200,13 @@ export function InvoiceNewEditDetails() {
                     {service.name}
                   </MenuItem>
                 ))}
-              </Field.Select>
+              </Field.Select> */}
 
               <Field.Text
                 size="small"
                 type="number"
                 name={`items[${index}].quantity`}
-                label="Quantity"
+                label="Số lượng"
                 placeholder="0"
                 onChange={(event) => handleChangeQuantity(event, index)}
                 InputLabelProps={{ shrink: true }}
@@ -200,13 +217,17 @@ export function InvoiceNewEditDetails() {
                 size="small"
                 type="number"
                 name={`items[${index}].price`}
-                label="Price"
+                label="Giá"
                 placeholder="0.00"
                 onChange={(event) => handleChangePrice(event, index)}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ typography: 'subtitle2', color: 'text.disabled' }}>$</Box>
+                      <Box
+                        sx={{ typography: 'subtitle2', color: 'text.disabled' }}
+                      >
+                        đ
+                      </Box>
                     </InputAdornment>
                   ),
                 }}
@@ -218,14 +239,22 @@ export function InvoiceNewEditDetails() {
                 size="small"
                 type="number"
                 name={`items[${index}].total`}
-                label="Total"
+                label="Tổng cộng"
                 placeholder="0.00"
-                value={values.items[index].total === 0 ? '' : values.items[index].total.toFixed(2)}
+                value={
+                  values.items[index].total === 0
+                    ? ''
+                    : values.items[index].total.toFixed(0)
+                }
                 onChange={(event) => handleChangePrice(event, index)}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ typography: 'subtitle2', color: 'text.disabled' }}>$</Box>
+                      <Box
+                        sx={{ typography: 'subtitle2', color: 'text.disabled' }}
+                      >
+                        đ
+                      </Box>
                     </InputAdornment>
                   ),
                 }}
@@ -244,7 +273,7 @@ export function InvoiceNewEditDetails() {
               startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
               onClick={() => handleRemove(index)}
             >
-              Remove
+              Xóa
             </Button>
           </Stack>
         ))}
@@ -264,7 +293,7 @@ export function InvoiceNewEditDetails() {
           onClick={handleAdd}
           sx={{ flexShrink: 0 }}
         >
-          Add Item
+          Thêm sản phẩm
         </Button>
 
         <Stack
@@ -273,17 +302,17 @@ export function InvoiceNewEditDetails() {
           direction={{ xs: 'column', md: 'row' }}
           sx={{ width: 1 }}
         >
-          <Field.Text
+          {/* <Field.Text
             size="small"
             label="Shipping($)"
             name="shipping"
             type="number"
             sx={{ maxWidth: { md: 120 } }}
-          />
+          /> */}
 
           <Field.Text
             size="small"
-            label="Discount($)"
+            label="Giảm giá"
             name="discount"
             type="number"
             sx={{ maxWidth: { md: 120 } }}
@@ -291,7 +320,7 @@ export function InvoiceNewEditDetails() {
 
           <Field.Text
             size="small"
-            label="Taxes(%)"
+            label="Phí giao hàng"
             name="taxes"
             type="number"
             sx={{ maxWidth: { md: 120 } }}

@@ -19,7 +19,13 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export function InvoiceTableToolbar({ filters, options, dateError, onResetPage }) {
+export function InvoiceTableToolbar({
+  filters,
+  options,
+  dateError,
+  onResetPage,
+  isPromotionPage = false,
+}) {
   const popover = usePopover();
 
   const handleFilterName = useCallback(
@@ -27,18 +33,20 @@ export function InvoiceTableToolbar({ filters, options, dateError, onResetPage }
       onResetPage();
       filters.setState({ name: event.target.value });
     },
-    [filters, onResetPage]
+    [filters, onResetPage],
   );
 
   const handleFilterService = useCallback(
     (event) => {
       const newValue =
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
+        typeof event.target.value === 'string'
+          ? event.target.value.split(',')
+          : event.target.value;
 
       onResetPage();
       filters.setState({ service: newValue });
     },
-    [filters, onResetPage]
+    [filters, onResetPage],
   );
 
   const handleFilterStartDate = useCallback(
@@ -46,7 +54,7 @@ export function InvoiceTableToolbar({ filters, options, dateError, onResetPage }
       onResetPage();
       filters.setState({ startDate: newValue });
     },
-    [filters, onResetPage]
+    [filters, onResetPage],
   );
 
   const handleFilterEndDate = useCallback(
@@ -54,7 +62,7 @@ export function InvoiceTableToolbar({ filters, options, dateError, onResetPage }
       onResetPage();
       filters.setState({ endDate: newValue });
     },
-    [filters, onResetPage]
+    [filters, onResetPage],
   );
 
   return (
@@ -65,7 +73,7 @@ export function InvoiceTableToolbar({ filters, options, dateError, onResetPage }
         direction={{ xs: 'column', md: 'row' }}
         sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
-        <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 180 } }}>
+        {/* <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 180 } }}>
           <InputLabel htmlFor="invoice-filter-service-select-label">Service</InputLabel>
 
           <Select
@@ -88,10 +96,10 @@ export function InvoiceTableToolbar({ filters, options, dateError, onResetPage }
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
 
         <DatePicker
-          label="Start date"
+          label="Ngày bắt đầu"
           value={filters.state.endDate}
           onChange={handleFilterStartDate}
           slotProps={{ textField: { fullWidth: true } }}
@@ -99,14 +107,16 @@ export function InvoiceTableToolbar({ filters, options, dateError, onResetPage }
         />
 
         <DatePicker
-          label="End date"
+          label="Ngày kết thúc"
           value={filters.state.endDate}
           onChange={handleFilterEndDate}
           slotProps={{
             textField: {
               fullWidth: true,
               error: dateError,
-              helperText: dateError ? 'End date must be later than start date' : null,
+              helperText: dateError
+                ? 'End date must be later than start date'
+                : null,
             },
           }}
           sx={{
@@ -118,16 +128,29 @@ export function InvoiceTableToolbar({ filters, options, dateError, onResetPage }
           }}
         />
 
-        <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={2}
+          flexGrow={1}
+          sx={{ width: 1 }}
+        >
           <TextField
             fullWidth
             value={filters.state.name}
             onChange={handleFilterName}
-            placeholder="Search customer or invoice number..."
+            placeholder={
+              isPromotionPage
+                ? 'Nhập mã khuyến mãi...'
+                : 'Nhập mã đơn nhập hàng để tìm...'
+            }
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                  <Iconify
+                    icon="eva:search-fill"
+                    sx={{ color: 'text.disabled' }}
+                  />
                 </InputAdornment>
               ),
             }}

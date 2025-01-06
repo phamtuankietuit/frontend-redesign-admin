@@ -2,7 +2,7 @@ import { z as zod } from 'zod';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMemo, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -15,21 +15,33 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import {
+  Grid,
   Skeleton,
   TextField,
   Autocomplete,
   createFilterOptions,
 } from '@mui/material';
 
-import { rowsWithId } from 'src/utils/helper';
-import { fCurrency } from 'src/utils/format-number';
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 
+import { fCurrency } from 'src/utils/format-number';
+import { rowsWithId, transformVariants } from 'src/utils/helper';
+
+import { selectProduct } from 'src/state/product/product.slice';
+import { uploadImagesAsync } from 'src/services/file/file.service';
 import { selectProductType } from 'src/state/product-type/product-type.slice';
+import {
+  createProductAsync,
+  getProductOptionsAsync,
+  updateProductAsync,
+} from 'src/services/product/product.service';
 import {
   getProductTypesFlattenAsync,
   getProductTypeAttributesAsync,
 } from 'src/services/product-type/product-type.service';
 
+import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 import ProductVariants from './product-variants';
@@ -59,21 +71,37 @@ export const NewProductSchema = zod.object({
   variants: zod.array(variantsSchema),
 });
 
-export function ProductNewEditForm() {
+export function ProductNewEditForm({ product }) {
+  console.log('🚀 ~ ProductNewEditForm ~ product:', product);
+  const { createUpdateProductPage } = useSelector(selectProduct);
+  // console.log(
+  //   '🚀 ~ ProductNewEditForm ~ createUpdateProductPage:',
+  //   createUpdateProductPage,
+  // );
+
+  const [isFirstLoading, setIsFirstLoading] = useState(true);
+
   const dispatch = useDispatch();
 
-  const defaultValues = useMemo(
-    () => ({
-      name: '',
-      description: '',
-      images: [],
-      productTypeId: '',
-      attributes: [],
+  const router = useRouter();
+
+  const defaultValues = useMemo(() => {
+    const images =
+      product?.productImages?.map((item) => item.largeImageUrl) || [];
+
+    return {
+      name: product?.name || '',
+      description: product?.description || '',
+      images,
+      productTypeId: product?.productTypeId || '',
       price: 0,
-      variants: [],
-    }),
-    [],
-  );
+      variants: createUpdateProductPage?.variantsRender || [],
+      productVariants: product?.productVariants || [],
+      isActive: true,
+      selectedAttributes: product?.attributeProductValues || [],
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
 
   const methods = useForm({
     resolver: zodResolver(NewProductSchema),
@@ -91,13 +119,126 @@ export function ProductNewEditForm() {
   } = methods;
 
   const values = watch();
+  // console.log('🚀 ~ ProductNewEditForm ~ values:', values);
 
-  const onSubmit = handleSubmit(async (data) => {
+  useEffect(() => {
+    reset(defaultValues);
+    if (product) {
+      dispatch(getProductTypeAttributesAsync(product?.productTypeId));
+      dispatch(getProductOptionsAsync(product?.id));
+    }
+  }, [product, reset, defaultValues, dispatch]);
+
+  useEffect(() => {
+    if (createUpdateProductPage?.variantsRender && product) {
+      setValue('variants', createUpdateProductPage?.variantsRender);
+      setValue('productVariants', product?.productVariants);
+    }
+  }, [createUpdateProductPage?.variantsRender, setValue, product]);
+
+  const onSubmit = handleSubmit(async () => {
     try {
-      console.info('DATA', data);
-      reset();
-      // toast.success(currentProduct ? 'Update success!' : 'Create success!');
-      // router.push(paths.dashboard.product.root);
+      const {
+        name,
+        description,
+        selectedAttributes,
+        isActive,
+        productTypeId,
+        productVariants,
+        images,
+      } = values;
+
+      const newImages = [];
+
+      await dispatch(uploadImagesAsync(images)).then((action) => {
+        if (uploadImagesAsync.fulfilled.match(action)) {
+          newImages.push(...action.payload);
+        } else {
+          toast.error('Có lỗi xảy khi tải ảnh lên, vui lòng thử lại!');
+        }
+      });
+
+      if (!product) {
+        await dispatch(
+          createProductAsync({
+            name,
+            description,
+            isActive,
+            productTypeId,
+            productImages: newImages,
+            productVariants,
+            attributeProductValues: selectedAttributes,
+          }),
+        ).then((action) => {
+          if (createProductAsync.fulfilled.match(action)) {
+            toast.success('Tạo sản phẩm thành công!');
+            reset();
+            router.push(paths.dashboard.product.edit(action.payload.id));
+          } else {
+            toast.error('Có lỗi xảy ra, vui lòng thử lại!');
+          }
+        });
+      } else {
+        const newProductVariants = productVariants.map((item) => {
+          const variantOptions = item.variantOptions?.map((vO) => {
+            const productOptionId = createUpdateProductPage?.variants.find(
+              (v) => v.variantName === vO.name,
+            )?.id;
+
+            const productOptionValueId =
+              createUpdateProductPage?.variants?.reduce(
+                (acc, variant) =>
+                  acc || variant?.values?.find((v) => v.value === vO.value),
+                null,
+              )?.id;
+
+            return { ...vO, productOptionId, productOptionValueId };
+          });
+
+          return {
+            ...item,
+            variantOptions,
+          };
+        });
+
+        const { productType, unitMeasure, ...restProduct } = product;
+
+        const updateImages = newImages.map((item) => {
+          const id = product.productImages.find(
+            (img) => img.largeImageUrl === item.largeImageUrl,
+          )?.id;
+
+          return {
+            id,
+            largeImageUrl: item.largeImageUrl,
+            thumbnailImageUrl: item.thumbnailImageUrl,
+          };
+        });
+
+        const body = {
+          ...restProduct,
+          name,
+          description,
+          isActive,
+          productTypeId: Number(productTypeId),
+          productImages: updateImages,
+          productVariants: newProductVariants,
+          attributeProductValues: selectedAttributes,
+        };
+
+        console.log('🚀 ~ onSubmit ~ body:', body);
+
+        dispatch(updateProductAsync({ id: product.id, body })).then(
+          (action) => {
+            if (updateProductAsync.fulfilled.match(action)) {
+              console.log(action.payload);
+              toast.success('Cập nhật sản phẩm thành công!');
+            } else {
+              toast.error('Có lỗi xảy ra, vui lòng thử lại!');
+            }
+          },
+        );
+      }
     } catch (error) {
       console.error(error);
     }
@@ -128,18 +269,24 @@ export function ProductNewEditForm() {
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name === 'productTypeId') {
-        dispatch(getProductTypeAttributesAsync(value.productTypeId)).then(
-          (action) => {
-            if (getProductTypeAttributesAsync.fulfilled.match(action)) {
-              setValue('attributes', action.payload);
-            }
-          },
-        );
+        dispatch(getProductTypeAttributesAsync(value.productTypeId));
+      }
+
+      if (name === 'variants') {
+        setValue('productVariants', transformVariants(value.variants));
+      }
+
+      if (values.variants.length > 0) {
+        values.variants.forEach((variant, index) => {
+          if (name?.includes(`variants[${index}]`)) {
+            setValue('productVariants', transformVariants(values.variants));
+          }
+        });
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [dispatch, watch, setValue]);
+  }, [dispatch, watch, setValue, values.variants, product, isFirstLoading]);
 
   const renderDetails = (
     <Card>
@@ -166,6 +313,7 @@ export function ProductNewEditForm() {
         <Stack spacing={1.5}>
           <Typography variant="subtitle2">Hình ảnh</Typography>
           <Field.Upload
+            control={control}
             multiple
             thumbnail
             name="images"
@@ -203,122 +351,70 @@ export function ProductNewEditForm() {
           )}
         </ComponentBlock>
 
-        {values.attributes?.map((item) => (
-          <Autocomplete
-            key={item.id}
-            name={item.name}
-            fullWidth
-            options={item.values}
-            getOptionLabel={(option) => option.value}
-            renderInput={(params) => (
-              <TextField {...params} label={item.name} />
-            )}
-            renderOption={(props, option) => {
-              if (option.inputValue) {
-                return (
-                  <li {...props} key="new">
-                    {`Thêm "${option.inputValue}"`}
-                  </li>
-                );
-              }
+        <Grid container spacing={3}>
+          {createUpdateProductPage?.attributes?.map((item, index) => (
+            <Grid item xs={12} sm={6} md={4} key={item.id}>
+              <Controller
+                key={item.id}
+                name={`selectedAttributes.${index}`}
+                control={control}
+                defaultValue={null}
+                render={({ field }) => (
+                  <Autocomplete
+                    {...field}
+                    value={field.value || null}
+                    isOptionEqualToValue={(option, value) =>
+                      option.value === value.value
+                    }
+                    fullWidth
+                    options={item.values || []}
+                    getOptionLabel={(option) => option.value || ''}
+                    renderInput={(params) => (
+                      <TextField {...params} label={item.name} />
+                    )}
+                    renderOption={(props, option) => {
+                      if (option.inputValue) {
+                        return (
+                          <li {...props} key="new">
+                            {`Thêm "${option.inputValue}"`}
+                          </li>
+                        );
+                      }
 
-              return (
-                <li {...props} key={option.id}>
-                  {option.value}
-                </li>
-              );
-            }}
-            filterOptions={(options, params) => {
-              const filtered = filter(options, params);
+                      return (
+                        <li {...props} key={option.attributeValueId}>
+                          {option.value || ''}
+                        </li>
+                      );
+                    }}
+                    filterOptions={(options, params) => {
+                      const filtered = filter(options, params);
 
-              const { inputValue } = params;
+                      const { inputValue } = params;
 
-              const isExisting = options.some(
-                (option) => inputValue === option.value,
-              );
-              if (inputValue !== '' && !isExisting) {
-                filtered.push({
-                  inputValue,
-                  value: `${inputValue}`,
-                });
-              }
+                      const isExisting = options.some(
+                        (option) => inputValue === option.value,
+                      );
+                      if (inputValue !== '' && !isExisting) {
+                        filtered.push({
+                          inputValue,
+                          value: `${inputValue}`,
+                          attributeId: item.id,
+                          name: item.name,
+                        });
+                      }
 
-              return filtered;
-            }}
-          />
-        ))}
-
-        {/* <Box
-          columnGap={2}
-          rowGap={3}
-          display="grid"
-          gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
-        >
-          <Field.Text name="code" label="Mã sản phẩm" />
-
-          <Field.Text name="sku" label="SKU" />
-
-          <Field.Text
-            name="quantity"
-            label="Số lượng"
-            placeholder="0"
-            type="number"
-            InputLabelProps={{ shrink: true }}
-          />
-
-          <Field.Select
-            native
-            name="category"
-            label="Phân loại"
-            InputLabelProps={{ shrink: true }}
-          >
-            {PRODUCT_CATEGORY_GROUP_OPTIONS.map((category) => (
-              <optgroup key={category.group} label={category.group}>
-                {category.classify.map((classify) => (
-                  <option key={classify} value={classify}>
-                    {classify}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </Field.Select>
-
-          <Field.MultiSelect
-            checkbox
-            name="colors"
-            label="Tác giả"
-            options={PRODUCT_AUTHOR_NAME_OPTIONS}
-          />
-
-          <Field.MultiSelect
-            checkbox
-            name="sizes"
-            label="Phân loại"
-            options={PRODUCT_CATEGORY_NAME_OPTIONS}
-          />
-        </Box> */}
-
-        {/* <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <Stack direction="row" alignItems="center" spacing={3}>
-          <Field.Switch name="saleLabel.enabled" label={null} sx={{ m: 0 }} />
-          <Field.Text
-            name="saleLabel.content"
-            label="Tiêu đề Sale"
-            fullWidth
-            disabled={!values.saleLabel.enabled}
-          />
-        </Stack>
-
-        <Stack direction="row" alignItems="center" spacing={3}>
-          <Field.Switch name="newLabel.enabled" label={null} sx={{ m: 0 }} />
-          <Field.Text
-            name="newLabel.content"
-            label="Tiêu đề mới"
-            fullWidth
-            disabled={!values.newLabel.enabled}
-          />
-        </Stack> */}
+                      return filtered;
+                    }}
+                    onChange={(_, newValue) => {
+                      field.onChange(newValue || null);
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+          ))}
+        </Grid>
       </Stack>
     </Card>
   );
@@ -353,6 +449,7 @@ export function ProductNewEditForm() {
         <DataGridProductVariants
           data={rowsWithId(values.variants)}
           control={control}
+          setValue={setValue}
         />
       </Stack>
     </Card>
@@ -403,7 +500,17 @@ export function ProductNewEditForm() {
     <Stack spacing={3} direction="row" alignItems="center" flexWrap="wrap">
       <FormControlLabel
         control={
-          <Switch defaultChecked inputProps={{ id: 'publish-switch' }} />
+          <Controller
+            name="isActive"
+            control={control}
+            render={({ field }) => (
+              <Switch
+                {...field}
+                defaultChecked
+                inputProps={{ id: 'publish-switch' }}
+              />
+            )}
+          />
         }
         label="Hiển thị"
         sx={{ pl: 3, flexGrow: 1 }}
@@ -415,17 +522,14 @@ export function ProductNewEditForm() {
         size="large"
         loading={isSubmitting}
       >
-        Tạo sản phẩm
+        {product ? 'Cập nhật sản phẩm' : 'Tạo sản phẩm'}
       </LoadingButton>
     </Stack>
   );
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
-      <Stack
-        spacing={{ xs: 3, md: 5 }}
-        sx={{ mx: 'auto', maxWidth: { xs: 720, xl: 880 } }}
-      >
+      <Stack spacing={{ xs: 3, md: 5 }} sx={{ mx: 'auto' }}>
         {renderDetails}
 
         {renderProperties}

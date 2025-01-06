@@ -25,16 +25,27 @@ export function InvoiceNewEditStatusDate() {
         value={values.invoiceNumber}
       />
 
-      <Field.Select fullWidth name="status" label="Status" InputLabelProps={{ shrink: true }}>
+      <Field.Select
+        fullWidth
+        name="status"
+        label="Trạng thái"
+        InputLabelProps={{ shrink: true }}
+      >
         {['paid', 'pending', 'overdue', 'draft'].map((option) => (
-          <MenuItem key={option} value={option} sx={{ textTransform: 'capitalize' }}>
-            {option}
+          <MenuItem
+            key={option}
+            value={option}
+            sx={{ textTransform: 'capitalize' }}
+          >
+            {option === 'paid' && 'Đã trả'}
+            {option === 'pending' && 'Đang đợi'}
+            {option === 'overdue' && 'Quá hạn'}
           </MenuItem>
         ))}
       </Field.Select>
 
-      <Field.DatePicker name="createDate" label="Date create" />
-      <Field.DatePicker name="dueDate" label="Due date" />
+      <Field.DatePicker name="createDate" label="Ngày tạo" />
+      <Field.DatePicker name="dueDate" label="Ngày hết hạn" />
     </Stack>
   );
 }

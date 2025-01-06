@@ -39,12 +39,14 @@ export const NewInvoiceSchema = zod
       zod.object({
         title: zod.string().min(1, { message: 'Title is required!' }),
         service: zod.string().min(1, { message: 'Service is required!' }),
-        quantity: zod.number().min(1, { message: 'Quantity must be more than 0' }),
+        quantity: zod
+          .number()
+          .min(1, { message: 'Quantity must be more than 0' }),
         // Not required
         price: zod.number(),
         total: zod.number(),
         description: zod.string(),
-      })
+      }),
     ),
     // Not required
     taxes: zod.number(),
@@ -92,7 +94,7 @@ export function InvoiceNewEditForm({ currentInvoice }) {
         },
       ],
     }),
-    [currentInvoice]
+    [currentInvoice],
   );
 
   const methods = useForm({
@@ -147,7 +149,12 @@ export function InvoiceNewEditForm({ currentInvoice }) {
         <InvoiceNewEditDetails />
       </Card>
 
-      <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>
+      <Stack
+        justifyContent="flex-end"
+        direction="row"
+        spacing={2}
+        sx={{ mt: 3 }}
+      >
         <LoadingButton
           color="inherit"
           size="large"
@@ -155,7 +162,7 @@ export function InvoiceNewEditForm({ currentInvoice }) {
           loading={loadingSave.value && isSubmitting}
           onClick={handleSaveAsDraft}
         >
-          Save as draft
+          Lưu bản nháp
         </LoadingButton>
 
         <LoadingButton
@@ -164,7 +171,7 @@ export function InvoiceNewEditForm({ currentInvoice }) {
           loading={loadingSend.value && isSubmitting}
           onClick={handleCreateAndSend}
         >
-          {currentInvoice ? 'Update' : 'Create'} & send
+          {currentInvoice ? 'Cập nhật' : 'Tạo'}
         </LoadingButton>
       </Stack>
     </Form>

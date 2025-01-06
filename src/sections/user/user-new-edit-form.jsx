@@ -134,8 +134,8 @@ export function UserNewEditForm({ currentUser }) {
                       color: 'text.disabled',
                     }}
                   >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
+                    Chấp nhận *.jpeg, *.jpg, *.png, *.gif
+                    <br /> kích thước tối đa {fData(3145728)}
                   </Typography>
                 }
               />
@@ -200,13 +200,13 @@ export function UserNewEditForm({ currentUser }) {
               sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
             /> */}
 
-            {currentUser && (
+            {/* {currentUser && (
               <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
                 <Button variant="soft" color="error">
                   Xóa người dùng
                 </Button>
               </Stack>
-            )}
+            )} */}
           </Card>
         </Grid>
 
@@ -221,9 +221,25 @@ export function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="name" label="Họ tên" />
-              <Field.Text name="email" label="Email" />
-              <Field.Phone name="phoneNumber" label="Số điện thoại" />
+              <Field.Text
+                InputProps={{
+                  readOnly: true,
+                }}
+                name="name"
+                label="Họ tên"
+              />
+              <Field.Text
+                InputProps={{
+                  readOnly: true,
+                }}
+                name="email"
+                label="Email"
+              />
+              <Field.Phone
+                placeholder="Nhập số điện thoại "
+                name="phoneNumber"
+                label="Số điện thoại"
+              />
 
               {/* <Field.CountrySelect
                 fullWidth

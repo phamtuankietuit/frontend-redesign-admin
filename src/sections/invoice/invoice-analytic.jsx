@@ -20,7 +20,11 @@ export function InvoiceAnalytic({ title, total, icon, color, percent, price }) {
       justifyContent="center"
       sx={{ width: 1, minWidth: 200 }}
     >
-      <Stack alignItems="center" justifyContent="center" sx={{ position: 'relative' }}>
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        sx={{ position: 'relative' }}
+      >
         <Iconify icon={icon} width={32} sx={{ color, position: 'absolute' }} />
 
         <CircularProgress
@@ -41,7 +45,8 @@ export function InvoiceAnalytic({ title, total, icon, color, percent, price }) {
             left: 0,
             opacity: 0.48,
             position: 'absolute',
-            color: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
+            color: (theme) =>
+              varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
           }}
         />
       </Stack>
@@ -49,8 +54,11 @@ export function InvoiceAnalytic({ title, total, icon, color, percent, price }) {
       <Stack spacing={0.5}>
         <Typography variant="subtitle1">{title}</Typography>
 
-        <Box component="span" sx={{ color: 'text.disabled', typography: 'body2' }}>
-          {fShortenNumber(total)} invoices
+        <Box
+          component="span"
+          sx={{ color: 'text.disabled', typography: 'body2' }}
+        >
+          {fShortenNumber(total)} đơn
         </Box>
 
         <Typography variant="subtitle2">{fCurrency(price)}</Typography>

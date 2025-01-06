@@ -6,7 +6,13 @@ import { paths } from 'src/routes/paths';
 import { useTabs } from 'src/hooks/use-tabs';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _userAbout, _userPlans, _userPayment, _userInvoices, _userAddressBook } from 'src/_mock';
+import {
+  _userAbout,
+  _userPlans,
+  _userPayment,
+  _userInvoices,
+  _userAddressBook,
+} from 'src/_mock';
 
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
@@ -20,15 +26,16 @@ import { AccountChangePassword } from '../account-change-password';
 // ----------------------------------------------------------------------
 
 const TABS = [
-  { value: 'general', label: 'General', icon: <Iconify icon="solar:user-id-bold" width={24} /> },
-  { value: 'billing', label: 'Billing', icon: <Iconify icon="solar:bill-list-bold" width={24} /> },
   {
-    value: 'notifications',
-    label: 'Notifications',
-    icon: <Iconify icon="solar:bell-bing-bold" width={24} />,
+    value: 'general',
+    label: 'Thông tin chung',
+    icon: <Iconify icon="solar:user-id-bold" width={24} />,
   },
-  { value: 'social', label: 'Social links', icon: <Iconify icon="solar:share-bold" width={24} /> },
-  { value: 'security', label: 'Security', icon: <Iconify icon="ic:round-vpn-key" width={24} /> },
+  {
+    value: 'security',
+    label: 'Đổi mật khẩu',
+    icon: <Iconify icon="ic:round-vpn-key" width={24} />,
+  },
 ];
 
 // ----------------------------------------------------------------------
@@ -39,18 +46,26 @@ export function AccountView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Account"
+        heading="Cài đặt tài khoản"
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
-          { name: 'Account' },
+          { name: 'Cài đặt', href: paths.profile.root },
+          { name: 'Tài khoản' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <Tabs value={tabs.value} onChange={tabs.onChange} sx={{ mb: { xs: 3, md: 5 } }}>
+      <Tabs
+        value={tabs.value}
+        onChange={tabs.onChange}
+        sx={{ mb: { xs: 3, md: 5 } }}
+      >
         {TABS.map((tab) => (
-          <Tab key={tab.value} label={tab.label} icon={tab.icon} value={tab.value} />
+          <Tab
+            key={tab.value}
+            label={tab.label}
+            icon={tab.icon}
+            value={tab.value}
+          />
         ))}
       </Tabs>
 
@@ -67,7 +82,9 @@ export function AccountView() {
 
       {tabs.value === 'notifications' && <AccountNotifications />}
 
-      {tabs.value === 'social' && <AccountSocialLinks socialLinks={_userAbout.socialLinks} />}
+      {tabs.value === 'social' && (
+        <AccountSocialLinks socialLinks={_userAbout.socialLinks} />
+      )}
 
       {tabs.value === 'security' && <AccountChangePassword />}
     </DashboardContent>

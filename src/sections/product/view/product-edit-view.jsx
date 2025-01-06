@@ -20,7 +20,7 @@ export function ProductEditView({ product }) {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <ProductNewEditForm currentProduct={product} />
+      <ProductNewEditForm product={product} />
     </DashboardContent>
   );
 }

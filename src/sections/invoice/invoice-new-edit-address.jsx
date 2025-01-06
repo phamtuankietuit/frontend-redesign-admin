@@ -50,8 +50,11 @@ export function InvoiceNewEditAddress() {
       >
         <Stack sx={{ width: 1 }}>
           <Stack direction="row" alignItems="center" sx={{ mb: 1 }}>
-            <Typography variant="h6" sx={{ color: 'text.disabled', flexGrow: 1 }}>
-              From:
+            <Typography
+              variant="h6"
+              sx={{ color: 'text.disabled', flexGrow: 1 }}
+            >
+              Từ:
             </Typography>
 
             <IconButton onClick={from.onTrue}>
@@ -67,15 +70,20 @@ export function InvoiceNewEditAddress() {
         </Stack>
 
         <Stack sx={{ width: 1 }}>
-          <Stack direction="row" alignItems="center" sx={{ mb: 1 }}>
-            <Typography variant="h6" sx={{ color: 'text.disabled', flexGrow: 1 }}>
+          {/* <Stack direction="row" alignItems="center" sx={{ mb: 1 }}>
+            <Typography
+              variant="h6"
+              sx={{ color: 'text.disabled', flexGrow: 1 }}
+            >
               To:
             </Typography>
 
             <IconButton onClick={to.onTrue}>
-              <Iconify icon={invoiceTo ? 'solar:pen-bold' : 'mingcute:add-line'} />
+              <Iconify
+                icon={invoiceTo ? 'solar:pen-bold' : 'mingcute:add-line'}
+              />
             </IconButton>
-          </Stack>
+          </Stack> */}
 
           {invoiceTo ? (
             <Stack spacing={1}>
@@ -92,7 +100,7 @@ export function InvoiceNewEditAddress() {
       </Stack>
 
       <AddressListDialog
-        title="Customers"
+        title="Nhà cung cấp"
         open={from.value}
         onClose={from.onFalse}
         selected={(selectedId) => invoiceFrom?.id === selectedId}
@@ -104,13 +112,13 @@ export function InvoiceNewEditAddress() {
             startIcon={<Iconify icon="mingcute:add-line" />}
             sx={{ alignSelf: 'flex-end' }}
           >
-            New
+            Thêm
           </Button>
         }
       />
 
       <AddressListDialog
-        title="Customers"
+        title="Nhà cung cấp"
         open={to.value}
         onClose={to.onFalse}
         selected={(selectedId) => invoiceTo?.id === selectedId}
@@ -122,7 +130,7 @@ export function InvoiceNewEditAddress() {
             startIcon={<Iconify icon="mingcute:add-line" />}
             sx={{ alignSelf: 'flex-end' }}
           >
-            New
+            Thêm
           </Button>
         }
       />

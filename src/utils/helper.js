@@ -178,3 +178,71 @@ export function generateCombinations(variants) {
 
   return result;
 }
+
+export function transformVariants(inputData) {
+  // Extract the variant names and their values
+  const variants = inputData.map(item => ({
+    name: item.variantName,
+    values: item.values
+  }));
+
+  // Generate all possible combinations of the variant values
+  const combinations = variants.reduce((acc, variant) => {
+    if (!acc.length) {
+      return variant.values.map(value => [{ name: variant.name, value }]);
+    }
+    return acc.flatMap(combination =>
+      variant.values.map(value => [...combination, { name: variant.name, value }])
+    );
+  }, []);
+
+  // Create the output structure for each combination
+  const output = combinations.map(combination => ({
+    recommendedRetailPrice: 0,
+    unitPrice: 0,
+    weight: 0,
+    dimension: {
+      length: 0,
+      width: 0,
+      height: 0
+    },
+    taxRate: 0,
+    comment: "",
+    variantOptions: combination
+  }));
+
+  return output;
+}
+
+
+export const transformAttributes = (attributes) => {
+  if (!attributes) {
+    return [];
+  }
+
+  return attributes.map((attribute) => {
+    const { id } = attribute;
+    return {
+      attributeId: id,
+      value: '',
+    };
+  });
+};
+
+export const sortTheAttributes = (firstObject, secondObject) => {
+  const orderMap = new Map();
+  firstObject.forEach((item, index) => {
+    orderMap.set(item.id, index);
+  });
+
+  return [...secondObject]
+    .sort((a, b) => orderMap.get(a.attributeId) - orderMap.get(b.attributeId))
+    .map((item) => {
+      const { attributeId, attributeValueId, value } = item;
+      return {
+        value,
+        productTypeAttributeId: attributeId,
+        id: attributeValueId,
+      };
+    });
+};

@@ -29,6 +29,17 @@ const ProductDetailsPage = lazy(
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
 const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
 const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
+// Inventory
+const InventoryListPage = lazy(
+  () => import('src/pages/dashboard/inventory/list'),
+);
+const InventoryEditPage = lazy(
+  () => import('src/pages/dashboard/inventory/edit'),
+);
+// Promotion
+const PromotionListPage = lazy(
+  () => import('src/pages/dashboard/promotion/list'),
+);
 // Order
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 const OrderDetailsPage = lazy(
@@ -101,9 +112,9 @@ export const dashboardRoutes = [
       </AuthGuard>
     ),
     children: [
-      { element: <IndexPage />, index: true },
+      { element: <OverviewAnalyticsPage />, index: true },
       { path: 'ecommerce', element: <OverviewEcommercePage /> },
-      { path: 'analytics', element: <OverviewAnalyticsPage /> },
+      // { path: 'analytics', element: <OverviewAnalyticsPage /> },
       { path: 'banking', element: <OverviewBankingPage /> },
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'file', element: <OverviewFilePage /> },
@@ -129,6 +140,17 @@ export const dashboardRoutes = [
           { path: 'new', element: <ProductCreatePage /> },
           { path: ':id/edit', element: <ProductEditPage /> },
         ],
+      },
+      {
+        path: 'inventory',
+        children: [
+          { element: <InventoryListPage />, index: true },
+          { path: ':id/edit', element: <InventoryEditPage /> },
+        ],
+      },
+      {
+        path: 'promotion',
+        children: [{ element: <PromotionListPage />, index: true }],
       },
       {
         path: 'order',

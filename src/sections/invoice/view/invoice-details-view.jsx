@@ -14,8 +14,8 @@ export function InvoiceDetailsView({ invoice }) {
       <CustomBreadcrumbs
         heading={invoice?.invoiceNumber}
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Invoice', href: paths.dashboard.invoice.root },
+          { name: 'Trang chủ', href: paths.dashboard.root },
+          { name: 'Đơn nhập hàng', href: paths.dashboard.invoice.root },
           { name: invoice?.invoiceNumber },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

@@ -51,8 +51,8 @@ export default function Page() {
 
       <ProductShopDetailsView
         product={product}
-        loading={!productError && !ratings}
-        error={productError}
+        loading={!product}
+        // error={productError}
       />
     </>
   );
