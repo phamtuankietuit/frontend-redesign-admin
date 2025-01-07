@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 
 import { useSetState } from 'src/hooks/use-set-state';
 
+import { findProduct } from 'src/utils/helper';
 import { fCurrency, fMyShortenNumber } from 'src/utils/format-number';
 
 import { selectProduct } from 'src/state/product/product.slice';
@@ -33,7 +34,7 @@ export function ProductDetailsSummary({
 }) {
   const { ratings } = useSelector(selectProduct);
 
-  const { id, name, minRecommendedRetailPrice, productVariants } = product;
+  const { id, name, minUnitPrice, maxUnitPrice, productVariants } = product;
 
   const { state, setState, setField, onResetState, canReset } = useSetState({
     available: productVariants?.length === 1 ? productVariants[0].quantity : 0,
@@ -44,7 +45,8 @@ export function ProductDetailsSummary({
     skuValue: '',
     name,
     quantity: state.available < 1 ? 0 : 1,
-    selectedOptions: {},
+    selectedOptions: null,
+    displayPrice: 0,
   };
 
   const methods = useForm({ defaultValues });
@@ -65,14 +67,13 @@ export function ProductDetailsSummary({
       Object.keys(values.selectedOptions)?.length ===
       product.productVariantOptions?.length
     ) {
-      const productVariant = productVariants.find((variant) =>
-        variant.optionValues.every(
-          (optionValue) =>
-            values.selectedOptions[optionValue.name] === optionValue.value,
-        ),
+      const productVariant = findProduct(
+        productVariants,
+        values.selectedOptions,
       );
 
       if (productVariant) {
+        setValue('displayPrice', productVariant.unitPrice);
         setState({ available: productVariant.quantity });
       }
     }
@@ -108,8 +109,19 @@ export function ProductDetailsSummary({
     }
   }, [onAddCart, values]);
 
-  const renderPrice = (
-    <Box sx={{ typography: 'h5' }}>{fCurrency(minRecommendedRetailPrice)}</Box>
+  const renderPrice =
+    minUnitPrice !== maxUnitPrice ? (
+      <Stack direction="row" spacing={2} justifyContent="center">
+        <Box sx={{ typography: 'h5' }}>{fCurrency(minUnitPrice)}</Box>
+        <Box sx={{ typography: 'h5' }}>-</Box>
+        <Box sx={{ typography: 'h5' }}>{fCurrency(maxUnitPrice)}</Box>
+      </Stack>
+    ) : (
+      <Box sx={{ typography: 'h5' }}>{fCurrency(minUnitPrice)}</Box>
+    );
+
+  const renderDisplayPrice = (
+    <Box sx={{ typography: 'h5' }}>{fCurrency(values.displayPrice)}</Box>
   );
 
   const renderShare = (
@@ -267,7 +279,7 @@ export function ProductDetailsSummary({
 
           {renderRating}
 
-          {renderPrice}
+          {values.displayPrice !== 0 ? renderDisplayPrice : renderPrice}
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />

@@ -81,7 +81,7 @@ function OptionItem({ option, thumbImage, selected, sx, ...other }) {
       }}
       {...other}
     >
-      <Image
+      {/* <Image
         src={thumbImage}
         sx={{
           width: 24,
@@ -89,9 +89,13 @@ function OptionItem({ option, thumbImage, selected, sx, ...other }) {
           borderRadius: 1,
           objectFit: 'cover',
         }}
-      />
+      /> */}
 
-      <Box component="span" flexGrow={1} sx={{ typography: 'subtitle2' }}>
+      <Box
+        component="span"
+        flexGrow={1}
+        sx={{ typography: 'subtitle2', textAlign: 'center' }}
+      >
         {option}
       </Box>
     </Box>

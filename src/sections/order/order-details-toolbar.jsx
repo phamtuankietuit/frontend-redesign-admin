@@ -10,8 +10,11 @@ import { RouterLink } from 'src/routes/components';
 import { fDateTime, formatStr } from 'src/utils/format-time';
 
 import { Label } from 'src/components/label';
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
+import { useDispatch } from 'react-redux';
+import { sendEmailAsync } from 'src/services/mail/mail.service';
 
 // ----------------------------------------------------------------------
 
@@ -24,6 +27,17 @@ export function OrderDetailsToolbar({
   onChangeStatus,
 }) {
   const popover = usePopover();
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    dispatch(
+      sendEmailAsync({
+        emailType: 1,
+        email: '21522262@gm.uit.edu.vn',
+      }),
+    );
+    toast.success('Cập nhật đơn hàng thành công');
+  };
 
   return (
     <>
@@ -98,6 +112,7 @@ export function OrderDetailsToolbar({
           <Button
             color="inherit"
             variant="contained"
+            onClick={handleSubmit}
             // startIcon={<Iconify icon="solar:pen-bold" />}
           >
             Lưu

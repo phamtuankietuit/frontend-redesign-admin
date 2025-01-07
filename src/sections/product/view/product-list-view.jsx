@@ -1,3 +1,4 @@
+import { useDispatch } from 'react-redux';
 import { useState, useEffect, useCallback } from 'react';
 
 import Card from '@mui/material/Card';
@@ -24,6 +25,7 @@ import { useSetState } from 'src/hooks/use-set-state';
 import { PRODUCT_STOCK_OPTIONS } from 'src/_mock';
 import { useGetProducts } from 'src/actions/product';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { getProductsAsync } from 'src/services/product/product.service';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -55,6 +57,8 @@ const HIDE_COLUMNS_TOGGLABLE = ['category', 'actions'];
 // ----------------------------------------------------------------------
 
 export function ProductListView({ isInventoryListPage = false }) {
+  const dispatch = useDispatch();
+
   const confirmRows = useBoolean();
 
   const router = useRouter();
@@ -224,6 +228,14 @@ export function ProductListView({ isInventoryListPage = false }) {
     columns
       .filter((column) => !HIDE_COLUMNS_TOGGLABLE.includes(column.field))
       .map((column) => column.field);
+
+  useEffect(() => {
+    dispatch(getProductsAsync()).then((action) => {
+      if (getProductsAsync.fulfilled.match(action)) {
+        console.log('PAYLOAD', action.payload);
+      }
+    });
+  }, [dispatch]);
 
   return (
     <>

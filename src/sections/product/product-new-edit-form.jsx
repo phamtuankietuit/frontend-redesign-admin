@@ -16,6 +16,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import {
   Grid,
+  Button,
   Skeleton,
   TextField,
   Autocomplete,
@@ -33,8 +34,8 @@ import { uploadImagesAsync } from 'src/services/file/file.service';
 import { selectProductType } from 'src/state/product-type/product-type.slice';
 import {
   createProductAsync,
-  getProductOptionsAsync,
   updateProductAsync,
+  getProductOptionsAsync,
 } from 'src/services/product/product.service';
 import {
   getProductTypesFlattenAsync,
@@ -99,6 +100,12 @@ export function ProductNewEditForm({ product }) {
       productVariants: product?.productVariants || [],
       isActive: true,
       selectedAttributes: product?.attributeProductValues || [],
+      allStockQuantity: 0,
+      allPrice: 0,
+      allLength: 0,
+      allHeight: 0,
+      allWidth: 0,
+      allWeight: 0,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
@@ -119,7 +126,7 @@ export function ProductNewEditForm({ product }) {
   } = methods;
 
   const values = watch();
-  // console.log('🚀 ~ ProductNewEditForm ~ values:', values);
+  console.log('🚀 ~ ProductNewEditForm ~ values:', values);
 
   useEffect(() => {
     reset(defaultValues);
@@ -288,6 +295,27 @@ export function ProductNewEditForm({ product }) {
     return () => subscription.unsubscribe();
   }, [dispatch, watch, setValue, values.variants, product, isFirstLoading]);
 
+  const handleApplyAll = () => {
+    const {
+      allStockQuantity,
+      allPrice,
+      allLength,
+      allHeight,
+      allWidth,
+      allWeight,
+      productVariants,
+    } = values;
+
+    productVariants.forEach((_, index) => {
+      setValue(`productVariants[${index}].stockQuantity`, allStockQuantity);
+      setValue(`productVariants[${index}].unitPrice`, allPrice);
+      setValue(`productVariants[${index}].weight`, allWeight);
+      setValue(`productVariants[${index}].dimension.length`, allLength);
+      setValue(`productVariants[${index}].dimension.width`, allWidth);
+      setValue(`productVariants[${index}].dimension.height`, allHeight);
+    });
+  };
+
   const renderDetails = (
     <Card>
       <CardHeader
@@ -438,18 +466,171 @@ export function ProductNewEditForm({ product }) {
   const renderProductVariantsDetails = (
     <Card>
       <CardHeader
-        title="Giá bán"
-        subheader="Thêm giá bán cho các biển thể"
+        title="Thông tin biến thể"
+        subheader="Thêm thông tin cho các biển thể"
         sx={{ mb: 3 }}
       />
 
       <Divider />
 
       <Stack spacing={3} sx={{ p: 3 }}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3}>
+          <Controller
+            name="allStockQuantity"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                fullWidth
+                type="text"
+                label="Số lượng"
+                InputLabelProps={{ shrink: true }}
+                value={fCurrency(value, { currencyDisplay: 'code' })}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, '');
+                  onChange(Number(rawValue));
+                }}
+              />
+            )}
+          />
+          <Controller
+            name="allPrice"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                fullWidth
+                type="text"
+                label="Giá bán"
+                InputLabelProps={{ shrink: true }}
+                value={fCurrency(value, { currencyDisplay: 'code' })}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, '');
+                  onChange(Number(rawValue));
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <Box component="span" sx={{ color: 'text.disabled' }}>
+                        ₫
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          />
+          <Controller
+            name="allLength"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                fullWidth
+                type="text"
+                label="Chiè̀u dài"
+                InputLabelProps={{ shrink: true }}
+                value={fCurrency(value, { currencyDisplay: 'code' })}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, '');
+                  onChange(Number(rawValue));
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <Box component="span" sx={{ color: 'text.disabled' }}>
+                        cm
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          />
+          <Controller
+            name="allHeight"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                fullWidth
+                type="text"
+                label="Chiè̀u cao"
+                InputLabelProps={{ shrink: true }}
+                value={fCurrency(value, { currencyDisplay: 'code' })}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, '');
+                  onChange(Number(rawValue));
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <Box component="span" sx={{ color: 'text.disabled' }}>
+                        cm
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          />
+          <Controller
+            name="allWidth"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                fullWidth
+                type="text"
+                label="Chiè̀u rộng"
+                InputLabelProps={{ shrink: true }}
+                value={fCurrency(value, { currencyDisplay: 'code' })}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, '');
+                  onChange(Number(rawValue));
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <Box component="span" sx={{ color: 'text.disabled' }}>
+                        cm
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          />
+          <Controller
+            name="allWeight"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                fullWidth
+                type="text"
+                label="Cân nặng"
+                InputLabelProps={{ shrink: true }}
+                value={fCurrency(value, { currencyDisplay: 'code' })}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, '');
+                  onChange(Number(rawValue));
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <Box component="span" sx={{ color: 'text.disabled' }}>
+                        g
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          />
+        </Stack>
+
+        <Button variant="contained" size="large" onClick={handleApplyAll}>
+          Áp dụng tất cả
+        </Button>
+
         <DataGridProductVariants
           data={rowsWithId(values.variants)}
           control={control}
-          setValue={setValue}
         />
       </Stack>
     </Card>

@@ -71,14 +71,14 @@ export const navData = [
           { title: 'Danh sách sản phẩm', path: paths.dashboard.product.root },
         ],
       },
-      {
-        title: 'Tồn kho',
-        path: paths.dashboard.inventory.root,
-        icon: ICONS.blog,
-        children: [
-          { title: 'Danh sách sản phẩm', path: paths.dashboard.inventory.root },
-        ],
-      },
+      // {
+      //   title: 'Tồn kho',
+      //   path: paths.dashboard.inventory.root,
+      //   icon: ICONS.blog,
+      //   children: [
+      //     { title: 'Danh sách sản phẩm', path: paths.dashboard.inventory.root },
+      //   ],
+      // },
       {
         title: 'Đơn nhập hàng',
         path: paths.dashboard.invoice.root,

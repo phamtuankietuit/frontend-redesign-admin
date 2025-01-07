@@ -75,7 +75,7 @@ export function ProductShopDetailsView({ product, error, loading }) {
       <CustomBreadcrumbs
         links={[
           { name: 'Trang chủ', href: '/' },
-          { name: product?.productType?.displayName, href: '/' },
+          { name: product?.productTypeName, href: '/' },
           { name: product?.name || 'Sản phẩm' },
         ]}
         sx={{ mb: 5 }}
@@ -83,9 +83,7 @@ export function ProductShopDetailsView({ product, error, loading }) {
 
       <Grid container spacing={{ xs: 3, md: 5, lg: 8 }}>
         <Grid xs={12} md={6} lg={7}>
-          <ProductDetailsCarousel
-            images={product?.productImages?.map((item) => item.largeImageUrl)}
-          />
+          <ProductDetailsCarousel images={product?.largeImageUrls} />
         </Grid>
 
         <Grid xs={12} md={6} lg={5}>
@@ -141,7 +139,7 @@ export function ProductShopDetailsView({ product, error, loading }) {
         </Tabs>
         {tabs.value === 'information' && (
           <ProductDetailsInformation
-            productTypeAttributes={product?.attributeProductValues}
+            productTypeAttributes={product?.productTypeAttributes}
           />
 
           // <CatalogItemCard

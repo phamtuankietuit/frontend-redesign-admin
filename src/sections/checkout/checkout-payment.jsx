@@ -1,10 +1,13 @@
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import LoadingButton from '@mui/lab/LoadingButton';
+
+import { sendEmailAsync } from 'src/services/mail/mail.service';
 
 import { Form } from 'src/components/hook-form';
 import { Iconify } from 'src/components/iconify';
@@ -70,10 +73,20 @@ export function CheckoutPayment() {
     formState: { isSubmitting },
   } = methods;
 
+  const dispatch = useDispatch();
+
   const onSubmit = handleSubmit(async (data) => {
     try {
       checkout.onNextStep();
       checkout.onReset();
+
+      dispatch(
+        sendEmailAsync({
+          emailType: 0,
+          email: '21522262@gm.uit.edu.vn',
+        }),
+      );
+
       console.info('DATA', data);
     } catch (error) {
       console.error(error);

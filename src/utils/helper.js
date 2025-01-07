@@ -201,6 +201,7 @@ export function transformVariants(inputData) {
     recommendedRetailPrice: 0,
     unitPrice: 0,
     weight: 0,
+    stockQuantity: 0,
     dimension: {
       length: 0,
       width: 0,
@@ -246,3 +247,10 @@ export const sortTheAttributes = (firstObject, secondObject) => {
       };
     });
 };
+
+export const findProduct = (products, criteria) =>
+  products.find(product => Object.entries(criteria)
+    .every(([key, value]) => {
+      const option = product.optionValues.find(opt => opt.name === key);
+      return option && option.value === value;
+    }));

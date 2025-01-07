@@ -10,6 +10,14 @@ export const getProductAsync = createAsyncThunk(
     }
 );
 
+export const getProductsAsync = createAsyncThunk(
+    'product/getProductsAsync',
+    async () => {
+        const response = await GET(`/products`);
+        return response.data;
+    }
+);
+
 export const getProductRatingsAsync = createAsyncThunk(
     'product/getProductRatingsAsync',
     async (params) => {

@@ -50,6 +50,16 @@ export function DataGridProductVariants({ data, control }) {
                 border: '1px solid #ddd',
               }}
             >
+              Số lượng
+            </TableCell>
+            <TableCell
+              style={{ borderColor: '#ddd' }}
+              sx={{
+                minWidth: 150,
+                textAlign: 'center',
+                border: '1px solid #ddd',
+              }}
+            >
               Giá bán
             </TableCell>
             <TableCell
@@ -103,6 +113,30 @@ export function DataGridProductVariants({ data, control }) {
                   </TableCell>
                 );
               })}
+              <TableCell
+                key={`stockQuantity-${row.id}`}
+                sx={{ border: '1px solid #ddd' }}
+                style={{ borderColor: '#ddd' }}
+              >
+                <Controller
+                  name={`productVariants[${rowIndex}].stockQuantity`}
+                  control={control}
+                  render={({ field: { onChange, value, ref } }) => (
+                    <TextField
+                      fullWidth
+                      type="text"
+                      label="Số lượng"
+                      InputLabelProps={{ shrink: true }}
+                      value={fCurrency(value, { currencyDisplay: 'code' })}
+                      onChange={(e) => {
+                        const rawValue = e.target.value.replace(/\D/g, '');
+                        onChange(Number(rawValue));
+                      }}
+                      inputRef={ref}
+                    />
+                  )}
+                />
+              </TableCell>
               <TableCell
                 key={`unitPrice-${row.id}`}
                 sx={{ border: '1px solid #ddd' }}
@@ -269,7 +303,7 @@ export function DataGridProductVariants({ data, control }) {
                               component="span"
                               sx={{ color: 'text.disabled' }}
                             >
-                              kg
+                              g
                             </Box>
                           </InputAdornment>
                         ),
