@@ -24,17 +24,18 @@ export function AuthGuard({ children }) {
 
   const checkPermissions = async () => {
     if (!user) {
-      if (getAccessToken() === null) {
-        router.replace(paths.auth.signIn);
-      } else {
-        // eslint-disable-next-line consistent-return
-        dispatch(getMeAsync()).then((action) => {
-          if (getMeAsync.rejected.match(action)) {
-            toast.error('Vui lòng đăng nhập lại!');
-            router.replace(paths.auth.signIn);
-          }
-        });
-      }
+      // if (getAccessToken() === null) {
+      //   router.replace(paths.auth.signIn);
+      // } else {
+      //   // eslint-disable-next-line consistent-return
+      //   dispatch(getMeAsync()).then((action) => {
+      //     if (getMeAsync.rejected.match(action)) {
+      //       toast.error('Vui lòng đăng nhập lại!');
+      //       router.replace(paths.auth.signIn);
+      //     }
+      //   });
+      // }
+      router.replace(paths.auth.signIn);
       return;
     }
 

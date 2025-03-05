@@ -8,7 +8,7 @@ export const getAccessToken = () => {
         }
         return JSON.parse(session).accessToken;
     } catch (error) {
-        console.error('Invalid Token. Redirecting to /login');
+        console.error('Invalid Access Token.');
         return null;
     }
 };
@@ -21,7 +21,7 @@ export const getRefreshToken = () => {
         }
         return JSON.parse(session).refreshToken;
     } catch (error) {
-        console.error('Invalid Token. Redirecting to /login');
+        console.error('Invalid Refresh Token.');
         return null;
     }
 };

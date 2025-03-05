@@ -1,11 +1,10 @@
 import axios from 'axios';
 
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
+import { redirectToSignIn } from 'src/utils/navigation';
 
 import { CONFIG } from 'src/config-global';
 
-import { setSession, getAccessToken, getRefreshToken } from './token.service';
+import { setSession, deleteItem, sessionKey, getAccessToken, getRefreshToken } from './token.service';
 
 const AxiosInstance = axios.create({
     baseURL: `${CONFIG.myServerUrl}/api`,
@@ -30,29 +29,32 @@ AxiosInstance.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
-            const refreshToken = getRefreshToken();
-
-            if (refreshToken) {
-                try {
-                    const { data } = await axios.post(`${CONFIG.myServerUrl}/auth/refresh`, {
-                        refreshToken,
-                    });
-
-                    setSession(data);
-
-                    originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-
-                    return AxiosInstance(originalRequest);
-                } catch (refreshError) {
-                    const router = useRouter();
-                    router.replace(paths.auth.signIn);
-                }
-            }
+        if (error.response?.status !== 401 || originalRequest._retry) {
+            return Promise.reject(new Error(error.response?.data?.message || error.message || 'Unknown error'));
         }
 
-        return Promise.reject(new Error(error));
+        originalRequest._retry = true;
+
+        const refreshToken = getRefreshToken();
+
+        if (!refreshToken) {
+            deleteItem(sessionKey);
+            // redirectToSignIn();
+            return Promise.reject(new Error(error.response?.data?.message || error.message || 'Unknown error'));
+        }
+
+        try {
+            const { data } = await axios.post(`${CONFIG.myServerUrl}/auth/refresh`, { refreshToken });
+
+            setSession(data);
+            originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+
+            return AxiosInstance(originalRequest);
+        } catch (refreshError) {
+            deleteItem(sessionKey);
+            redirectToSignIn();
+            return Promise.reject(new Error(refreshError.response?.data?.message || refreshError.message || 'Unknown error'));
+        }
     }
 );
 

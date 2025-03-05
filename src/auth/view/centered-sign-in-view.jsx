@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-import { Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -18,7 +17,7 @@ import { RouterLink } from 'src/routes/components';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { selectAuth } from 'src/state/auth/auth.slice';
-import { getUserRole, getAccessToken } from 'src/services/token.service';
+import { getAccessToken } from 'src/services/token.service';
 import { getMeAsync, signInAsync } from 'src/services/auth/auth.service';
 
 import { toast } from 'src/components/snackbar';
@@ -40,7 +39,7 @@ export const SignInSchema = zod.object({
 
 // ----------------------------------------------------------------------
 
-export function CenteredSignInView({ isAdmin = false }) {
+export function CenteredSignInView() {
   const router = useRouter();
 
   const { user } = useSelector(selectAuth);
@@ -63,45 +62,25 @@ export function CenteredSignInView({ isAdmin = false }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await dispatch(signInAsync({ ...data, signInSource: isAdmin ? 2 : 1 }))
-        // eslint-disable-next-line consistent-return
-        .then((action) => {
-          if (signInAsync.fulfilled.match(action)) {
-            return dispatch(getMeAsync());
-          }
-        })
-        .then((action) => {
-          if (getMeAsync.fulfilled.match(action)) {
-            if (isAdmin && getUserRole() === 'Admin') {
-              router.replace(paths.dashboard.root);
-            } else if (!isAdmin && getUserRole() === 'Customer') {
-              router.replace('/');
-            }
-          }
-        });
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      console.info('DATA', data);
+      // await dispatch(signInAsync({ ...data, signInSource: 1 }))
+      //   // eslint-disable-next-line consistent-return
+      //   .then((action) => {
+      //     if (signInAsync.fulfilled.match(action)) {
+      //       return dispatch(getMeAsync());
+      //     }
+      //   })
+      //   .then((action) => {
+      //     if (getMeAsync.fulfilled.match(action)) {
+      //       router.replace('/');
+      //     }
+      //   });
     } catch (error) {
       console.error(error);
       toast.error('Có lỗi xảy ra, vui lòng thử lại!');
     }
   });
-
-  useEffect(() => {
-    if (user) {
-      if (isAdmin && getUserRole() === 'Admin') {
-        router.replace(paths.dashboard);
-      }
-
-      if (!isAdmin && getUserRole() === 'Customer') {
-        router.replace('/');
-      }
-
-      return;
-    }
-
-    if (getAccessToken()) {
-      dispatch(getMeAsync());
-    }
-  }, [dispatch, router, user, isAdmin]);
 
   const renderLogo = <AnimateLogo2 sx={{ mb: 3, mx: 'auto' }} />;
 
@@ -158,17 +137,6 @@ export function CenteredSignInView({ isAdmin = false }) {
       >
         Đăng nhập
       </LoadingButton>
-
-      {!isAdmin && (
-        <Button
-          component={RouterLink}
-          href={paths.dashboard.signIn}
-          color="inherit"
-          endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
-        >
-          Đăng nhập vào hệ thống quản lý
-        </Button>
-      )}
     </Box>
   );
 

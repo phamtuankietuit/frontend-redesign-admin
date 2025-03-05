@@ -1,8 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useMemo, useEffect, useCallback } from 'react';
 
-import { useSetState } from 'src/hooks/use-set-state';
-
 import { selectAuth } from 'src/state/auth/auth.slice';
 import { getAccessToken } from 'src/services/token.service';
 import { getMeAsync } from 'src/services/auth/auth.service';
@@ -13,30 +11,21 @@ import { AuthContext } from './auth-context';
 // ----------------------------------------------------------------------
 
 export function AuthProvider({ children }) {
-  const dispatch = useDispatch();
-  const { user } = useSelector(selectAuth);
+  const { loading, isAuthenticated } = useSelector(selectAuth);
 
-  const { state, setState } = useSetState({
-    user: null,
-    loading: true,
-  });
+  const dispatch = useDispatch();
 
   const checkUserSession = useCallback(async () => {
     try {
       const accessToken = getAccessToken();
 
-      if (accessToken && isValidToken(accessToken)) {
-        dispatch(getMeAsync);
-
-        setState({ user, loading: false });
-      } else {
-        setState({ user: null, loading: false });
+      if (!isAuthenticated && accessToken && isValidToken(accessToken)) {
+        await dispatch(getMeAsync).unwrap();
       }
     } catch (error) {
       console.error(error);
-      setState({ auth: null, loading: false });
     }
-  }, [dispatch, setState, user]);
+  }, [dispatch, isAuthenticated]);
 
   useEffect(() => {
     checkUserSession();
@@ -45,24 +34,13 @@ export function AuthProvider({ children }) {
 
   // ----------------------------------------------------------------------
 
-  const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
-
-  const status = state.loading ? 'loading' : checkAuthenticated;
-
   const memoizedValue = useMemo(
     () => ({
-      user: state.user
-        ? {
-            ...state.user,
-            role: state.user?.role ?? 'admin',
-          }
-        : null,
       checkUserSession,
-      loading: status === 'loading',
-      authenticated: status === 'authenticated',
-      unauthenticated: status === 'unauthenticated',
+      isAuthenticated,
+      loading,
     }),
-    [checkUserSession, state.user, status],
+    [checkUserSession, isAuthenticated, loading],
   );
 
   return (

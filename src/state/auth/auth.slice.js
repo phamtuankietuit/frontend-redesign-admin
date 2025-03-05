@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { socket } from "src/hooks/use-socket";
+// import { socket } from "src/hooks/use-socket";
 
 import { getMeAsync, signInAsync } from "src/services/auth/auth.service";
 
@@ -8,7 +8,8 @@ import { toast } from 'src/components/snackbar';
 
 const initialState = {
   user: null,
-  loading: true,
+  loading: false,
+  isAuthenticated: false,
   signUp: {}
 };
 
@@ -18,7 +19,7 @@ const authSlice = createSlice({
   reducers: {
     signOut: (state) => {
       Object.assign(state, initialState);
-      socket.disconnect();
+      // socket.disconnect();
     },
     setSignUp: (state, action) => {
       state.signUp = action.payload;
@@ -29,11 +30,21 @@ const authSlice = createSlice({
       .addCase(signInAsync.rejected, () => {
         toast.error('Vui lòng kiểm tra lại thông tin đăng nhập!');
       })
+      .addCase(getMeAsync.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(getMeAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-        socket.emit('add-user', action.payload.id);
+        state.isAuthenticated = true;
+        // socket.emit('add-user', action.payload.id);
+      })
+      .addCase(getMeAsync.rejected, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.isAuthenticated = false;
       });
+    ;
   },
 });
 

@@ -66,7 +66,7 @@ export function MainLayout({ sx, data, children, header }) {
   const { productTypes } = useSelector(selectProductType);
 
   useEffect(() => {
-    if (productTypes.length === 0) {
+    if (productTypes?.length === 0) {
       dispatch(getProductTypesAsync());
     }
 

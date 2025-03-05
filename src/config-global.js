@@ -1,4 +1,3 @@
-import { paths } from './routes/paths';
 import packageJson from '../package.json';
 
 // ----------------------------------------------------------------------
@@ -12,6 +11,6 @@ export const CONFIG = {
   assetsDir: import.meta.env.VITE_ASSETS_DIR ?? '',
   auth: {
     skip: false,
-    redirectPath: paths.dashboard.root,
+    redirectPath: '/',
   },
 };

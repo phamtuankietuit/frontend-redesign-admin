@@ -47,7 +47,7 @@ export const navData = [
     items: [
       {
         title: 'Báo cáo',
-        path: paths.dashboard.root,
+        path: '/',
         icon: ICONS.analytics,
       },
     ],

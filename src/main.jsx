@@ -12,15 +12,15 @@ import store from './state/store';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  // <StrictMode>
-  <Provider store={store}>
-    <HelmetProvider>
-      <BrowserRouter>
-        <Suspense>
-          <App />
-        </Suspense>
-      </BrowserRouter>
-    </HelmetProvider>
-  </Provider>,
-  // </StrictMode>
+  <StrictMode>
+    <Provider store={store}>
+      <HelmetProvider>
+        <BrowserRouter>
+          <Suspense>
+            <App />
+          </Suspense>
+        </BrowserRouter>
+      </HelmetProvider>
+    </Provider>
+  </StrictMode>,
 );

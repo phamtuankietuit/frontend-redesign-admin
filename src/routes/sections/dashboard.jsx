@@ -101,15 +101,13 @@ const layoutContent = (
 
 export const dashboardRoutes = [
   {
-    path: 'admin',
-    element: CONFIG.auth.skip ? (
+    path: '/',
+    element: (
+      // <AuthGuard>
+      //   <RoleBasedGuard acceptRoles={['Admin']} hasContent>
       <>{layoutContent}</>
-    ) : (
-      <AuthGuard>
-        <RoleBasedGuard acceptRoles={['Admin']} hasContent>
-          {layoutContent}
-        </RoleBasedGuard>
-      </AuthGuard>
+      //   </RoleBasedGuard>
+      // </AuthGuard>
     ),
     children: [
       { element: <OverviewAnalyticsPage />, index: true },

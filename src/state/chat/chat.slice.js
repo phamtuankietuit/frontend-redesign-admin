@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { socket } from "src/hooks/use-socket";
+// import { socket } from "src/hooks/use-socket";
 
 import {
   getAllUsers,
@@ -70,7 +70,7 @@ const chatSlice = createSlice({
           ?.filter(
             participant => participant !== action.payload.senderId);
 
-        socket.emit('send-msg', { to, msg: action.payload });
+        // socket.emit('send-msg', { to, msg: action.payload });
       })
       .addCase(sendCustomerMessageAsync.fulfilled, (state, action) => {
         state.customer.messages.push(action.payload);
@@ -80,7 +80,7 @@ const chatSlice = createSlice({
           ?.filter(
             participant => participant !== action.payload.senderId);
 
-        socket.emit('send-msg', { to, msg: action.payload });
+        // socket.emit('send-msg', { to, msg: action.payload });
       })
       .addCase(getConversationsAsync.fulfilled, (state, action) => {
 
