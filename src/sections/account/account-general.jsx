@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { fData } from 'src/utils/format-number';
+import { toastMessage } from 'src/utils/constant';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
@@ -25,7 +26,7 @@ export const UpdateUserSchema = zod.object({
   email: zod
     .string()
     .min(1, { message: 'Không được bỏ trống!' })
-    .email({ message: 'Email không hợp lệ!' }),
+    .email({ message: toastMessage.error.invalidEmail }),
   photoURL: schemaHelper.file({
     message: { required_error: 'Không được bỏ trống!' },
   }),

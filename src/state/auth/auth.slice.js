@@ -10,7 +10,8 @@ const initialState = {
   user: null,
   loading: false,
   isAuthenticated: false,
-  signUp: {}
+  signUp: {},
+  verifyEmail: ''
 };
 
 const authSlice = createSlice({
@@ -24,6 +25,9 @@ const authSlice = createSlice({
     setSignUp: (state, action) => {
       state.signUp = action.payload;
     },
+    setVerifyEmail: (state, action) => {
+      state.verifyEmail = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -48,7 +52,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { signOut, setSignUp } = authSlice.actions;
+export const { signOut, setSignUp, setVerifyEmail } = authSlice.actions;
 
 export const selectAuth = (state) => state.auth;
 

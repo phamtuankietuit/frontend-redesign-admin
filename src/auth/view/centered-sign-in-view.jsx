@@ -16,6 +16,8 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { toastMessage } from 'src/utils/constant';
+
 import { selectAuth } from 'src/state/auth/auth.slice';
 import { getAccessToken } from 'src/services/token.service';
 import { getMeAsync, signInAsync } from 'src/services/auth/auth.service';
@@ -33,7 +35,7 @@ export const SignInSchema = zod.object({
   email: zod
     .string()
     .min(1, { message: 'Không được bỏ trống!' })
-    .email({ message: 'Email không hợp lệ!' }),
+    .email({ message: toastMessage.error.invalidEmail }),
   password: zod.string().min(1, { message: 'Không được bỏ trống!' }),
 });
 
@@ -145,19 +147,8 @@ export function CenteredSignInView() {
       {renderLogo}
 
       <FormHead
-        title="Đăng nhập"
-        description={
-          <>
-            {`Chưa có tài khoản? `}
-            <Link
-              component={RouterLink}
-              href={paths.auth.signUp}
-              variant="subtitle2"
-            >
-              Đăng ký
-            </Link>
-          </>
-        }
+        title="Đăng nhập hệ thống quản lý"
+        description="KKBooks - Hệ thống quản lý cửa hàng sách"
       />
 
       <Form methods={methods} onSubmit={onSubmit}>

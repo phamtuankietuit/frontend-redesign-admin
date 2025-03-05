@@ -11,6 +11,7 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
+import { toastMessage } from 'src/utils/constant';
 import { phoneNumberRegex } from 'src/utils/regex';
 
 import { selectAuth, setSignUp } from 'src/state/auth/auth.slice';
@@ -27,7 +28,7 @@ export const SignUpSchema = zod.object({
   email: zod
     .string()
     .min(1, { message: 'Không được bỏ trống!' })
-    .email({ message: 'Email không hợp lệ!' }),
+    .email({ message: toastMessage.error.invalidEmail }),
   name: zod.string().min(1, { message: 'Không được bỏ trống!' }),
   phoneNumber: zod
     .string()

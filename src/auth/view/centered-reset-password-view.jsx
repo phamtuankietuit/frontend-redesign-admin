@@ -1,13 +1,18 @@
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
+
+import { toastMessage } from 'src/utils/constant';
 
 import { PasswordIcon } from 'src/assets/icons';
+import { setVerifyEmail } from 'src/state/auth/auth.slice';
 
 import { Form, Field } from 'src/components/hook-form';
 
@@ -19,13 +24,17 @@ import { FormReturnLink } from '../components/form-return-link';
 export const ResetPasswordSchema = zod.object({
   email: zod
     .string()
-    .min(1, { message: 'Không được bỏ trống!' })
-    .email({ message: 'Email không hợp lệ!' }),
+    .min(1, { message: toastMessage.error.empty })
+    .email({ message: toastMessage.error.invalidEmail }),
 });
 
 // ----------------------------------------------------------------------
 
 export function CenteredResetPasswordView() {
+  const router = useRouter();
+
+  const dispatch = useDispatch();
+
   const defaultValues = { email: '' };
 
   const methods = useForm({
@@ -42,6 +51,8 @@ export function CenteredResetPasswordView() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       console.info('DATA', data);
+      dispatch(setVerifyEmail(data.email));
+      router.push(paths.auth.verify);
     } catch (error) {
       console.error(error);
     }

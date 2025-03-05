@@ -1,12 +1,6 @@
-export const productProperty = [
-    "id",
-    "minUnitPrice",
-    "maxUnitPrice",
-    "minRecommendedRetailPrice",
-    "maxRecommendedRetailPrice",
-    "unitMeasureName",
-    "description",
-    "productTypeId",
-    "productTypeName",
-    "isBook",
-];
+export const toastMessage = {
+    error: {
+        empty: 'Không được bỏ trống!',
+        invalidEmail: 'Email không hợp lệ!',
+    }
+};
