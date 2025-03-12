@@ -39,7 +39,6 @@ AxiosInstance.interceptors.response.use(
 
         if (!refreshToken) {
             deleteItem(sessionKey);
-            // redirectToSignIn();
             return Promise.reject(new Error(error.response?.data?.message || error.message || 'Unknown error'));
         }
 

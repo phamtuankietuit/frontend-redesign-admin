@@ -6,7 +6,7 @@ import { CenteredSignInView } from 'src/auth/view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Sign in - ${CONFIG.appName}` };
+const metadata = { title: `Đăng nhập - ${CONFIG.appName}` };
 
 export default function Page() {
   return (

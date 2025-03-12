@@ -1,19 +1,17 @@
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
 
 import { toastMessage } from 'src/utils/constant';
 
 import { PasswordIcon } from 'src/assets/icons';
-import { setVerifyEmail } from 'src/state/auth/auth.slice';
 
+import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
 
 import { FormHead } from '../components/form-head';
@@ -31,10 +29,6 @@ export const ResetPasswordSchema = zod.object({
 // ----------------------------------------------------------------------
 
 export function CenteredResetPasswordView() {
-  const router = useRouter();
-
-  const dispatch = useDispatch();
-
   const defaultValues = { email: '' };
 
   const methods = useForm({
@@ -51,8 +45,8 @@ export function CenteredResetPasswordView() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       console.info('DATA', data);
-      dispatch(setVerifyEmail(data.email));
-      router.push(paths.auth.verify);
+
+      toast.success('Vui lòng kiểm tra email!');
     } catch (error) {
       console.error(error);
     }
@@ -63,7 +57,6 @@ export function CenteredResetPasswordView() {
       <Field.Text
         name="email"
         label="Email"
-        placeholder="example@gmail.com"
         autoFocus
         InputLabelProps={{ shrink: true }}
       />
@@ -86,7 +79,7 @@ export function CenteredResetPasswordView() {
       <FormHead
         icon={<PasswordIcon />}
         title="Quên mật khẩu?"
-        description="Hãy nhập email để hệ thống gửi đường dẫn đặt lại mật khẩu."
+        description="Nhập email để đặt lại mật khẩu"
       />
 
       <Form methods={methods} onSubmit={onSubmit}>

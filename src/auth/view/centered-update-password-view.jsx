@@ -8,51 +8,51 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { paths } from 'src/routes/paths';
+import { useRouter, useSearchParams } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { SentIcon } from 'src/assets/icons';
+import { passwordRegex } from 'src/utils/regex';
+import { toastMessage } from 'src/utils/constant';
 
+import { EmailInboxIcon } from 'src/assets/icons';
+
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 
 import { FormHead } from '../components/form-head';
-import { FormResendCode } from '../components/form-resend-code';
-import { FormReturnLink } from '../components/form-return-link';
 
 // ----------------------------------------------------------------------
 
 export const UpdatePasswordSchema = zod
   .object({
-    code: zod
-      .string()
-      .min(1, { message: 'Code is required!' })
-      .min(6, { message: 'Code must be at least 6 characters!' }),
-    email: zod
-      .string()
-      .min(1, { message: 'Email is required!' })
-      .email({ message: 'Email must be a valid email address!' }),
     password: zod
       .string()
-      .min(1, { message: 'Password is required!' })
-      .min(6, { message: 'Password must be at least 6 characters!' }),
-    confirmPassword: zod
-      .string()
-      .min(1, { message: 'Confirm password is required!' }),
+      .min(1, { message: toastMessage.error.empty })
+      .regex(passwordRegex, {
+        message:
+          'Chứa ít nhất 1 chữ thường, 1 chữ hoa, 1 số và ít nhất 8 ký tự!',
+      }),
+    confirmPassword: zod.string().min(1, { message: toastMessage.error.empty }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match!',
+    message: 'Mật khẩu không khớp!',
     path: ['confirmPassword'],
   });
 
 // ----------------------------------------------------------------------
 
 export function CenteredUpdatePasswordView() {
+  const router = useRouter();
+
   const password = useBoolean();
 
+  const confirmPassword = useBoolean();
+
+  const token = useSearchParams().get('token');
+
   const defaultValues = {
-    code: '',
-    email: '',
     password: '',
     confirmPassword: '',
   };
@@ -61,6 +61,7 @@ export function CenteredUpdatePasswordView() {
     resolver: zodResolver(UpdatePasswordSchema),
     defaultValues,
   });
+
   const {
     handleSubmit,
     formState: { isSubmitting },
@@ -70,28 +71,24 @@ export function CenteredUpdatePasswordView() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       console.info('DATA', data);
+
+      toast.success('Cập nhật mật khẩu thành công. Vui lòng đăng nhập lại!');
+
+      router.replace(paths.auth.signIn);
     } catch (error) {
       console.error(error);
+      toast.success('Có lỗi xảy ra vui lòng thử lại!');
     }
   });
 
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
       <Field.Text
-        name="email"
-        label="Email address"
-        placeholder="example@gmail.com"
-        InputLabelProps={{ shrink: true }}
-      />
-
-      <Field.Code name="code" />
-
-      <Field.Text
         name="password"
-        label="Password"
-        placeholder="6+ characters"
+        label="Mật khẩu"
         type={password.value ? 'text' : 'password'}
         InputLabelProps={{ shrink: true }}
+        autoFocus
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
@@ -109,16 +106,18 @@ export function CenteredUpdatePasswordView() {
 
       <Field.Text
         name="confirmPassword"
-        label="Confirm new password"
-        type={password.value ? 'text' : 'password'}
+        label="Xác nhận mật khẩu"
+        type={confirmPassword.value ? 'text' : 'password'}
         InputLabelProps={{ shrink: true }}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={password.onToggle} edge="end">
+              <IconButton onClick={confirmPassword.onToggle} edge="end">
                 <Iconify
                   icon={
-                    password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'
+                    confirmPassword.value
+                      ? 'solar:eye-bold'
+                      : 'solar:eye-closed-bold'
                   }
                 />
               </IconButton>
@@ -133,9 +132,9 @@ export function CenteredUpdatePasswordView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
-        loadingIndicator="Update password..."
+        loadingIndicator="Đang cập nhật..."
       >
-        Update password
+        Cập nhật
       </LoadingButton>
     </Box>
   );
@@ -143,18 +142,14 @@ export function CenteredUpdatePasswordView() {
   return (
     <>
       <FormHead
-        icon={<SentIcon />}
-        title="Request sent successfully!"
-        description={`We've sent a 6-digit confirmation email to your email. \nPlease enter the code in below box to verify your email.`}
+        icon={<EmailInboxIcon />}
+        title="Đặt lại mật khẩu"
+        description="Đặt lại mật khẩu cho tài khoản của bạn"
       />
 
       <Form methods={methods} onSubmit={onSubmit}>
         {renderForm}
       </Form>
-
-      <FormResendCode onResendCode={() => {}} value={0} disabled={false} />
-
-      <FormReturnLink href={paths.authDemo.centered.signIn} />
     </>
   );
 }

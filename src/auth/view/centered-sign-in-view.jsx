@@ -1,8 +1,7 @@
 import { z as zod } from 'zod';
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -18,11 +17,8 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { toastMessage } from 'src/utils/constant';
 
-import { selectAuth } from 'src/state/auth/auth.slice';
-import { getAccessToken } from 'src/services/token.service';
-import { getMeAsync, signInAsync } from 'src/services/auth/auth.service';
+import { signInAsync } from 'src/services/auth/auth.service';
 
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { AnimateLogo2 } from 'src/components/animate';
 import { Form, Field } from 'src/components/hook-form';
@@ -34,17 +30,15 @@ import { FormHead } from '../components/form-head';
 export const SignInSchema = zod.object({
   email: zod
     .string()
-    .min(1, { message: 'Không được bỏ trống!' })
+    .min(1, { message: toastMessage.error.empty })
     .email({ message: toastMessage.error.invalidEmail }),
-  password: zod.string().min(1, { message: 'Không được bỏ trống!' }),
+  password: zod.string().min(1, { message: toastMessage.error.empty }),
 });
 
 // ----------------------------------------------------------------------
 
 export function CenteredSignInView() {
   const router = useRouter();
-
-  const { user } = useSelector(selectAuth);
 
   const password = useBoolean();
 
@@ -64,23 +58,17 @@ export function CenteredSignInView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      console.info('DATA', data);
-      // await dispatch(signInAsync({ ...data, signInSource: 1 }))
-      //   // eslint-disable-next-line consistent-return
-      //   .then((action) => {
-      //     if (signInAsync.fulfilled.match(action)) {
-      //       return dispatch(getMeAsync());
-      //     }
-      //   })
-      //   .then((action) => {
-      //     if (getMeAsync.fulfilled.match(action)) {
-      //       router.replace('/');
-      //     }
-      //   });
+      await dispatch(
+        signInAsync({
+          email: data.email,
+          password: data.password,
+          signInSource: 2,
+        }),
+      ).unwrap();
+
+      router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
     }
   });
 
@@ -92,6 +80,7 @@ export function CenteredSignInView() {
         name="email"
         label="Email"
         InputLabelProps={{ shrink: true }}
+        autoFocus
       />
 
       <Box gap={1.5} display="flex" flexDirection="column">
@@ -147,8 +136,8 @@ export function CenteredSignInView() {
       {renderLogo}
 
       <FormHead
-        title="Đăng nhập hệ thống quản lý"
-        description="KKBooks - Hệ thống quản lý cửa hàng sách"
+        title="Đăng nhập"
+        description="KKBooks - Đăng nhập hệ thống quản lý"
       />
 
       <Form methods={methods} onSubmit={onSubmit}>

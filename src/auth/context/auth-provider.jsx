@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useMemo, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import { selectAuth } from 'src/state/auth/auth.slice';
 import { getAccessToken } from 'src/services/token.service';
@@ -11,7 +11,9 @@ import { AuthContext } from './auth-context';
 // ----------------------------------------------------------------------
 
 export function AuthProvider({ children }) {
-  const { loading, isAuthenticated } = useSelector(selectAuth);
+  const [loading, setLoading] = useState(true);
+
+  const { user } = useSelector(selectAuth);
 
   const dispatch = useDispatch();
 
@@ -19,13 +21,16 @@ export function AuthProvider({ children }) {
     try {
       const accessToken = getAccessToken();
 
-      if (!isAuthenticated && accessToken && isValidToken(accessToken)) {
-        await dispatch(getMeAsync).unwrap();
+      if (!user && accessToken && isValidToken(accessToken)) {
+        await dispatch(getMeAsync()).unwrap();
       }
+
+      setLoading(false);
     } catch (error) {
-      console.error(error);
+      setLoading(false);
+      console.log(error);
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, user]);
 
   useEffect(() => {
     checkUserSession();
@@ -37,10 +42,10 @@ export function AuthProvider({ children }) {
   const memoizedValue = useMemo(
     () => ({
       checkUserSession,
-      isAuthenticated,
+      user,
       loading,
     }),
-    [checkUserSession, isAuthenticated, loading],
+    [checkUserSession, user, loading],
   );
 
   return (

@@ -7,7 +7,7 @@ import { CenteredResetPasswordView } from 'src/auth/view';
 // ----------------------------------------------------------------------
 
 const metadata = {
-  title: `Reset password - ${CONFIG.appName}`,
+  title: `Quên mật khẩu - ${CONFIG.appName}`,
 };
 
 export default function Page() {
