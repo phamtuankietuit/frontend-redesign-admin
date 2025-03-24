@@ -1,5 +1,6 @@
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
@@ -8,7 +9,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { paths } from 'src/routes/paths';
-import { useRouter, useSearchParams } from 'src/routes/hooks';
+import { useParams, useRouter, useSearchParams } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -16,6 +17,7 @@ import { passwordRegex } from 'src/utils/regex';
 import { toastMessage } from 'src/utils/constant';
 
 import { EmailInboxIcon } from 'src/assets/icons';
+import { resetPasswordAsync } from 'src/services/auth/auth.service';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -23,7 +25,7 @@ import { Form, Field } from 'src/components/hook-form';
 
 import { FormHead } from '../components/form-head';
 
-// ----------------------------------------------------------------------
+//   ----------------------------------------------------------------------
 
 export const UpdatePasswordSchema = zod
   .object({
@@ -31,8 +33,7 @@ export const UpdatePasswordSchema = zod
       .string()
       .min(1, { message: toastMessage.error.empty })
       .regex(passwordRegex, {
-        message:
-          'Chứa ít nhất 1 chữ thường, 1 chữ hoa, 1 số và ít nhất 8 ký tự!',
+        message: toastMessage.error.invalidPassword,
       }),
     confirmPassword: zod.string().min(1, { message: toastMessage.error.empty }),
   })
@@ -44,13 +45,17 @@ export const UpdatePasswordSchema = zod
 // ----------------------------------------------------------------------
 
 export function CenteredUpdatePasswordView() {
+  const dispatch = useDispatch();
+
   const router = useRouter();
 
   const password = useBoolean();
 
   const confirmPassword = useBoolean();
 
-  const token = useSearchParams().get('token');
+  const token = useSearchParams().get('token').replace(/\s/g, '+');
+
+  const { id } = useParams();
 
   const defaultValues = {
     password: '',
@@ -69,15 +74,22 @@ export function CenteredUpdatePasswordView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      console.info('DATA', data);
+      await dispatch(
+        resetPasswordAsync({
+          id,
+          body: {
+            token,
+            newPassword: data.password,
+          },
+        }),
+      ).unwrap();
 
       toast.success('Cập nhật mật khẩu thành công. Vui lòng đăng nhập lại!');
 
       router.replace(paths.auth.signIn);
     } catch (error) {
       console.error(error);
-      toast.success('Có lỗi xảy ra vui lòng thử lại!');
+      toast.error('Có lỗi xảy ra vui lòng thử lại!');
     }
   });
 

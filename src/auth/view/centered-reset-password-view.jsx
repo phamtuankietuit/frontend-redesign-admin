@@ -1,5 +1,6 @@
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
@@ -9,7 +10,9 @@ import { paths } from 'src/routes/paths';
 
 import { toastMessage } from 'src/utils/constant';
 
+import { CONFIG } from 'src/config-global';
 import { PasswordIcon } from 'src/assets/icons';
+import { sendEmailForgotPasswordAsync } from 'src/services/auth/auth.service';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
@@ -29,6 +32,8 @@ export const ResetPasswordSchema = zod.object({
 // ----------------------------------------------------------------------
 
 export function CenteredResetPasswordView() {
+  const dispatch = useDispatch();
+
   const defaultValues = { email: '' };
 
   const methods = useForm({
@@ -43,12 +48,17 @@ export function CenteredResetPasswordView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      console.info('DATA', data);
+      await dispatch(
+        sendEmailForgotPasswordAsync({
+          email: data.email,
+          redirectUrlBase: CONFIG.frontendUrl + paths.auth.updatePassword,
+        }),
+      ).unwrap();
 
-      toast.success('Vui lòng kiểm tra email!');
+      toast.success('Vui lòng kiểm tra email để đặt lại mật khẩu');
     } catch (error) {
       console.error(error);
+      toast.error('Đã xảy ra lỗi, vui lòng thử lại');
     }
   });
 

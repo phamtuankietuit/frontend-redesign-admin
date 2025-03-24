@@ -1,14 +1,20 @@
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+
+import { passwordRegex } from 'src/utils/regex';
+import { toastMessage } from 'src/utils/constant';
+
+import { selectAuth } from 'src/state/auth/auth.slice';
+import { updatePasswordAsync } from 'src/services/auth/auth.service';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -16,27 +22,33 @@ import { Form, Field } from 'src/components/hook-form';
 
 export const ChangePassWordSchema = zod
   .object({
-    oldPassword: zod
+    oldPassword: zod.string().min(1, { message: toastMessage.error.empty }),
+    newPassword: zod
       .string()
-      .min(1, { message: 'Password is required!' })
-      .min(6, { message: 'Password must be at least 6 characters!' }),
-    newPassword: zod.string().min(1, { message: 'New password is required!' }),
+      .min(1, { message: toastMessage.error.empty })
+      .regex(passwordRegex, {
+        message: toastMessage.error.invalidPassword,
+      }),
     confirmNewPassword: zod
       .string()
-      .min(1, { message: 'Confirm password is required!' }),
+      .min(1, { message: toastMessage.error.empty }),
   })
   .refine((data) => data.oldPassword !== data.newPassword, {
-    message: 'New password must be different than old password',
+    message: toastMessage.error.newPasswordMatchOldPassword,
     path: ['newPassword'],
   })
   .refine((data) => data.newPassword === data.confirmNewPassword, {
-    message: 'Passwords do not match!',
+    message: toastMessage.error.confirmPasswordNotMatch,
     path: ['confirmNewPassword'],
   });
 
 // ----------------------------------------------------------------------
 
 export function AccountChangePassword() {
+  const dispatch = useDispatch();
+
+  const { user } = useSelector(selectAuth);
+
   const password = useBoolean();
 
   const defaultValues = {
@@ -59,12 +71,26 @@ export function AccountChangePassword() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await dispatch(
+        updatePasswordAsync({
+          id: user.id,
+          body: {
+            email: user.email,
+            currentPassword: data.oldPassword,
+            newPassword: data.newPassword,
+          },
+        }),
+      ).unwrap();
+
       reset();
-      toast.success('Update success!');
-      console.info('DATA', data);
+      toast.success('Cập nhật mật khẩu thành công!');
     } catch (error) {
       console.error(error);
+      if (error.message === 'Invalid credentials were provided.') {
+        toast.error('Mật khẩu cũ không đúng!');
+      } else {
+        toast.error('Có lỗi xảy ra vui lòng thử lại!');
+      }
     }
   });
 
@@ -111,12 +137,6 @@ export function AccountChangePassword() {
               </InputAdornment>
             ),
           }}
-          helperText={
-            <Stack component="span" direction="row" alignItems="center">
-              <Iconify icon="eva:info-fill" width={16} sx={{ mr: 0.5 }} /> Mật
-              khẩu phải từ 8 kí tự
-            </Stack>
-          }
         />
 
         <Field.Text

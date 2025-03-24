@@ -31,7 +31,10 @@ const authCentered = {
       ),
     },
     { path: 'reset-password', element: <CenteredLayout.ResetPasswordPage /> },
-    { path: 'update-password', element: <CenteredLayout.UpdatePasswordPage /> },
+    {
+      path: 'update-password/:id',
+      element: <CenteredLayout.UpdatePasswordPage />,
+    },
   ],
 };
 

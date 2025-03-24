@@ -29,8 +29,8 @@ AxiosInstance.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status !== 401 || originalRequest._retry) {
-            return Promise.reject(new Error(error.response?.data?.message || error.message || 'Unknown error'));
+        if (error.response?.status !== 401 || originalRequest._retry || error.response?.data?.detail === 'Invalid credentials were provided.') {
+            return Promise.reject(new Error(error.response?.data?.detail || error.message || 'Unknown error'));
         }
 
         originalRequest._retry = true;
