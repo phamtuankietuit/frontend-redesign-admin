@@ -1,12 +1,10 @@
 import { z as zod } from 'zod';
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-import { Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -17,11 +15,10 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { selectAuth } from 'src/state/auth/auth.slice';
-import { getUserRole, getAccessToken } from 'src/services/token.service';
-import { getMeAsync, signInAsync } from 'src/services/auth/auth.service';
+import { toastMessage } from 'src/utils/constant';
 
-import { toast } from 'src/components/snackbar';
+import { signInAsync } from 'src/services/auth/auth.service';
+
 import { Iconify } from 'src/components/iconify';
 import { AnimateLogo2 } from 'src/components/animate';
 import { Form, Field } from 'src/components/hook-form';
@@ -33,17 +30,15 @@ import { FormHead } from '../components/form-head';
 export const SignInSchema = zod.object({
   email: zod
     .string()
-    .min(1, { message: 'Không được bỏ trống!' })
-    .email({ message: 'Email không hợp lệ!' }),
-  password: zod.string().min(1, { message: 'Không được bỏ trống!' }),
+    .min(1, { message: toastMessage.error.empty })
+    .email({ message: toastMessage.error.invalidEmail }),
+  password: zod.string().min(1, { message: toastMessage.error.empty }),
 });
 
 // ----------------------------------------------------------------------
 
-export function CenteredSignInView({ isAdmin = false }) {
+export function CenteredSignInView() {
   const router = useRouter();
-
-  const { user } = useSelector(selectAuth);
 
   const password = useBoolean();
 
@@ -63,45 +58,19 @@ export function CenteredSignInView({ isAdmin = false }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await dispatch(signInAsync({ ...data, signInSource: isAdmin ? 2 : 1 }))
-        // eslint-disable-next-line consistent-return
-        .then((action) => {
-          if (signInAsync.fulfilled.match(action)) {
-            return dispatch(getMeAsync());
-          }
-        })
-        .then((action) => {
-          if (getMeAsync.fulfilled.match(action)) {
-            if (isAdmin && getUserRole() === 'Admin') {
-              router.replace(paths.dashboard.root);
-            } else if (!isAdmin && getUserRole() === 'Customer') {
-              router.replace('/');
-            }
-          }
-        });
+      await dispatch(
+        signInAsync({
+          email: data.email,
+          password: data.password,
+          signInSource: 2,
+        }),
+      ).unwrap();
+
+      router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
     }
   });
-
-  useEffect(() => {
-    if (user) {
-      if (isAdmin && getUserRole() === 'Admin') {
-        router.replace(paths.dashboard);
-      }
-
-      if (!isAdmin && getUserRole() === 'Customer') {
-        router.replace('/');
-      }
-
-      return;
-    }
-
-    if (getAccessToken()) {
-      dispatch(getMeAsync());
-    }
-  }, [dispatch, router, user, isAdmin]);
 
   const renderLogo = <AnimateLogo2 sx={{ mb: 3, mx: 'auto' }} />;
 
@@ -111,6 +80,7 @@ export function CenteredSignInView({ isAdmin = false }) {
         name="email"
         label="Email"
         InputLabelProps={{ shrink: true }}
+        autoFocus
       />
 
       <Box gap={1.5} display="flex" flexDirection="column">
@@ -158,17 +128,6 @@ export function CenteredSignInView({ isAdmin = false }) {
       >
         Đăng nhập
       </LoadingButton>
-
-      {!isAdmin && (
-        <Button
-          component={RouterLink}
-          href={paths.dashboard.signIn}
-          color="inherit"
-          endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
-        >
-          Đăng nhập vào hệ thống quản lý
-        </Button>
-      )}
     </Box>
   );
 
@@ -178,18 +137,7 @@ export function CenteredSignInView({ isAdmin = false }) {
 
       <FormHead
         title="Đăng nhập"
-        description={
-          <>
-            {`Chưa có tài khoản? `}
-            <Link
-              component={RouterLink}
-              href={paths.auth.signUp}
-              variant="subtitle2"
-            >
-              Đăng ký
-            </Link>
-          </>
-        }
+        description="KKBooks - Đăng nhập hệ thống quản lý"
       />
 
       <Form methods={methods} onSubmit={onSubmit}>

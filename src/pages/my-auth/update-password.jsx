@@ -7,7 +7,7 @@ import { CenteredUpdatePasswordView } from 'src/auth/view';
 // ----------------------------------------------------------------------
 
 const metadata = {
-  title: `Update Password - ${CONFIG.appName}`,
+  title: `Cập nhật mật khẩu - ${CONFIG.appName}`,
 };
 
 export default function Page() {

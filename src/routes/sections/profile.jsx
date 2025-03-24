@@ -1,13 +1,18 @@
 import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { CONFIG } from 'src/config-global';
+import { _userAddressBook } from 'src/_mock';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import { navData } from 'src/layouts/config-nav-profile';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 
-import { AuthGuard, RoleBasedGuard } from 'src/auth/guard';
+import { AccountGeneral } from 'src/sections/account/account-general';
+import { AccountBilling } from 'src/sections/account/account-billing';
+import { AccountNotifications } from 'src/sections/account/account-notifications';
+import { AccountChangePassword } from 'src/sections/account/account-change-password';
+
+import { AuthGuard } from 'src/auth/guard';
 
 // ----------------------------------------------------------------------
 
@@ -26,18 +31,45 @@ const layoutContent = (
 
 export const profileRoutes = [
   {
-    path: 'customer',
-    element: CONFIG.auth.skip ? (
-      <>{layoutContent}</>
-    ) : (
-      <AuthGuard>
-        <RoleBasedGuard acceptRoles={['Customer']} hasContent>
-          {layoutContent}
-        </RoleBasedGuard>
-      </AuthGuard>
-    ),
+    element: <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
-      { element: <UserAccountPage />, index: true },
+      {
+        path: 'account',
+        children: [
+          {
+            element: (
+              <UserAccountPage title="Thông tin cá nhân">
+                <AccountGeneral />
+              </UserAccountPage>
+            ),
+            index: true,
+          },
+          {
+            path: 'address',
+            element: (
+              <UserAccountPage title="Địa chỉ">
+                <AccountBilling addressBook={_userAddressBook} />
+              </UserAccountPage>
+            ),
+          },
+          {
+            path: 'notifications',
+            element: (
+              <UserAccountPage title="Thông báo">
+                <AccountNotifications />
+              </UserAccountPage>
+            ),
+          },
+          {
+            path: 'security',
+            element: (
+              <UserAccountPage title="Bảo mật">
+                <AccountChangePassword />
+              </UserAccountPage>
+            ),
+          },
+        ],
+      },
       { path: 'orders', element: <OrderListPage /> },
     ],
   },

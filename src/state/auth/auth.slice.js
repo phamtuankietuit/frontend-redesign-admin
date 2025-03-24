@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { socket } from "src/hooks/use-socket";
+// import { socket } from "src/hooks/use-socket";
 
 import { getMeAsync, signInAsync } from "src/services/auth/auth.service";
 
@@ -8,8 +8,6 @@ import { toast } from 'src/components/snackbar';
 
 const initialState = {
   user: null,
-  loading: true,
-  signUp: {}
 };
 
 const authSlice = createSlice({
@@ -18,10 +16,7 @@ const authSlice = createSlice({
   reducers: {
     signOut: (state) => {
       Object.assign(state, initialState);
-      socket.disconnect();
-    },
-    setSignUp: (state, action) => {
-      state.signUp = action.payload;
+      // socket.disconnect();
     },
   },
   extraReducers: (builder) => {
@@ -32,12 +27,12 @@ const authSlice = createSlice({
       .addCase(getMeAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-        socket.emit('add-user', action.payload.id);
+        // socket.emit('add-user', action.payload.id);
       });
   },
 });
 
-export const { signOut, setSignUp } = authSlice.actions;
+export const { signOut } = authSlice.actions;
 
 export const selectAuth = (state) => state.auth;
 

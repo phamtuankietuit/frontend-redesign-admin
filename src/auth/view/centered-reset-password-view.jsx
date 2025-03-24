@@ -1,5 +1,6 @@
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
@@ -7,8 +8,13 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import { paths } from 'src/routes/paths';
 
-import { PasswordIcon } from 'src/assets/icons';
+import { toastMessage } from 'src/utils/constant';
 
+import { CONFIG } from 'src/config-global';
+import { PasswordIcon } from 'src/assets/icons';
+import { sendEmailForgotPasswordAsync } from 'src/services/auth/auth.service';
+
+import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
 
 import { FormHead } from '../components/form-head';
@@ -19,13 +25,15 @@ import { FormReturnLink } from '../components/form-return-link';
 export const ResetPasswordSchema = zod.object({
   email: zod
     .string()
-    .min(1, { message: 'Không được bỏ trống!' })
-    .email({ message: 'Email không hợp lệ!' }),
+    .min(1, { message: toastMessage.error.empty })
+    .email({ message: toastMessage.error.invalidEmail }),
 });
 
 // ----------------------------------------------------------------------
 
 export function CenteredResetPasswordView() {
+  const dispatch = useDispatch();
+
   const defaultValues = { email: '' };
 
   const methods = useForm({
@@ -40,10 +48,17 @@ export function CenteredResetPasswordView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      console.info('DATA', data);
+      await dispatch(
+        sendEmailForgotPasswordAsync({
+          email: data.email,
+          redirectUrlBase: CONFIG.frontendUrl + paths.auth.updatePassword,
+        }),
+      ).unwrap();
+
+      toast.success('Vui lòng kiểm tra email để đặt lại mật khẩu');
     } catch (error) {
       console.error(error);
+      toast.error('Đã xảy ra lỗi, vui lòng thử lại');
     }
   });
 
@@ -52,7 +67,6 @@ export function CenteredResetPasswordView() {
       <Field.Text
         name="email"
         label="Email"
-        placeholder="example@gmail.com"
         autoFocus
         InputLabelProps={{ shrink: true }}
       />
@@ -75,7 +89,7 @@ export function CenteredResetPasswordView() {
       <FormHead
         icon={<PasswordIcon />}
         title="Quên mật khẩu?"
-        description="Hãy nhập email để hệ thống gửi đường dẫn đặt lại mật khẩu."
+        description="Nhập email để đặt lại mật khẩu"
       />
 
       <Form methods={methods} onSubmit={onSubmit}>

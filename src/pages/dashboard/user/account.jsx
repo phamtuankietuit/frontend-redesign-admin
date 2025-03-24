@@ -8,14 +8,14 @@ import { AccountView } from 'src/sections/account/view';
 
 const metadata = { title: `Cài đặt tài khoản - ${CONFIG.appName}` };
 
-export default function Page() {
+export default function Page({ children, title }) {
   return (
     <>
       <Helmet>
         <title> {metadata.title}</title>
       </Helmet>
 
-      <AccountView />
+      <AccountView title={title}>{children}</AccountView>
     </>
   );
 }

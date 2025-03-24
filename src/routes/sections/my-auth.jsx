@@ -5,13 +5,12 @@ import { AuthCenteredLayout } from 'src/layouts/auth-centered';
 
 import { SplashScreen } from 'src/components/loading-screen';
 
+import { GuestGuard } from 'src/auth/guard';
+
 // ----------------------------------------------------------------------
 
 const CenteredLayout = {
   SignInPage: lazy(() => import('src/pages/my-auth/sign-in')),
-  AdminSignInPage: lazy(() => import('src/pages/my-auth/admin-sign-in')),
-  SignUpPage: lazy(() => import('src/pages/my-auth/sign-up')),
-  VerifyPage: lazy(() => import('src/pages/my-auth/verify')),
   ResetPasswordPage: lazy(() => import('src/pages/my-auth/reset-password')),
   UpdatePasswordPage: lazy(() => import('src/pages/my-auth/update-password')),
 };
@@ -23,12 +22,19 @@ const authCentered = {
     </AuthCenteredLayout>
   ),
   children: [
-    { path: 'sign-in', element: <CenteredLayout.SignInPage /> },
-    { path: 'admin/sign-in', element: <CenteredLayout.AdminSignInPage /> },
-    { path: 'sign-up', element: <CenteredLayout.SignUpPage /> },
-    { path: 'verify', element: <CenteredLayout.VerifyPage /> },
+    {
+      path: 'sign-in',
+      element: (
+        <GuestGuard>
+          <CenteredLayout.SignInPage />
+        </GuestGuard>
+      ),
+    },
     { path: 'reset-password', element: <CenteredLayout.ResetPasswordPage /> },
-    { path: 'update-password', element: <CenteredLayout.UpdatePasswordPage /> },
+    {
+      path: 'update-password/:id',
+      element: <CenteredLayout.UpdatePasswordPage />,
+    },
   ],
 };
 

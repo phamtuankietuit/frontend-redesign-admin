@@ -1,82 +1,105 @@
+import dayjs from 'dayjs';
 import { z as zod } from 'zod';
-import { useForm } from 'react-hook-form';
+import { useMemo } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isValidPhoneNumber } from 'react-phone-number-input/input';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
-import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
+import { Radio, RadioGroup, Typography, FormControlLabel } from '@mui/material';
 
-import { fData } from 'src/utils/format-number';
+import { toastMessage } from 'src/utils/constant';
+import { phoneNumberRegex } from 'src/utils/regex';
 
+import { selectAuth } from 'src/state/auth/auth.slice';
+import { updateMeAsync } from 'src/services/auth/auth.service';
+import { uploadImagesAsync } from 'src/services/file/file.service';
+
+import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
-
-import { useMockedUser } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
 export const UpdateUserSchema = zod.object({
-  displayName: zod.string().min(1, { message: 'Không được bỏ trống!' }),
+  fullName: zod.string().min(1, { message: toastMessage.error.empty }),
   email: zod
     .string()
-    .min(1, { message: 'Không được bỏ trống!' })
-    .email({ message: 'Email không hợp lệ!' }),
-  photoURL: schemaHelper.file({
-    message: { required_error: 'Không được bỏ trống!' },
-  }),
-  phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
-  country: schemaHelper.objectOrNull({
-    message: { required_error: 'Không được bỏ trống!' },
-  }),
-  address: zod.string().min(1, { message: 'Không được bỏ trống!' }),
-  state: zod.string().min(1, { message: 'Không được bỏ trống!' }),
-  city: zod.string().min(1, { message: 'Không được bỏ trống!' }),
-  zipCode: zod.string().min(1, { message: 'Zip Không được bỏ trống!' }),
-  about: zod.string().min(1, { message: 'Không được bỏ trống!' }),
-  // Not required
-  isPublic: zod.boolean(),
+    .min(1, { message: toastMessage.error.empty })
+    .email({ message: toastMessage.error.invalidEmail }),
+  imageUrl: schemaHelper.file().nullable(),
+  phoneNumber: zod
+    .string()
+    .min(1, { message: toastMessage.error.empty })
+    .regex(phoneNumberRegex, {
+      message: toastMessage.error.invalidPhoneNumber,
+    }),
+  dateOfBirth: schemaHelper.date().nullable(),
+  gender: zod.string().min(1, { message: toastMessage.error.empty }),
 });
 
 export function AccountGeneral() {
-  const { user } = useMockedUser();
+  const dispatch = useDispatch();
 
-  const defaultValues = {
-    displayName: user?.displayName || '',
-    email: user?.email || '',
-    photoURL: user?.photoURL || null,
-    phoneNumber: user?.phoneNumber || '',
-    country: user?.country || '',
-    address: user?.address || '',
-    state: user?.state || '',
-    city: user?.city || '',
-    zipCode: user?.zipCode || '',
-    about: user?.about || '',
-    isPublic: user?.isPublic || false,
-  };
+  const { user } = useSelector(selectAuth);
+
+  const defaultValues = useMemo(
+    () => ({
+      fullName: user?.fullName || '',
+      email: user?.email || '',
+      imageUrl: user.imageUrl || null,
+      phoneNumber: user?.phoneNumber || '',
+      dateOfBirth: dayjs(new Date(user?.dateOfBirth)) || null,
+      gender: String(user?.gender || '1'),
+    }),
+    [user],
+  );
 
   const methods = useForm({
-    mode: 'all',
+    mode: 'onSubmit',
     resolver: zodResolver(UpdateUserSchema),
     defaultValues,
   });
 
   const {
     handleSubmit,
+    control,
     formState: { isSubmitting },
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      toast.success('Update success!');
-      console.info('DATA', data);
+      if (typeof data.imageUrl === 'object') {
+        await dispatch(uploadImagesAsync([data.imageUrl]))
+          .unwrap()
+          .then((response) => {
+            data.imageUrl = response[0];
+          });
+      }
+
+      const { id, email, status } = user;
+
+      await dispatch(
+        updateMeAsync({
+          id: user.id,
+          body: {
+            ...data,
+            gender: Number(data.gender),
+            id,
+            email,
+            status,
+          },
+        }),
+      ).unwrap();
+
+      toast.success('Cập nhật thông tin thành công!');
     } catch (error) {
       console.error(error);
+      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
     }
   });
 
@@ -86,15 +109,22 @@ export function AccountGeneral() {
         <Grid xs={12} md={4}>
           <Card
             sx={{
-              pt: 10,
-              pb: 5,
-              px: 3,
-              textAlign: 'center',
+              p: 5,
             }}
           >
+            <Label
+              color="success"
+              sx={{ position: 'absolute', top: 24, right: 24 }}
+            >
+              Đang hoạt động
+            </Label>
+
             <Field.UploadAvatar
-              name="photoURL"
+              name="imageUrl"
               maxSize={3145728}
+              sx={{
+                mt: 3,
+              }}
               helperText={
                 <Typography
                   variant="caption"
@@ -106,22 +136,10 @@ export function AccountGeneral() {
                     color: 'text.disabled',
                   }}
                 >
-                  Chấp nhận *.jpeg, *.jpg, *.png, *.gif
-                  <br /> kích thước tối đa {fData(3145728)}
+                  Định dạng jpeg, jpg, png
                 </Typography>
               }
             />
-
-            {/* <Field.Switch
-              name="isPublic"
-              labelPlacement="start"
-              label="Public profile"
-              sx={{ mt: 5 }}
-            />
-
-            <Button variant="soft" color="error" sx={{ mt: 3 }}>
-              Delete user
-            </Button> */}
           </Card>
         </Grid>
 
@@ -136,25 +154,48 @@ export function AccountGeneral() {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="displayName" label="Tên" />
+              <Field.Text name="fullName" label="Tên" />
               <Field.Text name="email" label="Email" />
-              <Field.Phone name="phoneNumber" label="Số điện thoại" />
-              {/* <Field.Text name="address" label="Address" /> */}
+              <Field.Text name="phoneNumber" label="Số điện thoại" />
 
-              {/* <Field.CountrySelect
-                name="country"
-                label="Country"
-                placeholder="Choose a country"
-              /> */}
+              <Field.DatePicker
+                name="dateOfBirth"
+                openTo="year"
+                views={['day', 'month', 'year']}
+                label="Ngày sinh"
+                slotProps={{ textField: { fullWidth: true } }}
+                disableFuture
+              />
 
-              {/* <Field.Text name="state" label="State/region" />
-              <Field.Text name="city" label="City" />
-              <Field.Text name="zipCode" label="Zip/code" /> */}
+              <Box>
+                <Typography variant="subtitle2">Giới tính</Typography>
+                <Controller
+                  name="gender"
+                  control={control}
+                  render={({ field }) => (
+                    <RadioGroup {...field} row>
+                      <FormControlLabel
+                        value="1"
+                        control={<Radio size="medium" />}
+                        label="Nam"
+                      />
+                      <FormControlLabel
+                        value="2"
+                        control={<Radio size="medium" />}
+                        label="Nữ"
+                      />
+                      <FormControlLabel
+                        value="3"
+                        control={<Radio size="medium" />}
+                        label="Khác"
+                      />
+                    </RadioGroup>
+                  )}
+                />
+              </Box>
             </Box>
 
             <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
-              {/* <Field.Text name="about" multiline rows={4} label="About" /> */}
-
               <LoadingButton
                 type="submit"
                 variant="contained"

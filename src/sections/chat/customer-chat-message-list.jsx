@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Stack from '@mui/material/Stack';
 import LinearProgress from '@mui/material/LinearProgress';
 
-import { socket } from 'src/hooks/use-socket';
+// import { socket } from 'src/hooks/use-socket';
 
 import { selectChat, addCustomerMessage } from 'src/state/chat/chat.slice';
 
@@ -31,18 +31,18 @@ export function CustomerChatMessageList() {
 
   const lightbox = useLightBox(slides);
 
-  useEffect(() => {
-    if (!conversation) return;
+  // useEffect(() => {
+  //   if (!conversation) return;
 
-    socket.on('msg-receive', (message) => {
-      dispatch(addCustomerMessage(message));
-    });
+  //   socket.on('msg-receive', (message) => {
+  //     dispatch(addCustomerMessage(message));
+  //   });
 
-    // eslint-disable-next-line consistent-return
-    return () => {
-      socket.off('msg-receive');
-    };
-  }, [conversation, dispatch]);
+  //   // eslint-disable-next-line consistent-return
+  //   return () => {
+  //     socket.off('msg-receive');
+  //   };
+  // }, [conversation, dispatch]);
 
   if (!conversation) {
     return (

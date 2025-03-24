@@ -1,12 +1,11 @@
 import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { CONFIG } from 'src/config-global';
 import { DashboardLayout } from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 
-import { AuthGuard, RoleBasedGuard } from 'src/auth/guard';
+import { AuthGuard } from 'src/auth/guard';
 
 // ----------------------------------------------------------------------
 
@@ -101,16 +100,8 @@ const layoutContent = (
 
 export const dashboardRoutes = [
   {
-    path: 'admin',
-    element: CONFIG.auth.skip ? (
-      <>{layoutContent}</>
-    ) : (
-      <AuthGuard>
-        <RoleBasedGuard acceptRoles={['Admin']} hasContent>
-          {layoutContent}
-        </RoleBasedGuard>
-      </AuthGuard>
-    ),
+    path: '/',
+    element: <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
       { element: <OverviewAnalyticsPage />, index: true },
       { path: 'ecommerce', element: <OverviewEcommercePage /> },

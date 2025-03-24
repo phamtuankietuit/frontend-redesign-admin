@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Stack from '@mui/material/Stack';
 import LinearProgress from '@mui/material/LinearProgress';
 
-import { socket } from 'src/hooks/use-socket';
+// import { socket } from 'src/hooks/use-socket';
 
 import { selectChat, addAdminMessage } from 'src/state/chat/chat.slice';
 import { getConversationByIdAsync } from 'src/services/chat/chat.service';
@@ -39,18 +39,18 @@ export function ChatMessageList({ conversationId }) {
     dispatch(getConversationByIdAsync(conversationId));
   }, [dispatch, conversationId, loading]);
 
-  useEffect(() => {
-    if (!conversationId) return;
+  // useEffect(() => {
+  //   if (!conversationId) return;
 
-    socket.on('msg-receive', (message) => {
-      dispatch(addAdminMessage(message));
-    });
+  //   socket.on('msg-receive', (message) => {
+  //     dispatch(addAdminMessage(message));
+  //   });
 
-    // eslint-disable-next-line consistent-return
-    return () => {
-      socket.off('msg-receive');
-    };
-  }, [conversationId, dispatch]);
+  //   // eslint-disable-next-line consistent-return
+  //   return () => {
+  //     socket.off('msg-receive');
+  //   };
+  // }, [conversationId, dispatch]);
 
   if (loading) {
     return (
