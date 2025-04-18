@@ -52,8 +52,21 @@ export function ProductTableToolbar({ filters, options }) {
           value={local.state.publish}
           onChange={handleChangePublish}
           onClose={handleFilterPublish}
-          input={<OutlinedInput label="Publish" />}
-          renderValue={(selected) => selected.map((value) => value).join(', ')}
+          input={<OutlinedInput label="Hiển thị" />}
+          renderValue={(selected) => {
+            const publishLabels = options.publishs.map(
+              (option) => option.label,
+            );
+
+            const selectedLabels = selected.map(
+              (value) =>
+                publishLabels[
+                  options.publishs.findIndex((option) => option.value === value)
+                ],
+            );
+
+            return selectedLabels.map((value) => value).join(', ');
+          }}
           inputProps={{ id: 'product-filter-publish-select-label' }}
           sx={{ textTransform: 'capitalize' }}
         >

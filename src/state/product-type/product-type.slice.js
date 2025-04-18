@@ -9,12 +9,18 @@ const initialState = {
   productTypesFlatten: [],
   treeView: {
     items: []
-  }
+  },
+  formMode: 'new'
 };
 
 const productTypeSlice = createSlice({
   name: 'productType',
   initialState,
+  reducers: {
+    setFormMode: (state, action) => {
+      state.formMode = action.payload;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getProductTypesAsync.fulfilled, (state, action) => {
@@ -26,6 +32,8 @@ const productTypeSlice = createSlice({
       });
   },
 });
+
+export const { setFormMode } = productTypeSlice.actions;
 
 export const selectProductType = (state) => state.productType;
 

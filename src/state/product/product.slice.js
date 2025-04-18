@@ -1,26 +1,57 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { set } from "nprogress";
 
 import { getProductTypeAttributesAsync } from "src/services/product-type/product-type.service";
-import { getProductAsync, createProductAsync, getProductRatingsAsync, getProductOptionsAsync } from "src/services/product/product.service";
+import { getProductAsync, getProductsAsync, createProductAsync, getProductRatingsAsync, getProductOptionsAsync } from "src/services/product/product.service";
 
 const initialState = {
     product: null,
     ratings: null,
     productError: null,
-    products: null,
-    createUpdateProductPage: {
+    // 
+    products: [],
+    productsLoading: false,
+    totalCount: 0,
+    tableFilters: {
+        pageNumber: 1,
+        pageSize: 10,
+        searchQuery: '',
+        sortBy: undefined,
+        sortDirection: undefined,
+    },
+    selectedRowIds: [],
+    // 
+    createProductPage: {
         attributes: [],
-        variants: [],
         variantsRender: [],
+        variants: [],
     },
     updateProductPage: {
         product: null,
+        variantsRender: []
     }
 };
 
 const productSlice = createSlice({
     name: 'product',
     initialState,
+    reducers: {
+        resetTableFilters: (state) => {
+            state.tableFilters = initialState.tableFilters;
+        },
+        setTableFilters: (state, action) => {
+            state.tableFilters = {
+                ...state.tableFilters,
+                ...action.payload,
+            };
+        },
+        resetSelectedRowIds: (state) => {
+            state.selectedRowIds = initialState.selectedRowIds;
+        },
+        setSelectedRowIds: (state, action) => {
+            state.selectedRowIds = action.payload;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(getProductAsync.fulfilled, (state, action) => {
@@ -40,18 +71,24 @@ const productSlice = createSlice({
                 state.updateProductPage.product = action.payload;
             })
             .addCase(getProductTypeAttributesAsync.fulfilled, (state, action) => {
-                state.createUpdateProductPage.attributes = action.payload;
+                state.createProductPage.attributes = action.payload;
             })
             .addCase(getProductOptionsAsync.fulfilled, (state, action) => {
-                state.createUpdateProductPage.variants = action.payload.items;
-                state.createUpdateProductPage.variantsRender =
-                    action.payload.items.map((item) => ({
-                        ...item,
-                        values: item.values.map((value) => value.value),
-                    }));
+                state.updateProductPage.variantsRender = action.payload.items;
+            })
+            .addCase(getProductsAsync.fulfilled, (state, action) => {
+                state.products = action.payload.items;
+                state.totalCount = action.payload.totalCount;
+                state.selectedRowIds = initialState.selectedRowIds;
+                state.productsLoading = false;
+            })
+            .addCase(getProductsAsync.pending, (state) => {
+                state.productsLoading = true;
             });
     },
 });
+
+export const { resetTableFilters, setTableFilters, resetSelectedRowIds, setSelectedRowIds } = productSlice.actions;
 
 export const selectProduct = (state) => state.product;
 

@@ -6,25 +6,22 @@ import ListItemText from '@mui/material/ListItemText';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import { fCurrency } from 'src/utils/format-number';
-import { fTime, fDate, fDateTime, formatStr } from 'src/utils/format-time';
+import { fDateTime, formatStr } from 'src/utils/format-time';
 
 import { Label } from 'src/components/label';
 
 // ----------------------------------------------------------------------
 
 export function RenderCellPrice({ params }) {
-  return fCurrency(params.row.price);
+  return fCurrency(params.row.minUnitPrice);
 }
 
 // ----------------------------------------------------------------------
 
 export function RenderCellPublish({ params }) {
   return (
-    <Label
-      variant="soft"
-      color={(params.row.publish === 'published' && 'info') || 'default'}
-    >
-      {params.row.publish === 'published' ? 'Hiển thị' : 'Ẩn'}
+    <Label variant="soft" color={(params.row.isActive && 'info') || 'default'}>
+      {params.row.isActive ? 'Hiển thị' : 'Ẩn'}
     </Label>
   );
 }
@@ -35,13 +32,13 @@ export function RenderCellCreatedAt({ params }) {
   return (
     <Stack spacing={0.5}>
       <Box component="span">
-        {fDateTime(params.row.createdAt, formatStr.myFormat.date)}
+        {fDateTime(new Date(), formatStr.myFormat.date)}
       </Box>
       <Box
         component="span"
         sx={{ typography: 'caption', color: 'text.secondary' }}
       >
-        {fDateTime(params.row.createdAt, formatStr.myFormat.time)}
+        {fDateTime(new Date(), formatStr.myFormat.time)}
       </Box>
     </Stack>
   );
@@ -80,7 +77,7 @@ export function RenderCellProduct({ params, onViewRow }) {
     <Stack direction="row" alignItems="center" sx={{ py: 2, width: 1 }}>
       <Avatar
         alt={params.row.name}
-        src={params.row.coverUrl}
+        src={params.row.thumbnailImageUrl}
         variant="rounded"
         sx={{ width: 64, height: 64, mr: 2 }}
       />
@@ -88,6 +85,11 @@ export function RenderCellProduct({ params, onViewRow }) {
       <ListItemText
         disableTypography
         primary={
+          <Box component="div" sx={{ typography: 'body2' }}>
+            {params.row.id}
+          </Box>
+        }
+        secondary={
           <Link
             noWrap
             color="inherit"
@@ -97,14 +99,6 @@ export function RenderCellProduct({ params, onViewRow }) {
           >
             {params.row.name}
           </Link>
-        }
-        secondary={
-          <Box
-            component="div"
-            sx={{ typography: 'body2', color: 'text.disabled' }}
-          >
-            {params.row.category}
-          </Box>
         }
         sx={{ display: 'flex', flexDirection: 'column' }}
       />

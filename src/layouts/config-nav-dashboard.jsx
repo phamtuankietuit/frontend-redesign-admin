@@ -69,6 +69,7 @@ export const navData = [
         icon: ICONS.product,
         children: [
           { title: 'Danh sách sản phẩm', path: paths.dashboard.product.root },
+          { title: 'Loại sản phẩm', path: paths.dashboard.product.productType },
         ],
       },
       // {

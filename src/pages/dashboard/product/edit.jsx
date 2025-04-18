@@ -19,13 +19,16 @@ export default function Page() {
 
   const dispatch = useDispatch();
 
-  const { updateProductPage } = useSelector(selectProduct);
+  const {
+    updateProductPage: { product },
+  } = useSelector(selectProduct);
+  console.log('🚀 ~ Page ~ product:', product);
 
   useEffect(() => {
-    if (!updateProductPage?.product) {
+    if (!product) {
       dispatch(getProductAsync(id));
     }
-  }, [dispatch, id, updateProductPage?.product]);
+  }, [dispatch, id, product]);
 
   return (
     <>
@@ -33,7 +36,7 @@ export default function Page() {
         <title> {metadata.title}</title>
       </Helmet>
 
-      <ProductEditView product={updateProductPage?.product} />
+      <ProductEditView product={product} />
     </>
   );
 }

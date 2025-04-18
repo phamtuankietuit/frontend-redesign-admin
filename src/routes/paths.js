@@ -120,6 +120,7 @@ export const paths = {
         details: `${ROOTS.DASHBOARD}/product/${MOCK_ID}`,
         edit: `${ROOTS.DASHBOARD}/product/${MOCK_ID}/edit`,
       },
+      productType: `${ROOTS.DASHBOARD}/product/product-type`,
     },
     inventory: {
       root: `${ROOTS.DASHBOARD}/inventory`,
