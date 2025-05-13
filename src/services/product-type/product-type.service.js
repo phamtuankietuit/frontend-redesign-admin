@@ -25,3 +25,11 @@ export const getProductTypeAttributesAsync = createAsyncThunk(
     return response.data.listAttributes;
   }
 );
+
+export const getProductTypeByIdAsync = createAsyncThunk(
+  'productType/getProductTypeByIdAsync',
+  async ({ id, params }) => {
+    const response = await GET(`/product-types/${id}`, { params });
+    return response.data.listItem;
+  }
+);

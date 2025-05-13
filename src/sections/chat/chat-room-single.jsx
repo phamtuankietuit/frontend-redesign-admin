@@ -15,23 +15,23 @@ import { CollapseButton } from './styles';
 
 // ----------------------------------------------------------------------
 
-export function ChatRoomSingle({ participant }) {
-  const { admin } = useSelector(selectChat);
-
-  const { contact } = admin;
+export function ChatRoomSingle() {
+  const { customerId, cCombined, cLoading } = useSelector(selectChat);
 
   const collapse = useBoolean(true);
 
   const renderInfo = (
     <Stack alignItems="center" sx={{ py: 5 }}>
       <Avatar
-        alt={contact?.name}
-        src={contact?.avatarUrl}
+        alt={cCombined?.customer?.fullName}
+        src={cCombined?.customer?.imageUrl}
         sx={{ width: 96, height: 96, mb: 2 }}
       />
-      <Typography variant="subtitle1">{contact?.name}</Typography>
+      <Typography variant="subtitle1">
+        {cCombined?.customer?.fullName}
+      </Typography>
       <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-        {contact?.role}
+        KHÁCH HÀNG
       </Typography>
     </Stack>
   );
@@ -39,9 +39,19 @@ export function ChatRoomSingle({ participant }) {
   const renderContact = (
     <Stack spacing={2} sx={{ px: 2, py: 2.5 }}>
       {[
-        // { icon: 'mingcute:location-fill', value: contact?.address },
-        { icon: 'solar:phone-bold', value: contact?.phoneNumber },
-        { icon: 'fluent:mail-24-filled', value: contact?.email },
+        {
+          icon: 'fluent:calendar-12-filled',
+          value: new Date(cCombined?.customer?.dateOfBirth).toLocaleDateString(
+            'vi-VN',
+            {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            },
+          ),
+        },
+        { icon: 'solar:phone-bold', value: cCombined?.customer?.phoneNumber },
+        { icon: 'fluent:mail-24-filled', value: cCombined?.customer?.email },
       ].map((item) => (
         <Stack
           key={item.icon}

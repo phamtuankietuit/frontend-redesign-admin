@@ -2,11 +2,11 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
 
-import { ChatView } from 'src/sections/chat/view';
+import { ProductTypeListView } from 'src/sections/product-type/view/product-type-list-view';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Chat - ${CONFIG.appName}` };
+const metadata = { title: `Loại sản phẩm - ${CONFIG.appName}` };
 
 export default function Page() {
   return (
@@ -15,7 +15,7 @@ export default function Page() {
         <title> {metadata.title}</title>
       </Helmet>
 
-      <ChatView />
+      <ProductTypeListView />
     </>
   );
 }

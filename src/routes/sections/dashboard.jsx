@@ -28,6 +28,10 @@ const ProductDetailsPage = lazy(
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
 const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
 const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
+// Product type
+const ProductTypeListPage = lazy(
+  () => import('src/pages/dashboard/product-type/list'),
+);
 // Inventory
 const InventoryListPage = lazy(
   () => import('src/pages/dashboard/inventory/list'),
@@ -127,9 +131,10 @@ export const dashboardRoutes = [
         children: [
           { element: <ProductListPage />, index: true },
           { path: 'list', element: <ProductListPage /> },
-          { path: ':id', element: <ProductDetailsPage /> },
+          { path: ':id', element: <ProductEditPage /> },
           { path: 'new', element: <ProductCreatePage /> },
           { path: ':id/edit', element: <ProductEditPage /> },
+          { path: 'product-type', element: <ProductTypeListPage /> },
         ],
       },
       {

@@ -4,7 +4,7 @@ import { schemeConfig } from "src/theme/scheme-config";
 
 import { STORAGE_KEY } from "src/components/settings";
 
-import { GET, POST, PUT } from "../axios";
+import { GET, PUT, POST } from "../axios";
 import { deleteItem, sessionKey, setSession } from "../token.service";
 
 

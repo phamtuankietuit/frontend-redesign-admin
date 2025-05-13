@@ -152,7 +152,7 @@ export const transformProductTypes = (productTypes) => {
   return result;
 };
 
-export const rowsWithId = (rows) => rows.map((row, index) => ({
+export const rowsWithId = (rows) => rows?.map((row, index) => ({
   ...row,
   id: row.id || index,
 }));
@@ -169,7 +169,7 @@ export function generateCombinations(variants) {
 
     // eslint-disable-next-line no-restricted-syntax
     for (const value of variant.values) {
-      combine(variants, index + 1, [...current, value]);
+      combine(variants, index + 1, [...current, value.value]);
     }
   }
 
@@ -189,10 +189,10 @@ export function transformVariants(inputData) {
   // Generate all possible combinations of the variant values
   const combinations = variants.reduce((acc, variant) => {
     if (!acc.length) {
-      return variant.values.map(value => [{ name: variant.name, value }]);
+      return variant.values.map(value => [{ name: variant.name, ...value }]);
     }
     return acc.flatMap(combination =>
-      variant.values.map(value => [...combination, { name: variant.name, value }])
+      variant.values.map(value => [...combination, { name: variant.name, ...value }])
     );
   }, []);
 

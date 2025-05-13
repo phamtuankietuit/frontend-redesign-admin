@@ -51,7 +51,9 @@ export function MultiFilePreview({
   return (
     <Box
       component="ul"
-      className={uploadClasses.uploadMultiPreview.concat(className ? ` ${className}` : '')}
+      className={uploadClasses.uploadMultiPreview.concat(
+        className ? ` ${className}` : '',
+      )}
       sx={{
         gap: 1,
         display: 'flex',

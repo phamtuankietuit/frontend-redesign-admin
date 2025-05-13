@@ -19,9 +19,12 @@ const ProductVariants = ({ control, getValues }) => {
 
   const handleAddVariant = () => {
     append({
-      id: fields.length,
       variantName: '',
-      values: [''],
+      values: [
+        {
+          value: '',
+        },
+      ],
     });
   };
 
@@ -31,7 +34,10 @@ const ProductVariants = ({ control, getValues }) => {
 
   const handleAddValue = (variantIndex) => {
     const currentValues = getValues(`variants`);
-    const updatedValues = [...(currentValues[variantIndex].values || []), ''];
+    const updatedValues = [
+      ...(currentValues[variantIndex].values || []),
+      { value: '' },
+    ];
 
     update(variantIndex, {
       ...currentValues[variantIndex],
@@ -58,11 +64,7 @@ const ProductVariants = ({ control, getValues }) => {
         spacing={2}
       >
         {fields?.map((variant, variantIndex) => (
-          <Stack
-            key={`${variant.id}-${variantIndex}`}
-            alignItems="flex-end"
-            spacing={2}
-          >
+          <Stack key={`${variant.id}`} alignItems="flex-end" spacing={2}>
             <Stack
               direction={{ xs: 'column', md: 'row' }}
               spacing={2}
@@ -84,7 +86,7 @@ const ProductVariants = ({ control, getValues }) => {
                     alignItems="center"
                   >
                     <Field.Text
-                      name={`variants[${variantIndex}].values[${valueIndex}]`}
+                      name={`variants[${variantIndex}].values[${valueIndex}].value`}
                       label="Giá trị"
                       InputLabelProps={{ shrink: true }}
                     />

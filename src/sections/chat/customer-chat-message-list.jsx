@@ -6,7 +6,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 // import { socket } from 'src/hooks/use-socket';
 
-import { selectChat, addCustomerMessage } from 'src/state/chat/chat.slice';
+import { selectChat } from 'src/state/chat/chat.slice';
 
 import { Scrollbar } from 'src/components/scrollbar';
 import { Lightbox, useLightBox } from 'src/components/lightbox';

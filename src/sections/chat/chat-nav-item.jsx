@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -16,11 +16,19 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { fToNow } from 'src/utils/format-time';
 
-import { selectChat, setAdminContact } from 'src/state/chat/chat.slice';
+import { resetChatSelected } from 'src/state/chat/chat.slice';
+import { updateConversationReadAsync } from 'src/services/chat/chat.service';
 
 // ----------------------------------------------------------------------
 
-export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
+export function ChatNavItem({
+  selected,
+  collapse,
+  onCloseMobile,
+  conversation,
+}) {
+  const dispatch = useDispatch();
+
   const mdUp = useResponsive('up', 'md');
 
   const router = useRouter();
@@ -30,56 +38,46 @@ export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
   const selectedConversationId = searchParams.get('id') || '';
 
   const {
-    name,
-    avatarUrl,
-    status,
-    conversation,
-    lastMessage: lastMsgOnContract,
-  } = contact;
-
-  const {
-    admin: { lastMessage },
-  } = useSelector(selectChat);
-
-  const currentLastMessage =
-    selectedConversationId === conversation._id
-      ? lastMessage
-      : lastMsgOnContract;
-
-  const dispatch = useDispatch();
+    customer: { fullName, imageUrl },
+    latestMessage,
+    unreadCount,
+    conversationReadId,
+  } = conversation;
 
   const handleClickConversation = useCallback(async () => {
     try {
-      if (selectedConversationId !== conversation._id) {
+      if (selectedConversationId !== conversation.id) {
         if (!mdUp) {
           onCloseMobile();
         }
 
-        dispatch(setAdminContact(contact));
+        dispatch(resetChatSelected());
 
-        router.push(`${paths.dashboard.chat}?id=${conversation._id}`);
+        dispatch(
+          updateConversationReadAsync({
+            conversationReadId,
+            lastReadMessageId: latestMessage.id,
+          }),
+        );
+
+        router.push(`${paths.dashboard.chat}?id=${conversation.id}`);
       }
     } catch (error) {
       console.error(error);
     }
   }, [
-    conversation._id,
-    mdUp,
-    onCloseMobile,
-    router,
-    contact,
-    dispatch,
     selectedConversationId,
+    conversation.id,
+    mdUp,
+    dispatch,
+    router,
+    onCloseMobile,
+    conversationReadId,
+    latestMessage,
   ]);
 
   const renderSingle = (
-    <Badge
-      key={status}
-      variant={status}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-    >
-      <Avatar alt={name} src={avatarUrl} sx={{ width: 48, height: 48 }} />
-    </Badge>
+    <Avatar alt={fullName} src={imageUrl} sx={{ width: 48, height: 48 }} />
   );
 
   return (
@@ -96,7 +94,7 @@ export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
         <Badge
           color="error"
           overlap="circular"
-          badgeContent={collapse ? conversation.adminUnreadCount : 0}
+          badgeContent={collapse ? unreadCount : 0}
         >
           {renderSingle}
         </Badge>
@@ -104,13 +102,17 @@ export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
         {!collapse && (
           <>
             <ListItemText
-              primary={name}
+              primary={fullName}
               primaryTypographyProps={{
                 noWrap: true,
                 component: 'span',
                 variant: 'subtitle2',
               }}
-              secondary={currentLastMessage?.body}
+              secondary={
+                latestMessage?.contentType === 'text'
+                  ? latestMessage?.body
+                  : 'Hình ảnh'
+              }
               secondaryTypographyProps={{
                 noWrap: true,
                 component: 'span',
@@ -119,26 +121,30 @@ export function ChatNavItem({ selected, collapse, onCloseMobile, contact }) {
               }}
             />
 
-            <Stack alignItems="flex-end" sx={{ alignSelf: 'stretch' }}>
+            <Stack
+              alignItems="flex-end"
+              sx={{ alignSelf: 'stretch' }}
+              spacing={0.5}
+            >
               <Typography
                 noWrap
                 variant="body2"
                 component="span"
                 sx={{ mb: 1.5, fontSize: 12, color: 'text.disabled' }}
               >
-                {fToNow(currentLastMessage?.createdAt)}
+                {fToNow(latestMessage?.createdAt)}
               </Typography>
 
-              {/* {!!conversation.adminUnreadCount && (
-                <Box
+              {!!unreadCount && (
+                <Badge
+                  badgeContent={unreadCount}
+                  max={99}
+                  color="error"
                   sx={{
-                    width: 8,
-                    height: 8,
-                    bgcolor: 'info.main',
-                    borderRadius: '50%',
+                    mr: 1,
                   }}
                 />
-              )} */}
+              )}
             </Stack>
           </>
         )}

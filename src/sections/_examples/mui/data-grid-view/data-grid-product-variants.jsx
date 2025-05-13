@@ -29,15 +29,15 @@ export function DataGridProductVariants({ data, control }) {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            {data.map((variant) => (
+            {data.map((variant, index) => (
               <TableCell
+                key={index}
                 style={{ borderColor: '#ddd' }}
                 sx={{
                   minWidth: 100,
                   textAlign: 'center',
                   border: '1px solid #ddd',
                 }}
-                key={variant.id}
               >
                 {variant.variantName}
               </TableCell>
@@ -87,7 +87,7 @@ export function DataGridProductVariants({ data, control }) {
         </TableHead>
         <TableBody>
           {rows.map((row, rowIndex) => (
-            <TableRow key={row.join('-')}>
+            <TableRow key={rowIndex}>
               {row.map((cell, cellIndex) => {
                 if (rowIndex !== 0 && cell === rows[rowIndex - 1][cellIndex]) {
                   return null;
@@ -107,21 +107,24 @@ export function DataGridProductVariants({ data, control }) {
                     style={{ borderColor: '#ddd' }}
                     sx={{ border: '1px solid #ddd' }}
                     rowSpan={rowSpan}
-                    key={`${cell}-${cellIndex}`}
+                    key={`${rowIndex}-${cellIndex}`}
                   >
                     {cell}
                   </TableCell>
                 );
               })}
               <TableCell
-                key={`stockQuantity-${row.id}`}
+                key={`stockQuantity-${rowIndex}`}
                 sx={{ border: '1px solid #ddd' }}
                 style={{ borderColor: '#ddd' }}
               >
                 <Controller
                   name={`productVariants[${rowIndex}].stockQuantity`}
                   control={control}
-                  render={({ field: { onChange, value, ref } }) => (
+                  render={({
+                    field: { onChange, value, ref },
+                    fieldState: { error },
+                  }) => (
                     <TextField
                       fullWidth
                       type="text"
@@ -133,19 +136,24 @@ export function DataGridProductVariants({ data, control }) {
                         onChange(Number(rawValue));
                       }}
                       inputRef={ref}
+                      error={!!error}
+                      helperText={error?.message}
                     />
                   )}
                 />
               </TableCell>
               <TableCell
-                key={`unitPrice-${row.id}`}
+                key={`unitPrice-${rowIndex}`}
                 sx={{ border: '1px solid #ddd' }}
                 style={{ borderColor: '#ddd' }}
               >
                 <Controller
                   name={`productVariants[${rowIndex}].unitPrice`}
                   control={control}
-                  render={({ field: { onChange, value } }) => (
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
                     <TextField
                       fullWidth
                       type="text"
@@ -156,6 +164,8 @@ export function DataGridProductVariants({ data, control }) {
                         const rawValue = e.target.value.replace(/\D/g, '');
                         onChange(Number(rawValue));
                       }}
+                      error={!!error}
+                      helperText={error?.message}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="start">
@@ -173,14 +183,17 @@ export function DataGridProductVariants({ data, control }) {
                 />
               </TableCell>
               <TableCell
-                key={`length-${row.id}`}
+                key={`length-${rowIndex}`}
                 sx={{ border: '1px solid #ddd' }}
                 style={{ borderColor: '#ddd' }}
               >
                 <Controller
                   name={`productVariants[${rowIndex}].dimension.length`}
                   control={control}
-                  render={({ field: { onChange, value } }) => (
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
                     <TextField
                       fullWidth
                       type="text"
@@ -191,6 +204,8 @@ export function DataGridProductVariants({ data, control }) {
                         const rawValue = e.target.value.replace(/\D/g, '');
                         onChange(Number(rawValue));
                       }}
+                      error={!!error}
+                      helperText={error?.message}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="start">
@@ -208,14 +223,17 @@ export function DataGridProductVariants({ data, control }) {
                 />
               </TableCell>
               <TableCell
-                key={`height-${row.id}`}
+                key={`height-${rowIndex}`}
                 sx={{ border: '1px solid #ddd' }}
                 style={{ borderColor: '#ddd' }}
               >
                 <Controller
                   name={`productVariants[${rowIndex}].dimension.height`}
                   control={control}
-                  render={({ field: { onChange, value } }) => (
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
                     <TextField
                       fullWidth
                       type="text"
@@ -226,6 +244,8 @@ export function DataGridProductVariants({ data, control }) {
                         const rawValue = e.target.value.replace(/\D/g, '');
                         onChange(Number(rawValue));
                       }}
+                      error={!!error}
+                      helperText={error?.message}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="start">
@@ -243,14 +263,17 @@ export function DataGridProductVariants({ data, control }) {
                 />
               </TableCell>
               <TableCell
-                key={`width-${row.id}`}
+                key={`width-${rowIndex}`}
                 sx={{ border: '1px solid #ddd' }}
                 style={{ borderColor: '#ddd' }}
               >
                 <Controller
                   name={`productVariants[${rowIndex}].dimension.width`}
                   control={control}
-                  render={({ field: { onChange, value } }) => (
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
                     <TextField
                       fullWidth
                       type="text"
@@ -261,6 +284,8 @@ export function DataGridProductVariants({ data, control }) {
                         const rawValue = e.target.value.replace(/\D/g, '');
                         onChange(Number(rawValue));
                       }}
+                      error={!!error}
+                      helperText={error?.message}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="start">
@@ -278,14 +303,17 @@ export function DataGridProductVariants({ data, control }) {
                 />
               </TableCell>
               <TableCell
-                key={`weight-${row.id}`}
+                key={`weight-${rowIndex}`}
                 sx={{ border: '1px solid #ddd' }}
                 style={{ borderColor: '#ddd' }}
               >
                 <Controller
                   name={`productVariants[${rowIndex}].weight`}
                   control={control}
-                  render={({ field: { onChange, value } }) => (
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
                     <TextField
                       fullWidth
                       type="text"
@@ -296,6 +324,8 @@ export function DataGridProductVariants({ data, control }) {
                         const rawValue = e.target.value.replace(/\D/g, '');
                         onChange(Number(rawValue));
                       }}
+                      error={!!error}
+                      helperText={error?.message}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="start">
