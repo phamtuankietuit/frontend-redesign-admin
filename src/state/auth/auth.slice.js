@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// import { socket } from "src/hooks/use-socket";
+import { socket } from "src/hooks/use-socket";
 
 import { getMeAsync, signInAsync } from "src/services/auth/auth.service";
 
@@ -16,7 +16,11 @@ const authSlice = createSlice({
   reducers: {
     signOut: (state) => {
       Object.assign(state, initialState);
-      // socket.disconnect();
+
+      // Safely disconnect socket only if it's connected
+      if (socket?.connected) {
+        socket.disconnect();
+      }
     },
   },
   extraReducers: (builder) => {
@@ -27,7 +31,11 @@ const authSlice = createSlice({
       .addCase(getMeAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-        // socket.emit('add-user', action.payload.id);
+
+        // Try to connect socket only if it exists and isn't already connected
+        if (socket && !socket.connected) {
+          socket.connect();
+        }
       });
   },
 });

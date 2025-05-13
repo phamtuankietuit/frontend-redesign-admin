@@ -1,17 +1,20 @@
-import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Stack from '@mui/material/Stack';
-import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import { IconButton } from '@mui/material';
 import ListItemText from '@mui/material/ListItemText';
 
+import { useSearchParams } from 'src/routes/hooks';
+
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { fToNow } from 'src/utils/format-time';
-
 import { selectChat } from 'src/state/chat/chat.slice';
+import {
+  getUserByIdAsync,
+  getConversationByIdAsync,
+} from 'src/services/chat/chat.service';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -19,12 +22,8 @@ import { ChatHeaderSkeleton } from './chat-skeleton';
 
 // ----------------------------------------------------------------------
 
-export function ChatHeaderDetail({ collapseNav, loading }) {
+export function ChatHeaderDetail({ collapseNav }) {
   const lgUp = useResponsive('up', 'lg');
-
-  const { admin } = useSelector(selectChat);
-
-  const { contact } = admin;
 
   const { collapseDesktop, onCollapseDesktop, onOpenMobile } = collapseNav;
 
@@ -37,33 +36,46 @@ export function ChatHeaderDetail({ collapseNav, loading }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lgUp]);
 
+  const dispatch = useDispatch();
+
+  const searchParams = useSearchParams();
+
+  const selectedConversationId = searchParams.get('id') || '';
+
+  const { customerId, cCombined, cLoading } = useSelector(selectChat);
+
+  useEffect(() => {
+    if (customerId !== '') {
+      dispatch(getUserByIdAsync(Number(customerId)));
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customerId]);
+
+  const fetchData = useCallback(async () => {
+    dispatch(getConversationByIdAsync(selectedConversationId));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedConversationId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const renderSingle = (
     <Stack direction="row" alignItems="center" spacing={2}>
-      <Badge
-        variant={contact?.status}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      >
-        <Avatar src={contact?.avatarUrl} alt={contact?.name} />
-      </Badge>
+      <Avatar
+        src={cCombined?.customer?.imageUrl}
+        alt={cCombined?.customer?.fullName}
+      />
 
       <ListItemText
-        primary={contact?.name}
-        secondary={
-          contact?.status === 'offline'
-            ? fToNow(contact?.lastActivity)
-            : contact?.status
-        }
-        secondaryTypographyProps={{
-          component: 'span',
-          ...(contact?.status !== 'offline' && {
-            textTransform: 'capitalize',
-          }),
-        }}
+        primary={`${cCombined?.customer?.firstName} ${cCombined?.customer?.lastName}`}
       />
     </Stack>
   );
 
-  if (loading || !contact) {
+  if (cLoading) {
     return <ChatHeaderSkeleton />;
   }
 

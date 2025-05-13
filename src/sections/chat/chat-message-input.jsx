@@ -1,12 +1,12 @@
+import { useDispatch } from 'react-redux';
 import { useRef, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import Stack from '@mui/material/Stack';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 
-import { selectAuth } from 'src/state/auth/auth.slice';
-import { sendAdminMessageAsync } from 'src/services/chat/chat.service';
+import { uploadImagesAsync } from 'src/services/file/file.service';
+import { createMessageAsync } from 'src/services/chat/chat.service';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -14,8 +14,6 @@ import { Iconify } from 'src/components/iconify';
 
 export function ChatMessageInput({ disabled, selectedConversationId }) {
   const dispatch = useDispatch();
-
-  const { user } = useSelector(selectAuth);
 
   const fileRef = useRef(null);
 
@@ -31,16 +29,32 @@ export function ChatMessageInput({ disabled, selectedConversationId }) {
     setMessage(event.target.value);
   }, []);
 
+  const handleFileChange = async (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await dispatch(uploadImagesAsync([file]))
+        .unwrap()
+        .then((urls) => {
+          dispatch(
+            createMessageAsync({
+              conversationId: selectedConversationId,
+              contentType: 'image',
+              body: urls[0],
+            }),
+          );
+        });
+    }
+  };
+
   const handleSendMessage = useCallback(
     async (event) => {
       if (event.key !== 'Enter' || !message) return;
 
       try {
         dispatch(
-          sendAdminMessageAsync({
-            body: message,
-            senderId: user.id.toString(),
+          createMessageAsync({
             conversationId: selectedConversationId,
+            body: message,
           }),
         );
       } catch (error) {
@@ -49,7 +63,7 @@ export function ChatMessageInput({ disabled, selectedConversationId }) {
         setMessage('');
       }
     },
-    [message, dispatch, selectedConversationId, user.id],
+    [message, dispatch, selectedConversationId],
   );
 
   return (
@@ -82,7 +96,12 @@ export function ChatMessageInput({ disabled, selectedConversationId }) {
         }}
       />
 
-      <input type="file" ref={fileRef} style={{ display: 'none' }} />
+      <input
+        type="file"
+        ref={fileRef}
+        onChange={handleFileChange}
+        style={{ display: 'none' }}
+      />
     </>
   );
 }

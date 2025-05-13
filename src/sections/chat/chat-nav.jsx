@@ -37,7 +37,7 @@ const NAV_COLLAPSE_WIDTH = 96;
 
 export function ChatNav({
   loading,
-  contacts,
+  conversations,
   collapseNav,
   selectedConversationId,
 }) {
@@ -65,35 +65,35 @@ export function ChatNav({
     }
   }, [onCloseDesktop, mdUp]);
 
-  const handleToggleNav = useCallback(() => {
-    if (mdUp) {
-      onCollapseDesktop();
-    } else {
-      onCloseMobile();
-    }
-  }, [mdUp, onCloseMobile, onCollapseDesktop]);
+  // const handleToggleNav = useCallback(() => {
+  //   if (mdUp) {
+  //     onCollapseDesktop();
+  //   } else {
+  //     onCloseMobile();
+  //   }
+  // }, [mdUp, onCloseMobile, onCollapseDesktop]);
 
-  const handleClickCompose = useCallback(() => {
-    if (!mdUp) {
-      onCloseMobile();
-    }
-    router.push(paths.dashboard.chat);
-  }, [mdUp, onCloseMobile, router]);
+  // const handleClickCompose = useCallback(() => {
+  //   if (!mdUp) {
+  //     onCloseMobile();
+  //   }
+  //   router.push(paths.dashboard.chat);
+  // }, [mdUp, onCloseMobile, router]);
 
-  const handleSearchContacts = useCallback(
-    (inputValue) => {
-      setSearchContacts((prevState) => ({ ...prevState, query: inputValue }));
+  // const handleSearchContacts = useCallback(
+  //   (inputValue) => {
+  //     setSearchContacts((prevState) => ({ ...prevState, query: inputValue }));
 
-      if (inputValue) {
-        const results = contacts.filter((contact) =>
-          contact.name.toLowerCase().includes(inputValue),
-        );
+  //     if (inputValue) {
+  //       const results = contacts.filter((contact) =>
+  //         contact.name.toLowerCase().includes(inputValue),
+  //       );
 
-        setSearchContacts((prevState) => ({ ...prevState, results }));
-      }
-    },
-    [contacts],
-  );
+  //       setSearchContacts((prevState) => ({ ...prevState, results }));
+  //     }
+  //   },
+  //   [contacts],
+  // );
 
   const handleClickAwaySearch = useCallback(() => {
     setSearchContacts({ query: '', results: [] });
@@ -146,14 +146,13 @@ export function ChatNav({
   const renderList = (
     <nav>
       <Box component="ul">
-        {contacts?.map((contact) => (
+        {conversations?.map((conversation) => (
           <ChatNavItem
-            key={contact.id}
+            key={conversation.id}
             collapse={collapseDesktop}
-            conversation={contact.conversation}
-            selected={contact.conversation.id === selectedConversationId}
+            conversation={conversation}
+            selected={conversation.id === selectedConversationId}
             onCloseMobile={onCloseMobile}
-            contact={contact}
           />
         ))}
       </Box>

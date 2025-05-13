@@ -1,31 +1,65 @@
 import { io } from 'socket.io-client';
 import { useMemo, useState, useEffect } from 'react';
 
-// ----------------------------------------------------------------------
-
-// export const socket = io('http://localhost:5000', { withCredentials: true });
+import { CONFIG } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
-// export function useSocket(eventName) {
-//   const [data, setData] = useState(undefined);
+// Extract base URL without API path for socket connection
+const getSocketUrl = () => {
+  const url = CONFIG.chatServerUrl || '';
+  // Remove any API paths to get the base server URL
+  return url.replace(/\/api\/v1$/, '');
+};
 
-//   useEffect(() => {
-//     socket.on(eventName, (arg) => {
-//       setData(arg);
-//     });
+// Create socket with reconnection options and error handling
+export const socket = io(getSocketUrl(), {
+  withCredentials: true,
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+  timeout: 20000,
+});
 
-//     return () => {
-//       socket.off(eventName);
-//     };
-//   }, [eventName]);
+// Add socket event listeners for connection status
+socket.on('connect', () => {
+  console.log('Socket connected successfully, ID:', socket.id);
+});
 
-//   const memoizedValue = useMemo(
-//     () => ({
-//       ...data,
-//     }),
-//     [data]
-//   );
+socket.on('connect_error', (error) => {
+  console.error('Socket connection error:', error);
+});
 
-//   return memoizedValue;
-// }
+socket.on('reconnect', (attemptNumber) => {
+  console.log(`Socket reconnected after ${attemptNumber} attempts`);
+});
+
+socket.on('reconnect_error', (error) => {
+  console.error('Socket reconnection error:', error);
+});
+
+// ----------------------------------------------------------------------
+
+export function useSocket(eventName) {
+  const [data, setData] = useState(undefined);
+
+  useEffect(() => {
+    socket.on(eventName, (arg) => {
+      setData(arg);
+    });
+
+    return () => {
+      socket.off(eventName);
+    };
+  }, [eventName]);
+
+  const memoizedValue = useMemo(
+    () => ({
+      ...data,
+    }),
+    [data]
+  );
+
+  return memoizedValue;
+}

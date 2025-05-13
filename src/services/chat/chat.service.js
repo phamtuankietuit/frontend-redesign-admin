@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 import { GET } from "../axios";
-import { CHAT_GET, CHAT_POST } from "../chat-axios";
+import { CHAT_GET, CHAT_PUT, CHAT_POST } from "../chat-axios";
 
 export const sendAdminMessageAsync = createAsyncThunk(
   'chat/sendAdminMessageAsync',
@@ -21,21 +21,42 @@ export const sendCustomerMessageAsync = createAsyncThunk(
   }
 );
 
+export const createMessageAsync = createAsyncThunk(
+  'chat/createMessageAsync',
+  async (body) => {
+    const response = await CHAT_POST(`/messages`, body);
+
+    return response.data.data.message;
+  }
+);
+
+
 export const getMessagesAsync = createAsyncThunk(
   'chat/getMessagesAsync',
-  async (msg) => {
-    const response = await CHAT_GET(`/messages/getmsg`, msg);
+  async (params) => {
+    const response = await CHAT_GET(`/messages`, { params });
 
-    return response.data;
+    return response.data.data;
   }
 );
 
 export const getConversationsAsync = createAsyncThunk(
   'chat/getConversationsAsync',
-  async (userId) => {
-    const response = await CHAT_GET(`/conversations`, { params: { userId: userId.toString() } });
+  async ({ params }) => {
+    const response = await CHAT_GET(`/conversations`, {
+      params
+    });
 
-    return response.data;
+    return response.data.data.conversations;
+  }
+);
+
+export const getConversationByIdAsync = createAsyncThunk(
+  'chat/getConversationByIdAsync',
+  async (conversationId) => {
+    const response = await CHAT_GET(`/conversations/${conversationId}`);
+
+    return response.data.data;
   }
 );
 
@@ -48,16 +69,24 @@ export const createConversationAsync = createAsyncThunk(
   }
 );
 
+export const updateConversationReadAsync = createAsyncThunk(
+  'chat/updateConversationReadAsync',
+  async (body) => {
+    const response = await CHAT_PUT(`/conversation-reads`, body);
+
+    return response.data.data;
+  }
+);
+
 export const getAllUsers = createAsyncThunk(
   'chat/getAllUsers',
-  async () => {
+  async (customerIds) => {
     const response = await GET(`/users`,
       {
         params: {
+          userIds: customerIds.join(','),
           pageNumber: 1,
-          pageSize: 100,
-          sortDirection: 'asc',
-          sortBy: 'Id'
+          pageSize: 10000,
         }
       }
     );
@@ -66,13 +95,12 @@ export const getAllUsers = createAsyncThunk(
   }
 );
 
-export const getConversationByIdAsync = createAsyncThunk(
-  'chat/getConversationByIdAsync',
-  async (conversationId) => {
-    const response = await CHAT_GET(`/conversations/${conversationId}`);
+export const getUserByIdAsync = createAsyncThunk(
+  'chat/getUserById',
+  async (id) => {
+    const response = await GET(`/users/${id}`);
 
     return response.data;
   }
 );
-
 

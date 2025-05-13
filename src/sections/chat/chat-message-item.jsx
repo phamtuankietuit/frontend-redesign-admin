@@ -8,22 +8,13 @@ import Typography from '@mui/material/Typography';
 import { fToNow } from 'src/utils/format-time';
 
 import { selectChat } from 'src/state/chat/chat.slice';
-import { selectAuth } from 'src/state/auth/auth.slice';
 
 // ----------------------------------------------------------------------
 
 export function ChatMessageItem({ message, onOpenLightbox }) {
-  const { body, senderId, createdAt, hasImage } = message;
+  const { body, createdAt } = message;
 
-  const {
-    admin: { contact },
-  } = useSelector(selectChat);
-
-  const { id: contactId, name: contactFullName } = contact;
-
-  const { user } = useSelector(selectAuth);
-
-  const { fullName: userFullName } = user;
+  const { cCombined } = useSelector(selectChat);
 
   const renderInfo = (
     <Typography
@@ -32,11 +23,11 @@ export function ChatMessageItem({ message, onOpenLightbox }) {
       sx={{
         mb: 1,
         color: 'text.disabled',
-        ...(contactId.toString() !== senderId && { mr: 'auto' }),
+        ...(message?.customerId && { mr: 'auto' }),
       }}
     >
-      {contactId.toString() === senderId && `${contactFullName}, `}
-      {contactId.toString() !== senderId && `${userFullName}, `}
+      {message?.customerId &&
+        `${cCombined?.customer?.firstName} ${cCombined?.customer?.lastName}, `}
 
       {fToNow(createdAt)}
     </Typography>
@@ -51,14 +42,17 @@ export function ChatMessageItem({ message, onOpenLightbox }) {
         borderRadius: 1,
         typography: 'body2',
         bgcolor: 'background.neutral',
-        ...(contactId.toString() !== senderId && {
+        ...(message?.customerId && {
           color: 'grey.800',
           bgcolor: 'primary.lighter',
         }),
-        ...(hasImage && { p: 0, bgcolor: 'transparent' }),
+        ...(message?.contentType === 'image' && {
+          p: 0,
+          bgcolor: 'transparent',
+        }),
       }}
     >
-      {hasImage ? (
+      {message?.contentType === 'image' ? (
         <Box
           component="img"
           alt="attachment"
@@ -87,22 +81,18 @@ export function ChatMessageItem({ message, onOpenLightbox }) {
   return (
     <Stack
       direction="row"
-      justifyContent={contactId.toString() !== senderId ? 'flex-end' : 'unset'}
+      justifyContent={message?.customerId ? 'unset' : 'flex-end'}
       sx={{ mb: 5 }}
     >
-      {contactId.toString() === senderId && (
+      {message?.customerId && (
         <Avatar
-          alt={contact?.name}
-          src={contact?.avatarUrl}
+          alt={cCombined?.customer?.fullName}
+          src={cCombined?.customer?.imageUrl}
           sx={{ width: 32, height: 32, mr: 2 }}
         />
       )}
 
-      <Stack
-        alignItems={
-          contactId.toString() !== senderId ? 'flex-end' : 'flex-start'
-        }
-      >
+      <Stack alignItems={!message?.customerId ? 'flex-end' : 'flex-start'}>
         {renderInfo}
 
         <Stack
