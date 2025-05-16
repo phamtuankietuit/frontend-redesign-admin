@@ -32,4 +32,6 @@ export const CHAT_POST = (url, body, config) => ChatAxiosInstance.post(url, body
 
 export const CHAT_PUT = (url, body, config) => ChatAxiosInstance.put(url, body, config);
 
+export const CHAT_DELETE = (url, config) => ChatAxiosInstance.delete(url, config);
+
 export default ChatAxiosInstance;

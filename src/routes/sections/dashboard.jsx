@@ -55,6 +55,12 @@ const InvoiceDetailsPage = lazy(
 );
 const InvoiceCreatePage = lazy(() => import('src/pages/dashboard/invoice/new'));
 const InvoiceEditPage = lazy(() => import('src/pages/dashboard/invoice/edit'));
+// Branch
+const BranchListPage = lazy(() => import('src/pages/dashboard/branch/list'));
+// Fast Message
+const FastMessageListPage = lazy(
+  () => import('src/pages/dashboard/fast-message/list'),
+);
 // User
 const UserProfilePage = lazy(() => import('src/pages/dashboard/user/profile'));
 const UserCardsPage = lazy(() => import('src/pages/dashboard/user/cards'));
@@ -109,11 +115,21 @@ export const dashboardRoutes = [
     children: [
       { element: <OverviewAnalyticsPage />, index: true },
       { path: 'ecommerce', element: <OverviewEcommercePage /> },
-      // { path: 'analytics', element: <OverviewAnalyticsPage /> },
       { path: 'banking', element: <OverviewBankingPage /> },
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'file', element: <OverviewFilePage /> },
       { path: 'course', element: <OverviewCoursePage /> },
+      {
+        path: 'branch',
+        children: [{ element: <BranchListPage />, index: true }],
+      },
+      {
+        path: 'chat',
+        children: [
+          { element: <ChatPage />, index: true },
+          { path: 'list', element: <FastMessageListPage /> },
+        ],
+      },
       {
         path: 'user',
         children: [
@@ -198,7 +214,7 @@ export const dashboardRoutes = [
       },
       { path: 'file-manager', element: <FileManagerPage /> },
       { path: 'mail', element: <MailPage /> },
-      { path: 'chat', element: <ChatPage /> },
+
       { path: 'calendar', element: <CalendarPage /> },
       { path: 'kanban', element: <KanbanPage /> },
       { path: 'permission', element: <PermissionDeniedPage /> },
