@@ -15,12 +15,17 @@ const initialState = {
   },
   // 
   fastMessage: null,
+  // 
+  top3FastMessages: [],
 };
 
 const fastMessageSlice = createSlice({
   name: 'fastMessage',
   initialState,
   reducers: {
+    setTop3FastMessages: (state, action) => {
+      state.top3FastMessages = action.payload;
+    },
     setFastMessage: (state, action) => {
       state.fastMessage = action.payload;
     },
@@ -50,7 +55,7 @@ const fastMessageSlice = createSlice({
   },
 });
 
-export const { setTableFilters, setFastMessage } = fastMessageSlice.actions;
+export const { setTableFilters, setFastMessage, setTop3FastMessages } = fastMessageSlice.actions;
 
 export const selectFastMessage = (state) => state.fastMessage;
 
