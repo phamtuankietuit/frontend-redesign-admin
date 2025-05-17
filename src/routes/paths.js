@@ -84,7 +84,6 @@ export const paths = {
     root: ROOTS.DASHBOARD,
     signIn: `${ROOTS.DASHBOARD}/sign-in`,
     mail: `${ROOTS.DASHBOARD}/mail`,
-    chat: `${ROOTS.DASHBOARD}/chat`,
     blank: `${ROOTS.DASHBOARD}/blank`,
     kanban: `${ROOTS.DASHBOARD}/kanban`,
     calendar: `${ROOTS.DASHBOARD}/calendar`,
@@ -98,6 +97,13 @@ export const paths = {
       booking: `${ROOTS.DASHBOARD}/booking`,
       file: `${ROOTS.DASHBOARD}/file`,
       course: `${ROOTS.DASHBOARD}/course`,
+    },
+    branch: {
+      root: `${ROOTS.DASHBOARD}/branch`,
+    },
+    chat: {
+      root: `${ROOTS.DASHBOARD}/chat`,
+      list: `${ROOTS.DASHBOARD}/chat/list`,
     },
     user: {
       root: `${ROOTS.DASHBOARD}/user`,

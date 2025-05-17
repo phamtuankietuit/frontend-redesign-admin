@@ -410,21 +410,3 @@ function CustomToolbar({
     </>
   );
 }
-
-function applyFilter({ inputData, filters }) {
-  const { stock, publish } = filters;
-
-  if (stock.length) {
-    inputData = inputData.filter((product) =>
-      stock.includes(product.inventoryType),
-    );
-  }
-
-  if (publish.length) {
-    inputData = inputData.filter((product) =>
-      publish.includes(product.publish),
-    );
-  }
-
-  return inputData;
-}

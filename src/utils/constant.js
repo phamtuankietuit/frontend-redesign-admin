@@ -6,5 +6,6 @@ export const toastMessage = {
         invalidPassword: 'Chứa ít nhất 1 chữ thường, 1 chữ hoa, 1 số, 1 kí tự đặc biệt và ít nhất 8 ký tự!',
         newPasswordMatchOldPassword: 'Mật khẩu mới không được trùng với mật khẩu cũ!',
         confirmPasswordNotMatch: 'Mật khẩu không khớp!',
+        invalidShortHand: 'Chỉ chứa chữ thường và số',
     }
 };

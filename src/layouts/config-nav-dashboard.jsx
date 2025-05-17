@@ -64,6 +64,14 @@ export const navData = [
         ],
       },
       {
+        title: 'Chi nhánh',
+        path: paths.dashboard.branch.root,
+        icon: ICONS.tour,
+        children: [
+          { title: 'Danh sách chi nhánh', path: paths.dashboard.branch.root },
+        ],
+      },
+      {
         title: 'Sản phẩm',
         path: paths.dashboard.product.root,
         icon: ICONS.product,
@@ -107,7 +115,21 @@ export const navData = [
           },
         ],
       },
-      { title: 'Chat', path: paths.dashboard.chat, icon: ICONS.chat },
+      {
+        title: 'Chat',
+        path: paths.dashboard.chat.root,
+        icon: ICONS.chat,
+        children: [
+          {
+            title: 'Chat',
+            path: paths.dashboard.chat.root,
+          },
+          {
+            title: 'Tin nhắn nhanh',
+            path: paths.dashboard.chat.list,
+          },
+        ],
+      },
     ],
   },
 ];

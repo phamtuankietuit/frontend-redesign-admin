@@ -34,13 +34,18 @@ const initialState = {
   mTotalPages: 0,
   mLoading: false,
   mIsEnd: false,
-  addTop: false
+  addTop: false,
+  // Fast Message
+  fastMessageSearchQuery: '',
 };
 
 const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
+    setFastMessageSearchQuery: (state, action) => {
+      state.fastMessageSearchQuery = action.payload;
+    },
     setTableFiltersMessages: (state, action) => {
       state.tableFiltersMessages = {
         ...state.tableFiltersMessages,
@@ -221,7 +226,14 @@ const chatSlice = createSlice({
   },
 });
 
-export const { setTableFiltersMessages, resetChatSelected, addNewMessageSocket } = chatSlice.actions;
+export const
+  {
+    setTableFiltersMessages,
+    resetChatSelected,
+    addNewMessageSocket,
+    setFastMessageSearchQuery,
+  }
+    = chatSlice.actions;
 
 export const selectChat = (state) => state.chat;
 

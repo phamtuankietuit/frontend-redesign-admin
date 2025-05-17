@@ -60,7 +60,7 @@ export function ChatNavItem({
           }),
         );
 
-        router.push(`${paths.dashboard.chat}?id=${conversation.id}`);
+        router.push(`${paths.dashboard.chat.root}?id=${conversation.id}`);
       }
     } catch (error) {
       console.error(error);
