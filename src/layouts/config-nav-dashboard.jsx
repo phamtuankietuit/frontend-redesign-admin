@@ -89,11 +89,14 @@ export const navData = [
       //   ],
       // },
       {
-        title: 'Đơn nhập hàng',
-        path: paths.dashboard.invoice.root,
+        title: 'Cập nhật tồn kho',
+        path: paths.dashboard.stockAdjustment.root,
         icon: ICONS.invoice,
         children: [
-          { title: 'Danh sách đơn nhập', path: paths.dashboard.invoice.root },
+          {
+            title: 'Đơn cập nhật tồn kho',
+            path: paths.dashboard.stockAdjustment.root,
+          },
         ],
       },
       {

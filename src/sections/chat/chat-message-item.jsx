@@ -9,10 +9,12 @@ import { fToNow } from 'src/utils/format-time';
 
 import { selectChat } from 'src/state/chat/chat.slice';
 
+import { Markdown } from 'src/components/markdown';
+
 // ----------------------------------------------------------------------
 
 export function ChatMessageItem({ message, onOpenLightbox }) {
-  const { body, createdAt } = message;
+  const { body, createdAt, markdown, contentType } = message;
 
   const { cCombined } = useSelector(selectChat);
 
@@ -52,25 +54,33 @@ export function ChatMessageItem({ message, onOpenLightbox }) {
         }),
       }}
     >
-      {message?.contentType === 'image' ? (
-        <Box
-          component="img"
-          alt="attachment"
-          src={body}
-          onClick={() => onOpenLightbox(body)}
-          sx={{
-            width: 400,
-            height: 'auto',
-            borderRadius: 1.5,
-            cursor: 'pointer',
-            objectFit: 'cover',
-            aspectRatio: '16/11',
-            '&:hover': { opacity: 0.9 },
-          }}
-        />
-      ) : (
-        body
-      )}
+      {(() => {
+        if (contentType === 'image') {
+          return (
+            <Box
+              component="img"
+              alt="attachment"
+              src={body}
+              onClick={() => onOpenLightbox(body)}
+              sx={{
+                width: 400,
+                height: 'auto',
+                borderRadius: 1.5,
+                cursor: 'pointer',
+                objectFit: 'cover',
+                aspectRatio: '16/11',
+                '&:hover': { opacity: 0.9 },
+              }}
+            />
+          );
+        }
+
+        if (markdown) {
+          return <Markdown>{body}</Markdown>;
+        }
+
+        return body;
+      })()}
     </Stack>
   );
 

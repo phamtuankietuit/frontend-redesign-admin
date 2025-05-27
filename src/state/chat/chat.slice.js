@@ -58,7 +58,7 @@ const chatSlice = createSlice({
       state.mIsEnd = false;
     },
     addNewMessageSocket: (state, action) => {
-      if (action.payload?.assignee?.id === 'admin') {
+      if (action.payload?.assignee?.id === 'admin' || action.payload?.assignee?.id === 'auto-system') {
         // Only add the message if we're in the same conversation
         if (state.conversation?.id === action.payload.conversationId) {
           state.messages.push(action.payload);

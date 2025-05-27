@@ -33,8 +33,11 @@ export function ChatNavSearchResults({ query, results, onClickResult }) {
               onClick={() => onClickResult(result)}
               sx={{ gap: 2, py: 1.5, px: 2.5, typography: 'subtitle2' }}
             >
-              <Avatar alt={result.name} src={result.avatarUrl} />
-              {result.name}
+              <Avatar
+                alt={result?.customer?.fullName}
+                src={result?.customer?.imageUrl}
+              />
+              {result?.customer?.fullName}
             </ListItemButton>
           </Box>
         ))}
@@ -45,7 +48,7 @@ export function ChatNavSearchResults({ query, results, onClickResult }) {
   return (
     <>
       <Typography variant="h6" sx={{ px: 2.5, mb: 2 }}>
-        Contacts ({totalResults})
+        Khách hàng ({totalResults})
       </Typography>
 
       {notFound ? renderNotFound : renderResults}
