@@ -91,6 +91,7 @@ export function BranchListView() {
         setTableFilters({
           sortDirection: isAsc ? 'desc' : 'asc',
           sortBy: id,
+          pageNumber: 1,
         }),
       );
     }

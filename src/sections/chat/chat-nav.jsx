@@ -1,10 +1,11 @@
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { resetChatSelected } from 'src/state/chat/chat.slice';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 
@@ -12,22 +13,13 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useResponsive } from 'src/hooks/use-responsive';
-
-import { today } from 'src/utils/format-time';
-
-import { createConversation } from 'src/actions/chat';
-
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
-import { useMockedUser } from 'src/auth/hooks';
-
 import { ToggleButton } from './styles';
 import { ChatNavItem } from './chat-nav-item';
-import { ChatNavAccount } from './chat-nav-account';
 import { ChatNavItemSkeleton } from './chat-skeleton';
 import { ChatNavSearchResults } from './chat-nav-search-results';
-import { initialConversation } from './utils/initial-conversation';
 
 // ----------------------------------------------------------------------
 
@@ -41,6 +33,8 @@ export function ChatNav({
   collapseNav,
   selectedConversationId,
 }) {
+  const dispatch = useDispatch();
+
   const router = useRouter();
 
   const mdUp = useResponsive('up', 'md');
@@ -51,7 +45,6 @@ export function ChatNav({
     onCloseMobile,
     onCloseDesktop,
     collapseDesktop,
-    onCollapseDesktop,
   } = collapseNav;
 
   const [searchContacts, setSearchContacts] = useState({
@@ -65,81 +58,35 @@ export function ChatNav({
     }
   }, [onCloseDesktop, mdUp]);
 
-  // const handleToggleNav = useCallback(() => {
-  //   if (mdUp) {
-  //     onCollapseDesktop();
-  //   } else {
-  //     onCloseMobile();
-  //   }
-  // }, [mdUp, onCloseMobile, onCollapseDesktop]);
-
-  // const handleClickCompose = useCallback(() => {
-  //   if (!mdUp) {
-  //     onCloseMobile();
-  //   }
-  //   router.push(paths.dashboard.chat);
-  // }, [mdUp, onCloseMobile, router]);
-
-  // const handleSearchContacts = useCallback(
-  //   (inputValue) => {
-  //     setSearchContacts((prevState) => ({ ...prevState, query: inputValue }));
-
-  //     if (inputValue) {
-  //       const results = contacts.filter((contact) =>
-  //         contact.name.toLowerCase().includes(inputValue),
-  //       );
-
-  //       setSearchContacts((prevState) => ({ ...prevState, results }));
-  //     }
-  //   },
-  //   [contacts],
-  // );
-
   const handleClickAwaySearch = useCallback(() => {
     setSearchContacts({ query: '', results: [] });
   }, []);
 
-  // const handleClickResult = useCallback(
-  //   async (result) => {
-  //     handleClickAwaySearch();
+  const handleSearchContacts = useCallback(
+    (inputValue) => {
+      setSearchContacts((prevState) => ({ ...prevState, query: inputValue }));
 
-  //     const linkTo = (id) => router.push(`${paths.dashboard.chat}?id=${id}`);
+      if (inputValue) {
+        const results = conversations.filter((contact) =>
+          contact?.customer?.fullName.toLowerCase().includes(inputValue),
+        );
 
-  //     try {
-  //       // Check if the conversation already exists
-  //       if (conversations.allIds.includes(result.id)) {
-  //         linkTo(result.id);
-  //         return;
-  //       }
+        setSearchContacts((prevState) => ({ ...prevState, results }));
+      }
+    },
+    [conversations],
+  );
 
-  //       // Find the recipient in contacts
-  //       const recipient = contacts.find((contact) => contact.id === result.id);
-  //       if (!recipient) {
-  //         console.error('Recipient not found');
-  //         return;
-  //       }
+  const handleClickResult = useCallback(
+    async (result) => {
+      handleClickAwaySearch();
 
-  //       // Prepare conversation data
-  //       const { conversationData } = initialConversation({
-  //         recipients: [recipient],
-  //         me: myContact,
-  //       });
+      dispatch(resetChatSelected());
 
-  //       // Create a new conversation
-  //       const res = await createConversation(conversationData);
-
-  //       if (!res || !res.conversation) {
-  //         console.error('Failed to create conversation');
-  //       }
-
-  //       // Navigate to the new conversation
-  //       linkTo(res.conversation.id);
-  //     } catch (error) {
-  //       console.error('Error handling click result:', error);
-  //     }
-  //   },
-  //   [contacts, conversations.allIds, handleClickAwaySearch, myContact, router],
-  // );
+      router.push(`${paths.dashboard.chat.root}?id=${result.id}`);
+    },
+    [handleClickAwaySearch, router, dispatch],
+  );
 
   const renderLoading = <ChatNavItemSkeleton />;
 
@@ -159,20 +106,20 @@ export function ChatNav({
     </nav>
   );
 
-  // const renderListResults = (
-  //   <ChatNavSearchResults
-  //     query={searchContacts.query}
-  //     results={searchContacts.results}
-  //     onClickResult={() => {}}
-  //   />
-  // );
+  const renderListResults = (
+    <ChatNavSearchResults
+      query={searchContacts.query}
+      results={searchContacts.results}
+      onClickResult={handleClickResult}
+    />
+  );
 
   const renderSearchInput = (
     <ClickAwayListener onClickAway={handleClickAwaySearch}>
       <TextField
         fullWidth
         value={searchContacts.query}
-        onChange={() => {}}
+        onChange={(event) => handleSearchContacts(event.target.value)}
         placeholder="Tìm khách hàng..."
         InputProps={{
           startAdornment: (
@@ -188,46 +135,15 @@ export function ChatNav({
 
   const renderContent = (
     <>
-      {/* <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="center"
-        sx={{ p: 2.5, pb: 0 }}
-      >
-        {!collapseDesktop && (
-          <>
-            <ChatNavAccount />
-            <Box sx={{ flexGrow: 1 }} />
-          </>
-        )}
-
-        <IconButton onClick={handleToggleNav}>
-          <Iconify
-            icon={
-              collapseDesktop
-                ? 'eva:arrow-ios-forward-fill'
-                : 'eva:arrow-ios-back-fill'
-            }
-          />
-        </IconButton>
-
-        {!collapseDesktop && (
-          <IconButton onClick={handleClickCompose}>
-            <Iconify width={24} icon="solar:user-plus-bold" />
-          </IconButton>
-        )}
-      </Stack> */}
-
       <Box sx={{ p: 2.5, pt: 0 }}>{!collapseDesktop && renderSearchInput}</Box>
 
       {loading ? (
         renderLoading
       ) : (
         <Scrollbar sx={{ pb: 1 }}>
-          {renderList}
-          {/* {searchContacts.query && !!conversations.allIds.length
+          {searchContacts.query && !!conversations.length
             ? renderListResults
-            : renderList} */}
+            : renderList}
         </Scrollbar>
       )}
     </>

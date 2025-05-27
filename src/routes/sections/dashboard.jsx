@@ -61,6 +61,16 @@ const BranchListPage = lazy(() => import('src/pages/dashboard/branch/list'));
 const FastMessageListPage = lazy(
   () => import('src/pages/dashboard/fast-message/list'),
 );
+// Stock Adjustment
+const StockAdjustmentListPage = lazy(
+  () => import('src/pages/dashboard/stock-adjustment/list'),
+);
+const StockAdjustmentCreatePage = lazy(
+  () => import('src/pages/dashboard/stock-adjustment/new'),
+);
+const StockAdjustmentEditPage = lazy(
+  () => import('src/pages/dashboard/stock-adjustment/edit'),
+);
 // User
 const UserProfilePage = lazy(() => import('src/pages/dashboard/user/profile'));
 const UserCardsPage = lazy(() => import('src/pages/dashboard/user/cards'));
@@ -170,6 +180,15 @@ export const dashboardRoutes = [
           { element: <OrderListPage />, index: true },
           { path: 'list', element: <OrderListPage /> },
           { path: ':id', element: <OrderDetailsPage /> },
+        ],
+      },
+      {
+        path: 'stock-adjustment',
+        children: [
+          { element: <StockAdjustmentListPage />, index: true },
+          { path: 'list', element: <StockAdjustmentListPage /> },
+          { path: ':id', element: <StockAdjustmentEditPage /> },
+          { path: 'new', element: <StockAdjustmentCreatePage /> },
         ],
       },
       {

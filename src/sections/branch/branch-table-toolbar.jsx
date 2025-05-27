@@ -21,6 +21,7 @@ export function BranchTableToolbar() {
           sortBy: 'Name',
           sortDirection: 'asc',
           searchQuery: searchValue,
+          pageNumber: 1,
         }),
       );
     },

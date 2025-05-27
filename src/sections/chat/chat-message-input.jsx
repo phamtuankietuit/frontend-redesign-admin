@@ -51,7 +51,6 @@ export function ChatMessageInput({ disabled, selectedConversationId }) {
         const topMatches = fastMessages.filter((msg) =>
           msg.shorthand?.toLowerCase().includes(query),
         );
-        // .slice(0, 3);
 
         dispatch(setTop3FastMessages(topMatches));
       } else {
@@ -82,20 +81,31 @@ export function ChatMessageInput({ disabled, selectedConversationId }) {
     async (event) => {
       if (event.key !== 'Enter' || !message) return;
 
-      try {
-        dispatch(
-          createMessageAsync({
-            conversationId: selectedConversationId,
-            body: message,
-          }),
-        );
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setMessage('');
+      const query = message.slice(1).toLowerCase();
+
+      const matchMessage = fastMessages.find(
+        (msg) => msg.shorthand?.toLowerCase() === query,
+      );
+
+      if (matchMessage) {
+        setMessage(matchMessage.body);
+        dispatch(setTop3FastMessages([]));
+      } else {
+        try {
+          dispatch(
+            createMessageAsync({
+              conversationId: selectedConversationId,
+              body: message,
+            }),
+          );
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setMessage('');
+        }
       }
     },
-    [message, dispatch, selectedConversationId],
+    [message, dispatch, selectedConversationId, fastMessages],
   );
   const handleClickFastMessage = useCallback(
     (value) => {
