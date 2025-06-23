@@ -19,7 +19,6 @@ export function BranchListDialog({
   open,
   action,
   onClose,
-  selected,
   onSelect,
   title = '',
 }) {
@@ -58,9 +57,7 @@ export function BranchListDialog({
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            ...(selected(`${branch.id}`) && {
-              bgcolor: 'action.selected',
-            }),
+
             '&:hover': {
               bgcolor: 'action.selected',
             },

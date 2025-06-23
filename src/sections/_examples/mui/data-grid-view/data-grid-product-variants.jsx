@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 
 import {
   Box,
@@ -16,8 +16,11 @@ import {
 
 import { fCurrency } from 'src/utils/format-number';
 import { generateCombinations } from 'src/utils/helper';
+import { Field } from 'src/components/hook-form';
 
-export function DataGridProductVariants({ data, control }) {
+export function DataGridProductVariants({ data }) {
+  const { control } = useFormContext();
+
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
@@ -50,7 +53,17 @@ export function DataGridProductVariants({ data, control }) {
                 border: '1px solid #ddd',
               }}
             >
-              Số lượng
+              SKU
+            </TableCell>
+            <TableCell
+              style={{ borderColor: '#ddd' }}
+              sx={{
+                minWidth: 150,
+                textAlign: 'center',
+                border: '1px solid #ddd',
+              }}
+            >
+              Giá bán đề xuất
             </TableCell>
             <TableCell
               style={{ borderColor: '#ddd' }}
@@ -114,30 +127,52 @@ export function DataGridProductVariants({ data, control }) {
                 );
               })}
               <TableCell
-                key={`stockQuantity-${rowIndex}`}
+                key={`sku-${rowIndex}`}
+                sx={{ border: '1px solid #ddd' }}
+                style={{ borderColor: '#ddd' }}
+              >
+                <Field.Text
+                  name={`productVariants[${rowIndex}].sku`}
+                  label="SKU"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </TableCell>
+              <TableCell
+                key={`recommendedRetailPrice-${rowIndex}`}
                 sx={{ border: '1px solid #ddd' }}
                 style={{ borderColor: '#ddd' }}
               >
                 <Controller
-                  name={`productVariants[${rowIndex}].stockQuantity`}
+                  name={`productVariants[${rowIndex}].recommendedRetailPrice`}
                   control={control}
                   render={({
-                    field: { onChange, value, ref },
+                    field: { onChange, value },
                     fieldState: { error },
                   }) => (
                     <TextField
                       fullWidth
                       type="text"
-                      label="Số lượng"
+                      label="Giá bán đề xuất"
                       InputLabelProps={{ shrink: true }}
                       value={fCurrency(value, { currencyDisplay: 'code' })}
                       onChange={(e) => {
                         const rawValue = e.target.value.replace(/\D/g, '');
                         onChange(Number(rawValue));
                       }}
-                      inputRef={ref}
                       error={!!error}
                       helperText={error?.message}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="start">
+                            <Box
+                              component="span"
+                              sx={{ color: 'text.disabled' }}
+                            >
+                              ₫
+                            </Box>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   )}
                 />

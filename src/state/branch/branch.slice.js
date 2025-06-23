@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import { getBranchesAsync } from "src/services/branch/branch.service";
 
-const initialState = {
+export const initialState = {
   branches: [],
   branchesLoading: false,
   totalCount: 0,

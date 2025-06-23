@@ -2,56 +2,73 @@ import { useCallback } from 'react';
 
 import Chip from '@mui/material/Chip';
 
-import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result';
+import {
+  chipProps,
+  FiltersBlock,
+  FiltersResult,
+} from 'src/components/filters-result';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  resetTableFilters,
+  selectUser,
+  setCustomerType,
+  setTableFilters,
+} from 'src/state/user/user.slice';
 
 // ----------------------------------------------------------------------
 
-export function UserTableFiltersResult({ filters, onResetPage, totalResults, sx }) {
-  const handleRemoveKeyword = useCallback(() => {
-    onResetPage();
-    filters.setState({ name: '' });
-  }, [filters, onResetPage]);
+export function UserTableFiltersResult({ totalResults, sx }) {
+  const dispatch = useDispatch();
+
+  const {
+    tableFilters: { status },
+    customerType,
+  } = useSelector(selectUser);
 
   const handleRemoveStatus = useCallback(() => {
-    onResetPage();
-    filters.setState({ status: 'all' });
-  }, [filters, onResetPage]);
+    dispatch(setTableFilters({ status: 'all', pageNumber: 1 }));
+  }, [dispatch]);
 
-  const handleRemoveRole = useCallback(
-    (inputValue) => {
-      const newValue = filters.state.role.filter((item) => item !== inputValue);
-
-      onResetPage();
-      filters.setState({ role: newValue });
-    },
-    [filters, onResetPage]
-  );
+  const handleRemoveCustomerType = useCallback(() => {
+    dispatch(setCustomerType(null));
+  }, [dispatch]);
 
   const handleReset = useCallback(() => {
-    onResetPage();
-    filters.onResetState();
-  }, [filters, onResetPage]);
+    dispatch(resetTableFilters());
+  }, [dispatch]);
 
   return (
     <FiltersResult totalResults={totalResults} onReset={handleReset} sx={sx}>
-      <FiltersBlock label="Status:" isShow={filters.state.status !== 'all'}>
+      <FiltersBlock label="Trạng thái:" isShow={status !== 'all'}>
         <Chip
           {...chipProps}
-          label={filters.state.status}
+          label={
+            (status === 1 && 'Đang hoạt động') ||
+            (status === 4 && 'Không hoạt động') ||
+            (status === 6 && 'Khóa tài khoản')
+          }
           onDelete={handleRemoveStatus}
-          sx={{ textTransform: 'capitalize' }}
         />
       </FiltersBlock>
 
-      <FiltersBlock label="Role:" isShow={!!filters.state.role.length}>
-        {filters.state.role.map((item) => (
-          <Chip {...chipProps} key={item} label={item} onDelete={() => handleRemoveRole(item)} />
-        ))}
+      <FiltersBlock label="Loại khách hàng:" isShow={!!customerType}>
+        <Chip
+          {...chipProps}
+          label={customerType?.name || ''}
+          onDelete={handleRemoveCustomerType}
+        />
       </FiltersBlock>
 
-      <FiltersBlock label="Keyword:" isShow={!!filters.state.name}>
-        <Chip {...chipProps} label={filters.state.name} onDelete={handleRemoveKeyword} />
-      </FiltersBlock>
+      {/* <FiltersBlock label="Role:" isShow={!!filters.state.role.length}>
+        {filters.state.role.map((item) => (
+          <Chip
+            {...chipProps}
+            key={item}
+            label={item}
+            onDelete={() => handleRemoveRole(item)}
+          />
+        ))}
+      </FiltersBlock> */}
     </FiltersResult>
   );
 }

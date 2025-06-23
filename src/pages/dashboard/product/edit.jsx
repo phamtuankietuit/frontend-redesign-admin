@@ -22,7 +22,6 @@ export default function Page() {
   const {
     updateProductPage: { product },
   } = useSelector(selectProduct);
-  console.log('🚀 ~ Page ~ product:', product);
 
   useEffect(() => {
     if (!product) {

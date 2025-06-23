@@ -1,8 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
-
-import { InvoiceListView } from 'src/sections/invoice/view';
+import { PromotionListView } from 'src/sections/promotion/view';
 
 // ----------------------------------------------------------------------
 
@@ -15,7 +14,7 @@ export default function Page() {
         <title> {metadata.title}</title>
       </Helmet>
 
-      <InvoiceListView isPromotionPage />
+      <PromotionListView />
     </>
   );
 }

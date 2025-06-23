@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { set } from "nprogress";
 
 import { getBranchesAsync } from "src/services/branch/branch.service";
 import { getProductsAsync } from "src/services/product/product.service";

@@ -1,143 +1,78 @@
+import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
+import { Autocomplete, TextField } from '@mui/material';
+
+import {
+  selectUser,
+  setCustomerType,
+  setTableFilters,
+} from 'src/state/user/user.slice';
+import { selectCustomerType } from 'src/state/customer-type/customer-type.slice';
 
 import Stack from '@mui/material/Stack';
-import Select from '@mui/material/Select';
-import MenuList from '@mui/material/MenuList';
-import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import IconButton from '@mui/material/IconButton';
-import FormControl from '@mui/material/FormControl';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-
-import { Iconify } from 'src/components/iconify';
-import { usePopover, CustomPopover } from 'src/components/custom-popover';
+import SearchBar from '../product/components/search-bar';
 
 // ----------------------------------------------------------------------
 
-export function UserTableToolbar({ filters, options, onResetPage }) {
-  const popover = usePopover();
+export function UserTableToolbar() {
+  const dispatch = useDispatch();
 
-  const handleFilterName = useCallback(
-    (event) => {
-      onResetPage();
-      filters.setState({ name: event.target.value });
+  const { tableFilters, customerType } = useSelector(selectUser);
+  const { customerTypes } = useSelector(selectCustomerType);
+
+  const handleSearchChange = useCallback(
+    (searchValue) => {
+      dispatch(
+        setTableFilters({
+          sortBy: 'CreationTime',
+          sortDirection: 'desc',
+          searchQuery: searchValue,
+          pageNumber: 1,
+        }),
+      );
     },
-    [filters, onResetPage],
-  );
-
-  const handleFilterRole = useCallback(
-    (event) => {
-      const newValue =
-        typeof event.target.value === 'string'
-          ? event.target.value.split(',')
-          : event.target.value;
-
-      onResetPage();
-      filters.setState({ role: newValue });
-    },
-    [filters, onResetPage],
+    [dispatch],
   );
 
   return (
-    <>
+    <Stack
+      spacing={2}
+      alignItems={{ xs: 'flex-end', md: 'center' }}
+      direction={{ xs: 'column', md: 'row' }}
+      sx={{ p: 2.5 }}
+    >
+      <Autocomplete
+        sx={{ minWidth: { xs: 1, md: 180 } }}
+        value={customerType}
+        options={customerTypes}
+        onChange={(event, newValue) => {
+          dispatch(setCustomerType(newValue));
+        }}
+        getOptionLabel={(option) => option.name}
+        renderInput={(params) => (
+          <TextField {...params} label="Loại khách hàng" />
+        )}
+        renderOption={(props, option) => (
+          <li {...props} key={option.id}>
+            {option.name}
+          </li>
+        )}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+      />
+
       <Stack
+        direction="row"
+        alignItems="center"
         spacing={2}
-        alignItems={{ xs: 'flex-end', md: 'center' }}
-        direction={{ xs: 'column', md: 'row' }}
-        sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
+        flexGrow={1}
+        sx={{ width: 1 }}
       >
-        {/* <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-          <InputLabel htmlFor="user-filter-role-select-label">Role</InputLabel>
-          <Select
-            multiple
-            value={filters.state.role}
-            onChange={handleFilterRole}
-            input={<OutlinedInput label="Role" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            inputProps={{ id: 'user-filter-role-select-label' }}
-            MenuProps={{ PaperProps: { sx: { maxHeight: 240 } } }}
-          >
-            {options.roles.map((option) => (
-              <MenuItem key={option} value={option}>
-                <Checkbox
-                  disableRipple
-                  size="small"
-                  checked={filters.state.role.includes(option)}
-                />
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl> */}
-
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={2}
-          flexGrow={1}
-          sx={{ width: 1 }}
-        >
-          <TextField
-            fullWidth
-            value={filters.state.name}
-            onChange={handleFilterName}
-            placeholder="Tìm khách hàng..."
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Iconify
-                    icon="eva:search-fill"
-                    sx={{ color: 'text.disabled' }}
-                  />
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          <IconButton onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </Stack>
+        <SearchBar
+          placeholder="Tìm kiếm khách hàng..."
+          value={tableFilters.searchQuery}
+          onSearchChange={handleSearchChange}
+        />
       </Stack>
-
-      <CustomPopover
-        open={popover.open}
-        anchorEl={popover.anchorEl}
-        onClose={popover.onClose}
-        slotProps={{ arrow: { placement: 'right-top' } }}
-      >
-        <MenuList>
-          <MenuItem
-            onClick={() => {
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:printer-minimalistic-bold" />
-            Print
-          </MenuItem>
-
-          <MenuItem
-            onClick={() => {
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:import-bold" />
-            Import
-          </MenuItem>
-
-          <MenuItem
-            onClick={() => {
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:export-bold" />
-            Export
-          </MenuItem>
-        </MenuList>
-      </CustomPopover>
-    </>
+    </Stack>
   );
 }

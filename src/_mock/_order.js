@@ -3,12 +3,15 @@ import { _mock } from './_mock';
 // ----------------------------------------------------------------------
 
 export const ORDER_STATUS_OPTIONS = [
-  { value: 'pending', label: 'Chờ xác nhận' },
-  { value: 'processing', label: 'Đang đóng hàng' },
-  { value: 'shipping', label: 'Đang giao hàng' },
-  { value: 'completed', label: 'Hoàn thành' },
-  { value: 'cancelled', label: 'Đã hủy' },
-  { value: 'refunded', label: 'Trả hàng' },
+  { value: 'Pending', label: 'Chờ xác nhận' },
+  { value: 'WaitForConfirmPackageBranch', label: 'Chờ chọn kho' },
+  { value: 'Packaging', label: 'Đang đóng hàng' },
+  { value: 'Processing', label: 'Chờ lấy hàng' },
+  { value: 'Shipped', label: 'Đang giao hàng' },
+  { value: 'Delivered', label: 'Đã giao' },
+  { value: 'Received', label: 'Đã nhận' },
+  { value: 'Cancelled', label: 'Đã hủy' },
+  { value: 'Refunded', label: 'Trả hàng' },
 ];
 
 const ITEMS = [...Array(3)].map((_, index) => ({

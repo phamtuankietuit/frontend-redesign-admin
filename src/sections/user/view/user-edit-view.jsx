@@ -8,19 +8,20 @@ import { UserNewEditForm } from '../user-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export function UserEditView({ user: currentUser }) {
+export function UserEditView({ user }) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
         heading="Cập nhật khách hàng"
         links={[
           { name: 'Trang chủ', href: paths.dashboard.root },
-          { name: currentUser?.name },
+          { name: 'Danh sách khách hàng', href: paths.dashboard.user.list },
+          { name: user?.fullName },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserNewEditForm currentUser={currentUser} />
+      <UserNewEditForm currentUser={user} />
     </DashboardContent>
   );
 }

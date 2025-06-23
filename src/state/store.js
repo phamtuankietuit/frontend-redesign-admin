@@ -8,6 +8,14 @@ import addressReducer from './address/address.slice';
 import productTypeReducer from './product-type/product-type.slice';
 import fastMessageReducer from './fast-message/fast-message.slice';
 import stockAdjustmentReducer from './stock-adjustment/stock-adjustment.slice';
+import userReducer from './user/user.slice';
+import customerTypeReducer from './customer-type/customer-type.slice';
+import stockReducer from './stock/stock.slice';
+import ratingReducer from './rating/rating.slice';
+import stockTransferReducer from './stock-transfer/stock-transfer.slice';
+import promotionReducer from './promotion/promotion.slice';
+import bannerReducer from './banner/banner.slice';
+import orderReducer from './order/order.slice';
 
 const store = configureStore({
     reducer: {
@@ -19,7 +27,14 @@ const store = configureStore({
         address: addressReducer,
         fastMessage: fastMessageReducer,
         stockAdjustment: stockAdjustmentReducer,
+        user: userReducer,
+        customerType: customerTypeReducer,
+        stock: stockReducer, rating: ratingReducer,
+        stockTransfer: stockTransferReducer,
+        promotion: promotionReducer,
+        banner: bannerReducer,
+        order: orderReducer,
     }
 });
 
-export default store; 
+export default store;

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-import { GET, PUT, POST } from "../axios";
+import { GET, PUT, POST, DELETE } from "../axios";
 
 export const getProductAsync = createAsyncThunk(
     'product/getProductAsync',
@@ -12,8 +12,8 @@ export const getProductAsync = createAsyncThunk(
 
 export const getProductsAsync = createAsyncThunk(
     'product/getProductsAsync',
-    async (params) => {
-        const response = await GET(`/products`, { params });
+    async (body) => {
+        const response = await POST(`/products/list`, body);
         return response.data;
     }
 );
@@ -51,5 +51,13 @@ export const updateProductAsync = createAsyncThunk(
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
         }
+    }
+);
+
+export const deleteProductByIdAsync = createAsyncThunk(
+    'product/deleteProductByIdAsync',
+    async (id) => {
+        const response = await DELETE(`/products/${id}`);
+        return response.data;
     }
 );

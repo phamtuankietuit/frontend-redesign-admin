@@ -5,7 +5,14 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 // ----------------------------------------------------------------------
 
-export function RHFAutocomplete({ name, label, variant, helperText, placeholder, ...other }) {
+export function RHFAutocomplete({
+  name,
+  label,
+  variant,
+  helperText,
+  placeholder,
+  ...other
+}) {
   const { control, setValue } = useFormContext();
 
   return (
@@ -16,7 +23,10 @@ export function RHFAutocomplete({ name, label, variant, helperText, placeholder,
         <Autocomplete
           {...field}
           id={`rhf-autocomplete-${name}`}
-          onChange={(event, newValue) => setValue(name, newValue, { shouldValidate: true })}
+          value={field.value ?? (other.multiple ? [] : null)}
+          onChange={(event, newValue) =>
+            setValue(name, newValue, { shouldValidate: true })
+          }
           renderInput={(params) => (
             <TextField
               {...params}

@@ -2,13 +2,9 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
-import MenuList from '@mui/material/MenuList';
 import Collapse from '@mui/material/Collapse';
-import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -16,12 +12,10 @@ import ListItemText from '@mui/material/ListItemText';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { fCurrency } from 'src/utils/format-number';
-import { fDate, fDateTime, formatStr, fTime } from 'src/utils/format-time';
+import { fDateTime, formatStr } from 'src/utils/format-time';
 
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { ConfirmDialog } from 'src/components/custom-dialog';
-import { usePopover, CustomPopover } from 'src/components/custom-popover';
+import { Label } from 'src/components/label';
 
 // ----------------------------------------------------------------------
 
@@ -31,25 +25,11 @@ export function OrderTableRow({
   onViewRow,
   onSelectRow,
   onDeleteRow,
-  isCustomer = false,
 }) {
-  console.log('🚀 ~ isCustomer:', isCustomer);
-  const confirm = useBoolean();
-
   const collapse = useBoolean();
-
-  const popover = usePopover();
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      {/* <TableCell padding="checkbox">
-        <Checkbox
-          checked={selected}
-          onClick={onSelectRow}
-          inputProps={{ id: `row-checkbox-${row.id}`, 'aria-label': `Row checkbox` }}
-        />
-      </TableCell> */}
-
       <TableCell>
         <Link
           color="inherit"
@@ -57,35 +37,31 @@ export function OrderTableRow({
           underline="always"
           sx={{ cursor: 'pointer' }}
         >
-          {row.orderNumber}
+          {row?.orderNumber}
         </Link>
       </TableCell>
+      <TableCell>
+        <Stack spacing={2} direction="row" alignItems="center">
+          <Avatar alt={row?.customerFullName} src={row?.customerAvartarUrl} />
 
-      {!isCustomer && (
-        <TableCell>
-          <Stack spacing={2} direction="row" alignItems="center">
-            <Avatar alt={row.customer.name} src={row.customer.avatarUrl} />
-
-            <Stack
-              sx={{
-                typography: 'body2',
-                flex: '1 1 auto',
-                alignItems: 'flex-start',
-              }}
-            >
-              <Box component="span">{row.customer.name}</Box>
-              <Box component="span" sx={{ color: 'text.disabled' }}>
-                {row.customer.email}
-              </Box>
-            </Stack>
+          <Stack
+            sx={{
+              typography: 'body2',
+              flex: '1 1 auto',
+              alignItems: 'flex-start',
+            }}
+          >
+            <Box component="span">{row?.customerFullName}</Box>
+            <Box component="span" sx={{ color: 'text.disabled' }}>
+              {row?.customerEmail}
+            </Box>
           </Stack>
-        </TableCell>
-      )}
-
+        </Stack>
+      </TableCell>
       <TableCell>
         <ListItemText
-          primary={fDateTime(row.createdAt, formatStr.myFormat.date)}
-          secondary={fDateTime(row.createdAt, formatStr.myFormat.time)}
+          primary={fDateTime(row?.orderWhen, formatStr.myFormat.date)}
+          secondary={fDateTime(row?.orderWhen, formatStr.myFormat.time)}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -94,31 +70,35 @@ export function OrderTableRow({
           }}
         />
       </TableCell>
-
-      <TableCell align="center"> {row.totalQuantity} </TableCell>
-      <TableCell> {fCurrency(row.subtotal)} </TableCell>
-
+      <TableCell align="center"> {row?.orderLines?.length} </TableCell>
+      <TableCell> {fCurrency(row?.total)} </TableCell>
       <TableCell>
         <Label
           variant="soft"
           color={
-            (row.status === 'pending' && 'warning') ||
-            (row.status === 'processing' && 'warning') ||
-            (row.status === 'shipping' && 'info') ||
-            (row.status === 'completed' && 'success') ||
-            (row.status === 'cancelled' && 'error') ||
+            (row.status === 'Pending' && 'warning') ||
+            (row.status === 'WaitForConfirmPackageBranch' && 'warning') ||
+            (row.status === 'Packaging' && 'warning') ||
+            (row.status === 'Processing' && 'info') ||
+            (row.status === 'Shipped' && 'info') ||
+            (row.status === 'Delivered' && 'success') ||
+            (row.status === 'Received' && 'success') ||
+            (row.status === 'Cancelled' && 'error') ||
+            (row.status === 'Refunded' && 'error') ||
             'default'
           }
         >
-          {row.status === 'pending' && 'Chờ xác nhận'}
-          {row.status === 'processing' && 'Đang đóng hàng'}
-          {row.status === 'shipping' && 'Đang giao hàng'}
-          {row.status === 'completed' && 'Hoàn thành'}
-          {row.status === 'cancelled' && 'Đã hủy'}
-          {row.status === 'refunded' && 'Trả hàng'}
+          {row.status === 'Pending' && 'Chờ xác nhận'}
+          {row.status === 'WaitForConfirmPackageBranch' && 'Chờ chọn kho'}
+          {row.status === 'Packaging' && 'Đang đóng hàng'}
+          {row.status === 'Processing' && 'Chờ lấy hàng'}
+          {row.status === 'Shipped' && 'Đang giao hàng'}
+          {row.status === 'Delivered' && 'Đã giao'}
+          {row.status === 'Received' && 'Đã nhận'}
+          {row.status === 'Cancelled' && 'Đã hủy'}
+          {row.status === 'Refunded' && 'Trả hàng'}
         </Label>
       </TableCell>
-
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
           color={collapse.value ? 'inherit' : 'default'}
@@ -126,13 +106,6 @@ export function OrderTableRow({
           sx={{ ...(collapse.value && { bgcolor: 'action.hover' }) }}
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
-
-        <IconButton
-          color={popover.open ? 'inherit' : 'default'}
-          onClick={popover.onOpen}
-        >
-          <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
       </TableCell>
     </TableRow>
@@ -148,7 +121,7 @@ export function OrderTableRow({
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Paper sx={{ m: 1.5 }}>
-            {row.items.map((item) => (
+            {row?.orderLines?.map((item) => (
               <Stack
                 key={item.id}
                 direction="row"
@@ -162,14 +135,14 @@ export function OrderTableRow({
                 }}
               >
                 <Avatar
-                  src={item.coverUrl}
+                  src={item?.thumbnailUrl}
                   variant="rounded"
                   sx={{ width: 48, height: 48, mr: 2 }}
                 />
 
                 <ListItemText
-                  primary={item.name}
-                  secondary={item.sku}
+                  primary={item?.productName}
+                  secondary={item?.productVariantOptionName}
                   primaryTypographyProps={{ typography: 'body2' }}
                   secondaryTypographyProps={{
                     component: 'span',
@@ -181,7 +154,7 @@ export function OrderTableRow({
                 <div>x{item.quantity} </div>
 
                 <Box sx={{ width: 110, textAlign: 'right' }}>
-                  {fCurrency(item.price)}
+                  {fCurrency(item.total)}
                 </Box>
               </Stack>
             ))}
@@ -196,48 +169,6 @@ export function OrderTableRow({
       {renderPrimary}
 
       {renderSecondary}
-
-      <CustomPopover
-        open={popover.open}
-        anchorEl={popover.anchorEl}
-        onClose={popover.onClose}
-        slotProps={{ arrow: { placement: 'right-top' } }}
-      >
-        <MenuList>
-          <MenuItem
-            onClick={() => {
-              confirm.onTrue();
-              popover.onClose();
-            }}
-            sx={{ color: 'error.main' }}
-          >
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
-          </MenuItem>
-
-          <MenuItem
-            onClick={() => {
-              onViewRow();
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:eye-bold" />
-            View
-          </MenuItem>
-        </MenuList>
-      </CustomPopover>
-
-      <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
-        action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
-          </Button>
-        }
-      />
     </>
   );
 }

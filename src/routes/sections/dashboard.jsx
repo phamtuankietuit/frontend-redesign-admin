@@ -25,9 +25,18 @@ const OverviewCoursePage = lazy(() => import('src/pages/dashboard/course'));
 const ProductDetailsPage = lazy(
   () => import('src/pages/dashboard/product/details'),
 );
-const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
+const NewProductListPage = lazy(
+  () => import('src/pages/dashboard/product/new-list'),
+);
 const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
 const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
+// Stock
+const StockListPage = lazy(
+  () => import('src/pages/dashboard/product/stock-list'),
+);
+const StockDetailsPage = lazy(
+  () => import('src/pages/dashboard/product/stock-details'),
+);
 // Product type
 const ProductTypeListPage = lazy(
   () => import('src/pages/dashboard/product-type/list'),
@@ -43,6 +52,20 @@ const InventoryEditPage = lazy(
 const PromotionListPage = lazy(
   () => import('src/pages/dashboard/promotion/list'),
 );
+const PromotionCreatePage = lazy(
+  () => import('src/pages/dashboard/promotion/new'),
+);
+
+const PromotionEditPage = lazy(
+  () => import('src/pages/dashboard/promotion/edit'),
+);
+// Banner
+const BannerListPage = lazy(() => import('src/pages/dashboard/banner/list'));
+const BannerCreatePage = lazy(() => import('src/pages/dashboard/banner/new'));
+const BannerDetailsPage = lazy(
+  () => import('src/pages/dashboard/banner/details'),
+);
+const BannerEditPage = lazy(() => import('src/pages/dashboard/banner/edit'));
 // Order
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 const OrderDetailsPage = lazy(
@@ -71,6 +94,21 @@ const StockAdjustmentCreatePage = lazy(
 const StockAdjustmentEditPage = lazy(
   () => import('src/pages/dashboard/stock-adjustment/edit'),
 );
+// Stock Transfer
+const StockTransferListPage = lazy(
+  () => import('src/pages/dashboard/stock-transfer/list'),
+);
+const StockTransferCreatePage = lazy(
+  () => import('src/pages/dashboard/stock-transfer/new'),
+);
+const StockTransferEditPage = lazy(
+  () => import('src/pages/dashboard/stock-transfer/edit'),
+);
+// Rating
+const RatingListPage = lazy(() => import('src/pages/dashboard/rating/list'));
+const RatingDetailsPage = lazy(
+  () => import('src/pages/dashboard/rating/details'),
+);
 // User
 const UserProfilePage = lazy(() => import('src/pages/dashboard/user/profile'));
 const UserCardsPage = lazy(() => import('src/pages/dashboard/user/cards'));
@@ -78,6 +116,10 @@ const UserListPage = lazy(() => import('src/pages/dashboard/user/list'));
 const UserAccountPage = lazy(() => import('src/pages/dashboard/user/account'));
 const UserCreatePage = lazy(() => import('src/pages/dashboard/user/new'));
 const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
+// Customer Type
+const CustomerTypeListPage = lazy(
+  () => import('src/pages/dashboard/customer-type/list'),
+);
 // Blog
 const BlogPostsPage = lazy(() => import('src/pages/dashboard/post/list'));
 const BlogPostPage = lazy(() => import('src/pages/dashboard/post/details'));
@@ -134,6 +176,13 @@ export const dashboardRoutes = [
         children: [{ element: <BranchListPage />, index: true }],
       },
       {
+        path: 'rating',
+        children: [
+          { element: <RatingListPage />, index: true },
+          { path: ':id', element: <RatingDetailsPage /> },
+        ],
+      },
+      {
         path: 'chat',
         children: [
           { element: <ChatPage />, index: true },
@@ -150,16 +199,18 @@ export const dashboardRoutes = [
           { path: 'new', element: <UserCreatePage /> },
           { path: ':id/edit', element: <UserEditPage /> },
           { path: 'account', element: <UserAccountPage /> },
+          { path: 'customer-type', element: <CustomerTypeListPage /> },
         ],
       },
       {
         path: 'product',
         children: [
-          { element: <ProductListPage />, index: true },
-          { path: 'list', element: <ProductListPage /> },
+          { element: <NewProductListPage />, index: true },
           { path: ':id', element: <ProductEditPage /> },
           { path: 'new', element: <ProductCreatePage /> },
           { path: ':id/edit', element: <ProductEditPage /> },
+          { path: 'stock', element: <StockListPage /> },
+          { path: 'stock/:id', element: <StockDetailsPage /> },
           { path: 'product-type', element: <ProductTypeListPage /> },
         ],
       },
@@ -172,7 +223,20 @@ export const dashboardRoutes = [
       },
       {
         path: 'promotion',
-        children: [{ element: <PromotionListPage />, index: true }],
+        children: [
+          { element: <PromotionListPage />, index: true },
+          { path: 'new', element: <PromotionCreatePage /> },
+          { path: ':id', element: <PromotionEditPage /> },
+        ],
+      },
+      {
+        path: 'banner',
+        children: [
+          { element: <BannerListPage />, index: true },
+          { path: 'new', element: <BannerCreatePage /> },
+          { path: ':id', element: <BannerEditPage /> },
+          { path: ':id/details', element: <BannerDetailsPage /> },
+        ],
       },
       {
         path: 'order',
@@ -189,6 +253,15 @@ export const dashboardRoutes = [
           { path: 'list', element: <StockAdjustmentListPage /> },
           { path: ':id', element: <StockAdjustmentEditPage /> },
           { path: 'new', element: <StockAdjustmentCreatePage /> },
+        ],
+      },
+      {
+        path: 'stock-transfer',
+        children: [
+          { element: <StockTransferListPage />, index: true },
+          { path: 'list', element: <StockTransferListPage /> },
+          { path: ':id', element: <StockTransferEditPage /> },
+          { path: 'new', element: <StockTransferCreatePage /> },
         ],
       },
       {

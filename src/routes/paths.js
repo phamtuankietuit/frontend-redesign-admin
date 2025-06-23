@@ -116,6 +116,9 @@ export const paths = {
       demo: {
         edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit`,
       },
+      customerType: {
+        root: `${ROOTS.DASHBOARD}/user/customer-type`,
+      },
     },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,
@@ -127,6 +130,8 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/product/${MOCK_ID}/edit`,
       },
       productType: `${ROOTS.DASHBOARD}/product/product-type`,
+      stock: `${ROOTS.DASHBOARD}/product/stock`,
+      stockDetails: (id) => `${ROOTS.DASHBOARD}/product/stock/${id}`,
     },
     inventory: {
       root: `${ROOTS.DASHBOARD}/inventory`,
@@ -136,6 +141,15 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/stock-adjustment`,
       new: `${ROOTS.DASHBOARD}/stock-adjustment/new`,
       edit: (id) => `${ROOTS.DASHBOARD}/stock-adjustment/${id}`,
+    },
+    stockTransfer: {
+      root: `${ROOTS.DASHBOARD}/stock-transfer`,
+      new: `${ROOTS.DASHBOARD}/stock-transfer/new`,
+      edit: (id) => `${ROOTS.DASHBOARD}/stock-transfer/${id}`,
+    },
+    rating: {
+      root: `${ROOTS.DASHBOARD}/rating`,
+      details: (id) => `${ROOTS.DASHBOARD}/rating/${id}`,
     },
     invoice: {
       root: `${ROOTS.DASHBOARD}/invoice`,
@@ -166,6 +180,15 @@ export const paths = {
     },
     promotion: {
       root: `${ROOTS.DASHBOARD}/promotion`,
+      new: `${ROOTS.DASHBOARD}/promotion/new`,
+      edit: (id) => `${ROOTS.DASHBOARD}/promotion/${id}`,
+      details: (id) => `${ROOTS.DASHBOARD}/promotion/${id}/details`,
+    },
+    banner: {
+      root: `${ROOTS.DASHBOARD}/banner`,
+      new: `${ROOTS.DASHBOARD}/banner/new`,
+      edit: (id) => `${ROOTS.DASHBOARD}/banner/${id}`,
+      details: (id) => `${ROOTS.DASHBOARD}/banner/${id}/details`,
     },
     job: {
       root: `${ROOTS.DASHBOARD}/job`,

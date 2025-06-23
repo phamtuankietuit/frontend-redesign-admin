@@ -60,7 +60,27 @@ export const navData = [
         path: paths.dashboard.user.root,
         icon: ICONS.user,
         children: [
+          {
+            title: 'Loại khách hàng',
+            path: paths.dashboard.user.customerType.root,
+          },
           { title: 'Danh sách khách hàng', path: paths.dashboard.user.list },
+        ],
+      },
+      {
+        title: 'Banner',
+        path: paths.dashboard.banner.root,
+        icon: ICONS.kanban,
+        children: [
+          { title: 'Danh sách banner', path: paths.dashboard.banner.root },
+        ],
+      },
+      {
+        title: 'Đánh giá',
+        path: paths.dashboard.rating.root,
+        icon: ICONS.label,
+        children: [
+          { title: 'Danh sách đánh giá', path: paths.dashboard.rating.root },
         ],
       },
       {
@@ -77,17 +97,9 @@ export const navData = [
         icon: ICONS.product,
         children: [
           { title: 'Danh sách sản phẩm', path: paths.dashboard.product.root },
-          { title: 'Loại sản phẩm', path: paths.dashboard.product.productType },
+          { title: 'Tồn kho', path: paths.dashboard.product.stock },
         ],
       },
-      // {
-      //   title: 'Tồn kho',
-      //   path: paths.dashboard.inventory.root,
-      //   icon: ICONS.blog,
-      //   children: [
-      //     { title: 'Danh sách sản phẩm', path: paths.dashboard.inventory.root },
-      //   ],
-      // },
       {
         title: 'Cập nhật tồn kho',
         path: paths.dashboard.stockAdjustment.root,
@@ -99,6 +111,17 @@ export const navData = [
           },
         ],
       },
+      // {
+      //   title: 'Luân chuyển hàng hóa',
+      //   path: paths.dashboard.stockTransfer.root,
+      //   icon: ICONS.invoice,
+      //   children: [
+      //     {
+      //       title: 'Đơn luân chuyển hàng hóa',
+      //       path: paths.dashboard.stockTransfer.root,
+      //     },
+      //   ],
+      // },
       {
         title: 'Đơn hàng',
         path: paths.dashboard.order.root,

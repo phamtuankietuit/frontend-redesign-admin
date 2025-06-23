@@ -7,10 +7,11 @@ import { getProductTypesAsync, getProductTypesFlattenAsync } from "src/services/
 const initialState = {
   productTypes: [],
   productTypesFlatten: [],
+  productTypesFlattenLoading: false,
   treeView: {
     items: []
   },
-  formMode: 'new'
+  formMode: 'new',
 };
 
 const productTypeSlice = createSlice({
@@ -26,9 +27,15 @@ const productTypeSlice = createSlice({
       .addCase(getProductTypesAsync.fulfilled, (state, action) => {
         state.productTypes = action.payload;
       })
+      .addCase(getProductTypesFlattenAsync.pending, (state) => {
+        state.productTypesFlatten = [];
+        state.treeView.items = [];
+        state.productTypesFlattenLoading = true;
+      })
       .addCase(getProductTypesFlattenAsync.fulfilled, (state, action) => {
         state.productTypesFlatten = action.payload;
         state.treeView.items = transformProductTypes(action.payload);
+        state.productTypesFlattenLoading = false;
       });
   },
 });

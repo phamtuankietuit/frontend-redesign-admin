@@ -24,7 +24,7 @@ export const formatStr = {
   },
   myFormat: {
     date: 'DD/MM/YYYY', // 17/04/2022
-    dateTime: 'DD/MM/YYYY HH:mm', // 17/04/2022 12:00
+    dateTime: 'HH:mm DD/MM/YYYY', // 17/04/2022 12:00
     time: 'HH:mm', // 12:00
   },
 };

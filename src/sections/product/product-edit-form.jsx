@@ -21,17 +21,21 @@ import {
 } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
-import { usePathname } from 'src/routes/hooks';
+import { usePathname, useRouter } from 'src/routes/hooks';
 
 import { toastMessage } from 'src/utils/constant';
 import { fCurrency } from 'src/utils/format-number';
-import { rowsWithId, transformVariants } from 'src/utils/helper';
+import {
+  rowsWithId,
+  transformVariants,
+  mergeVariantOptionsWithExisting,
+} from 'src/utils/helper';
 
 import { selectProduct } from 'src/state/product/product.slice';
 import { uploadImagesAsync } from 'src/services/file/file.service';
 import { selectProductType } from 'src/state/product-type/product-type.slice';
 import {
-  createProductAsync,
+  deleteProductByIdAsync,
   getProductOptionsAsync,
   updateProductAsync,
 } from 'src/services/product/product.service';
@@ -40,6 +44,7 @@ import {
   getProductTypesFlattenAsync,
   getProductTypeAttributesAsync,
 } from 'src/services/product-type/product-type.service';
+import { useBoolean } from 'src/hooks/use-boolean';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
@@ -59,6 +64,7 @@ const variantsSchema = zod.object({
       value: zod.string().min(1, { message: toastMessage.error.empty }),
     }),
   ),
+  id: zod.number().optional(),
 });
 
 const dimensionSchema = zod.object({
@@ -75,26 +81,25 @@ const dimensionSchema = zod.object({
 
 const variantOptionSchema = zod.object({
   name: zod.string(),
-  productOptionId: zod.number().optional(),
-  productOptionValueId: zod.number().optional(),
+  productOptionId: zod.any().optional(),
+  productOptionValueId: zod.any().optional(),
   value: zod.string(),
 });
 
 const itemSchema = zod.object({
-  recommendedRetailPrice: zod.number().optional(),
-  unitPrice: zod.number().min(0, {
+  id: zod.number().optional(),
+  sku: zod.string().optional(),
+  recommendedRetailPrice: zod.number().min(1, {
+    message: 'Giá bán đề xuất không hợp lệ!',
+  }),
+  unitPrice: zod.number().min(1, {
     message: 'Giá bán không hợp lệ!',
   }),
   weight: zod.number().min(1, {
     message: 'Cân nặng không hợp lệ!',
   }),
-  stockQuantity: zod.number().min(0, {
-    message: 'Số lượng không hợp lệ!',
-  }),
   dimension: dimensionSchema,
-  taxRate: zod.number().optional(),
-  comment: zod.string().optional(),
-  variantOptions: zod.array(variantOptionSchema),
+  variantOptions: zod.array(variantOptionSchema).optional(),
 });
 
 export const NewProductSchema = zod.object({
@@ -110,16 +115,14 @@ export const NewProductSchema = zod.object({
   formAttributes: schemaHelper.objectOrNull(),
   isActive: zod.boolean(),
   variants: zod.array(variantsSchema),
-  productVariants: zod.array(itemSchema).optional(),
-  price: zod.number().optional(),
-  stockQuantity: zod.number().optional(),
-  length: zod.number().optional(),
-  width: zod.number().optional(),
-  height: zod.number().optional(),
-  weight: zod.number().optional(),
+  productVariants: zod.array(itemSchema),
 });
 
-export function ProductNewEditForm({ product }) {
+export function ProductEditForm({ product }) {
+  const dispatch = useDispatch();
+
+  const router = useRouter();
+
   const {
     createProductPage: { attributes },
     updateProductPage: { variantsRender },
@@ -128,18 +131,42 @@ export function ProductNewEditForm({ product }) {
   const {
     treeView: { items },
   } = useSelector(selectProductType);
-
-  const dispatch = useDispatch();
-
   const [expandedItems, setExpandedItems] = useState([]);
-
   const defaultValues = useMemo(() => {
     const images =
       product?.productImages?.map((item) => item.largeImageUrl) || [];
 
-    const isOneVariant = product?.productVariants.length <= 1;
-
-    const oneVariant = product?.productVariants[0] || {};
+    // Đảm bảo productVariants luôn có ít nhất 1 phần tử và bảo tồn dữ liệu gốc
+    const productVariants =
+      product?.productVariants?.length > 0
+        ? product.productVariants.map((variant) => ({
+            ...variant,
+            // Đảm bảo các trường bắt buộc có giá trị mặc định
+            sku: variant.sku || '',
+            recommendedRetailPrice: variant.recommendedRetailPrice || 0,
+            unitPrice: variant.unitPrice || 0,
+            weight: variant.weight || 0,
+            dimension: variant.dimension || {
+              length: 0,
+              width: 0,
+              height: 0,
+            },
+            variantOptions: variant.variantOptions || [],
+          }))
+        : [
+            {
+              sku: '',
+              recommendedRetailPrice: 0,
+              unitPrice: 0,
+              weight: 0,
+              dimension: {
+                length: 0,
+                width: 0,
+                height: 0,
+              },
+              variantOptions: [],
+            },
+          ];
 
     return {
       name: product?.name || '',
@@ -148,32 +175,21 @@ export function ProductNewEditForm({ product }) {
       productTypeId: String(product?.productTypeId || ''),
       formAttributes: [],
       variants: variantsRender || [],
-      isActive: product?.isActive || true,
-      productVariants: product?.productVariants || [],
-      allStockQuantity: 0,
-      allPrice: 0,
+      isActive: product?.isActive !== undefined ? product.isActive : true,
+      productVariants,
+      allRecommendedRetailPrice: 0,
+      allUnitPrice: 0,
       allLength: 0,
       allHeight: 0,
       allWidth: 0,
       allWeight: 0,
-      stockQuantity: isOneVariant ? oneVariant.stockQuantity : 0,
-      price: isOneVariant ? oneVariant.unitPrice : 0,
-      length: isOneVariant ? oneVariant.length : 0,
-      height: isOneVariant ? oneVariant.height : 0,
-      width: isOneVariant ? oneVariant.width : 0,
-      weight: isOneVariant ? oneVariant.weight : 0,
-      isViewProductVariants: !(product?.productVariants.length <= 1),
-      isViewProductVariantsDetails: product?.productVariants.length > 1,
-      isViewPricing: product?.productVariants.length <= 1,
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product, variantsRender]);
 
   const methods = useForm({
     resolver: zodResolver(NewProductSchema),
     defaultValues,
   });
-
   const {
     reset,
     watch,
@@ -181,11 +197,11 @@ export function ProductNewEditForm({ product }) {
     handleSubmit,
     control,
     getValues,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
+  // console.log('🚀 ~ ProductEditForm ~ errors:', errors);
 
   const values = watch();
-  // console.log('🚀 ~ ProductNewEditForm ~ values:', values);
 
   const onItemExpansionToggle = useCallback((e, itemId, isExpanded) => {
     if (!isExpanded) {
@@ -208,46 +224,38 @@ export function ProductNewEditForm({ product }) {
         setExpandedItems(expandIds);
       });
   }, [dispatch, product]);
-
   useEffect(() => {
     if (product && Object.keys(defaultValues).length > 0) {
+      // Reset form với dữ liệu mặc định
       reset(defaultValues);
       handleExpandTreeView();
 
-      if (product.productVariants.length <= 1) {
-        setValue('isViewProductVariants', false);
-      }
-
       dispatch(getProductTypeAttributesAsync(product.productTypeId));
 
+      // Chỉ fetch product options nếu chưa có variantsRender và sản phẩm có nhiều biến thể
       if (variantsRender.length === 0 && product?.productVariants.length > 1) {
         dispatch(getProductOptionsAsync(product?.id));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product, variantsRender]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const variants = useMemo(() => watch('variants'), [watch('variants')]);
-  const productVariants = useMemo(
-    () => watch('productVariants'),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [watch('productVariants')],
-  );
+  }, [product, variantsRender, reset, dispatch, handleExpandTreeView]);
 
   const handleApplyAll = () => {
     const {
-      allStockQuantity,
-      allPrice,
+      allRecommendedRetailPrice,
+      allUnitPrice,
       allLength,
       allHeight,
       allWidth,
       allWeight,
     } = values;
 
-    productVariants.forEach((_, index) => {
-      setValue(`productVariants[${index}].stockQuantity`, allStockQuantity);
-      setValue(`productVariants[${index}].unitPrice`, allPrice);
+    values.productVariants.forEach((_, index) => {
+      setValue(
+        `productVariants[${index}].recommendedRetailPrice`,
+        allRecommendedRetailPrice,
+      );
+      setValue(`productVariants[${index}].unitPrice`, allUnitPrice);
       setValue(`productVariants[${index}].weight`, allWeight);
       setValue(`productVariants[${index}].dimension.length`, allLength);
       setValue(`productVariants[${index}].dimension.width`, allWidth);
@@ -257,32 +265,58 @@ export function ProductNewEditForm({ product }) {
 
   // TRACK CHANGES
   useEffect(() => {
-    const subscription = watch((value, { name }) => {
+    const subscription = watch((value, { name, type }) => {
       if (name === 'productTypeId') {
         dispatch(getProductTypeAttributesAsync(value.productTypeId));
       }
+      if (name?.startsWith('variants') && type === 'change') {
+        if (value.variants && value.variants.length > 0) {
+          const transformedVariants = transformVariants(value.variants);
 
-      if (name === 'variants') {
-        setValue('productVariants', transformVariants(value.variants));
-      }
-
-      if (values?.variants?.length > 0) {
-        values?.variants?.forEach((variant, variant_index) => {
-          variant?.values?.forEach((_, value_index) => {
-            if (
-              name ===
-                `variants[${variant_index}].values[${value_index}].value` &&
-              value.variants[variant_index].values[value_index].value !== ''
-            ) {
-              setValue('productVariants', transformVariants(value.variants));
-            }
-          });
-        });
+          // Nếu có product với productVariants có sẵn, merge để preserve productOptionId và productOptionValueId
+          if (product?.productVariants?.length > 0) {
+            const currentProductVariants = getValues('productVariants') || [];
+            const mergedVariants = mergeVariantOptionsWithExisting(
+              transformedVariants,
+              currentProductVariants.length > 0
+                ? currentProductVariants
+                : product.productVariants,
+            );
+            setValue('productVariants', mergedVariants);
+          } else {
+            setValue('productVariants', transformedVariants);
+          }
+        }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [dispatch, watch, setValue, values]);
+  }, [dispatch, watch, setValue, getValues, product]);
+  useEffect(() => {
+    if (variantsRender?.length > 0 && product?.productVariants?.length > 1) {
+      // Chỉ transform khi có variants thực sự và sản phẩm có nhiều biến thể
+      const transformedVariants = transformVariants(variantsRender);
+
+      // Lấy dữ liệu hiện tại từ form để tránh ghi đè
+      const currentProductVariants = getValues('productVariants') || [];
+
+      // Merge dữ liệu hiện có với structure mới
+      const mergedVariants = mergeVariantOptionsWithExisting(
+        transformedVariants,
+        currentProductVariants.length > 0
+          ? currentProductVariants
+          : product.productVariants,
+      );
+
+      // Chỉ set nếu có sự khác biệt thực sự
+      const currentVariantsStr = JSON.stringify(currentProductVariants);
+      const mergedVariantsStr = JSON.stringify(mergedVariants);
+
+      if (currentVariantsStr !== mergedVariantsStr) {
+        setValue('productVariants', mergedVariants);
+      }
+    }
+  }, [variantsRender, product, setValue, getValues]);
 
   // ATTRIBUTE
   const formAttributes = watch('formAttributes');
@@ -314,21 +348,17 @@ export function ProductNewEditForm({ product }) {
 
   // PRODUCT TYPE
   useEffect(() => {
-    if (items.length === 0) {
-      dispatch(getProductTypesFlattenAsync());
-    }
-  }, [dispatch, items]);
+    dispatch(getProductTypesFlattenAsync());
+  }, [dispatch]);
 
   // IMAGES
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const images = useMemo(() => watch('images'), [watch('images')]);
-
   const handleRemoveFile = useCallback(
     (inputFile) => {
-      const filtered = images?.filter((file) => file !== inputFile);
+      const currentImages = getValues('images');
+      const filtered = currentImages?.filter((file) => file !== inputFile);
       setValue('images', filtered, { shouldValidate: true });
     },
-    [setValue, images],
+    [setValue, getValues],
   );
 
   const handleRemoveAllFiles = useCallback(() => {
@@ -346,42 +376,41 @@ export function ProductNewEditForm({ product }) {
         isActive,
         formAttributes: dataAttributes,
         productVariants: dataProductVariants,
-        stockQuantity,
-        weight,
-        length,
-        width,
-        height,
-        price,
       } = data;
 
-      const attributeProductValues = dataAttributes?.map((item) => ({
-        value: item.newValue || item.selectedValue?.value,
-        ...(item.selectedValue && {
-          attributeId: item.selectedValue.attributeId,
-          attributeValueId: item.selectedValue.attributeValueId,
-        }),
-        ...(item?.name && {
-          name: item.name,
-        }),
-      }));
+      const attributeProductValues = dataAttributes
+        ?.map((item) => ({
+          value: item.newValue || item.selectedValue?.value,
+          attributeId: item.id,
+          ...(item.selectedValue && {
+            attributeValueId: item.selectedValue.attributeValueId,
+          }),
+          ...(item?.name && {
+            name: item.name,
+          }),
+        }))
+        .filter((item) => item.value);
 
       const newImages = [];
 
       if (imgs.length > 0) {
-        imgs.forEach(async (img) => {
-          if (typeof img === 'string') {
-            newImages.push({
-              largeImageUrl: img,
-              thumbnailImageUrl: img,
-            });
-          } else {
-            const imgUrls = await dispatch(uploadImagesAsync([img])).unwrap();
-            newImages.push({
-              largeImageUrl: imgUrls[0],
-              thumbnailImageUrl: imgUrls[0],
-            });
-          }
-        });
+        await Promise.all(
+          imgs.map(async (img) => {
+            if (typeof img === 'string') {
+              const oldImage = product?.productImages?.find(
+                (image) => image.largeImageUrl === img,
+              );
+
+              newImages.push(oldImage);
+            } else {
+              const imgUrls = await dispatch(uploadImagesAsync([img])).unwrap();
+              newImages.push({
+                largeImageUrl: imgUrls[0],
+                thumbnailImageUrl: imgUrls[0],
+              });
+            }
+          }),
+        );
       }
 
       const body = {
@@ -392,40 +421,91 @@ export function ProductNewEditForm({ product }) {
         description,
         isActive,
         attributeProductValues,
-        productVariants:
-          dataProductVariants?.length > 1
-            ? dataProductVariants
-            : [
-                {
-                  recommendedRetailPrice: 0,
-                  unitPrice: price,
-                  weight,
-                  dimension: {
-                    length,
-                    width,
-                    height,
-                  },
-                  taxRate: 0,
-                  comment: '',
-                  stockQuantity,
-                  variantOptions: [],
-                },
-              ],
+        productVariants: dataProductVariants,
       };
-      console.log('🚀 ~ onSubmit ~ body:', body);
+
+      body.productVariants.forEach((variant) => {
+        if (!variant.sku) {
+          variant.sku = `SKU-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+        }
+      });
+      // console.log('🚀 ~ body.productVariants.forEach ~ body:', body);
 
       if (product) {
         await dispatch(updateProductAsync({ id: product.id, body })).unwrap();
         toast.success('Cập nhật sản phẩm thành công!');
-      } else {
-        await dispatch(createProductAsync(body)).unwrap();
-        toast.success('Tạo sản phẩm thành công!');
       }
     } catch (error) {
       console.error(error);
       toast.error('Có lỗi xảy ra, vui lòng thử lại!');
     }
   });
+
+  // WATCH VARIANTS CHANGES
+  useEffect(() => {
+    const variants = values.variants;
+
+    if (variants && variants.length > 0) {
+      const transformedVariants = transformVariants(variants);
+
+      if (product?.productVariants?.length > 0) {
+        const currentProductVariants = getValues('productVariants') || [];
+        const mergedVariants = mergeVariantOptionsWithExisting(
+          transformedVariants,
+          currentProductVariants.length > 0
+            ? currentProductVariants
+            : product.productVariants,
+        );
+        setValue('productVariants', mergedVariants, { shouldValidate: true });
+      } else {
+        setValue('productVariants', transformedVariants, {
+          shouldValidate: true,
+        });
+      }
+    } else if (variants && variants.length === 0) {
+      // Reset về single variant khi không có variants
+      setValue(
+        'productVariants',
+        [
+          {
+            sku: product?.productVariants?.[0]?.sku || '',
+            recommendedRetailPrice:
+              product?.productVariants?.[0]?.recommendedRetailPrice || 0,
+            unitPrice: product?.productVariants?.[0]?.unitPrice || 0,
+            weight: product?.productVariants?.[0]?.weight || 0,
+            dimension: product?.productVariants?.[0]?.dimension || {
+              length: 0,
+              width: 0,
+              height: 0,
+            },
+            variantOptions: [],
+          },
+        ],
+        { shouldValidate: true },
+      );
+    }
+  }, [values.variants, product, setValue, getValues]);
+
+  const deleteLoading = useBoolean(false);
+
+  const handleDeleteProduct = async () => {
+    try {
+      if (product) {
+        deleteLoading.onTrue();
+
+        await dispatch(deleteProductByIdAsync(product.id)).unwrap();
+
+        toast.success('Đã xóa sản phẩm thành công!');
+
+        router.push(paths.dashboard.product.root);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Có lỗi xảy ra khi xóa sản phẩm!');
+    } finally {
+      deleteLoading.onFalse();
+    }
+  };
 
   const renderDetails = (
     <Card>
@@ -542,11 +622,9 @@ export function ProductNewEditForm({ product }) {
         subheader="Thêm biến thể cho sản phẩm"
         sx={{ mb: 3 }}
       />
-
       <Divider />
-
       <Stack spacing={3} sx={{ p: 3 }}>
-        <ProductVariants control={control} getValues={getValues} />
+        <ProductVariants />
       </Stack>
     </Card>
   );
@@ -564,24 +642,33 @@ export function ProductNewEditForm({ product }) {
       <Stack spacing={3} sx={{ p: 3 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3}>
           <Controller
-            name="allStockQuantity"
+            name="allRecommendedRetailPrice"
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextField
                 fullWidth
                 type="text"
-                label="Số lượng"
+                label="Giá bán đề xuất"
                 InputLabelProps={{ shrink: true }}
                 value={fCurrency(value, { currencyDisplay: 'code' })}
                 onChange={(e) => {
                   const rawValue = e.target.value.replace(/\D/g, '');
                   onChange(Number(rawValue));
                 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <Box component="span" sx={{ color: 'text.disabled' }}>
+                        ₫
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               />
             )}
           />
           <Controller
-            name="allPrice"
+            name="allUnitPrice"
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextField
@@ -716,10 +803,7 @@ export function ProductNewEditForm({ product }) {
           Áp dụng tất cả
         </Button>
 
-        <DataGridProductVariants
-          data={rowsWithId(variants)}
-          control={control}
-        />
+        <DataGridProductVariants data={rowsWithId(values.variants)} />
       </Stack>
     </Card>
   );
@@ -737,28 +821,52 @@ export function ProductNewEditForm({ product }) {
       <Grid container spacing={3} sx={{ p: 3 }}>
         <Grid item xs={12} sm={6} md={4}>
           <Controller
-            name="stockQuantity"
+            name="productVariants[0].sku"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field }) => (
               <TextField
+                {...field}
                 fullWidth
                 type="text"
-                label="Số lượng"
+                label="SKU"
                 InputLabelProps={{ shrink: true }}
-                value={fCurrency(value, { currencyDisplay: 'code' })}
-                onChange={(e) => {
-                  const rawValue = e.target.value.replace(/\D/g, '');
-                  onChange(Number(rawValue));
-                }}
               />
             )}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Controller
-            name="price"
+            name="productVariants[0].recommendedRetailPrice"
             control={control}
             render={({ field: { onChange, value } }) => (
+              <TextField
+                fullWidth
+                type="text"
+                label="Giá bán đề xuất"
+                InputLabelProps={{ shrink: true }}
+                value={fCurrency(value, { currencyDisplay: 'code' })}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, '');
+                  onChange(Number(rawValue));
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Box component="span" sx={{ color: 'text.disabled' }}>
+                        ₫
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          />
+        </Grid>{' '}
+        <Grid item xs={12} sm={6} md={4}>
+          <Controller
+            name="productVariants[0].unitPrice"
+            control={control}
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextField
                 fullWidth
                 type="text"
@@ -778,15 +886,17 @@ export function ProductNewEditForm({ product }) {
                     </InputAdornment>
                   ),
                 }}
+                error={!!error}
+                helperText={error ? error.message : ''}
               />
             )}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Controller
-            name="length"
+            name="productVariants[0].dimension.length"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextField
                 fullWidth
                 type="text"
@@ -806,15 +916,17 @@ export function ProductNewEditForm({ product }) {
                     </InputAdornment>
                   ),
                 }}
+                error={!!error}
+                helperText={error ? error.message : ''}
               />
             )}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Controller
-            name="width"
+            name="productVariants[0].dimension.width"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextField
                 fullWidth
                 type="text"
@@ -834,15 +946,17 @@ export function ProductNewEditForm({ product }) {
                     </InputAdornment>
                   ),
                 }}
+                error={!!error}
+                helperText={error ? error.message : ''}
               />
             )}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Controller
-            name="height"
+            name="productVariants[0].dimension.height"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextField
                 fullWidth
                 type="text"
@@ -862,15 +976,17 @@ export function ProductNewEditForm({ product }) {
                     </InputAdornment>
                   ),
                 }}
+                error={!!error}
+                helperText={error ? error.message : ''}
               />
             )}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Controller
-            name="weight"
+            name="productVariants[0].weight"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextField
                 fullWidth
                 type="text"
@@ -884,12 +1000,15 @@ export function ProductNewEditForm({ product }) {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
+                      {' '}
                       <Box component="span" sx={{ color: 'text.disabled' }}>
                         g
                       </Box>
                     </InputAdornment>
                   ),
                 }}
+                error={!!error}
+                helperText={error ? error.message : ''}
               />
             )}
           />
@@ -907,19 +1026,32 @@ export function ProductNewEditForm({ product }) {
     >
       <Field.Switch name="isActive" label="Hiển thị" />
 
-      <LoadingButton
-        type="submit"
-        variant="contained"
-        size="large"
-        loading={isSubmitting}
-      >
-        {product ? 'Cập nhật sản phẩm' : 'Tạo sản phẩm'}
-      </LoadingButton>
+      <Stack direction="row" spacing={2}>
+        {product && (
+          <LoadingButton
+            variant="outlined"
+            size="large"
+            color="error"
+            loading={deleteLoading.value}
+            onClick={handleDeleteProduct}
+          >
+            Xóa sản phẩm
+          </LoadingButton>
+        )}
+
+        <LoadingButton
+          type="submit"
+          variant="contained"
+          size="large"
+          loading={isSubmitting}
+        >
+          {product ? 'Cập nhật sản phẩm' : 'Tạo sản phẩm'}
+        </LoadingButton>
+      </Stack>
     </Stack>
   );
 
   const pathName = usePathname();
-
   if (!product && pathName !== paths.dashboard.product.new) {
     return (
       <LinearProgress key="primary" color="primary" sx={{ mb: 2, width: 1 }} />
@@ -930,15 +1062,10 @@ export function ProductNewEditForm({ product }) {
     <Form methods={methods} onSubmit={onSubmit}>
       <Stack spacing={{ xs: 3, md: 5 }} sx={{ mx: 'auto' }}>
         {renderDetails}
-
         {renderProperties}
-
-        {values.isViewProductVariants && renderProductVariants}
-
-        {productVariants?.length > 1 && renderProductVariantsDetails}
-
+        {renderProductVariants}
+        {values.variants?.length > 0 && renderProductVariantsDetails}
         {values.variants?.length === 0 && renderPricing}
-
         {renderActions}
       </Stack>
     </Form>

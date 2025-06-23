@@ -1,4 +1,4 @@
-import { useFieldArray } from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -11,34 +11,35 @@ import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-const ProductVariants = ({ control, getValues }) => {
+const ProductVariants = () => {
+  const { control, getValues } = useFormContext();
+
   const { fields, append, remove, update } = useFieldArray({
     control,
     name: 'variants',
   });
 
   const handleAddVariant = () => {
-    append({
+    const newVariant = {
       variantName: '',
       values: [
         {
           value: '',
         },
       ],
-    });
+    };
+    append(newVariant);
   };
 
   const handleRemoveVariant = (variantIndex) => {
     remove(variantIndex);
   };
-
   const handleAddValue = (variantIndex) => {
     const currentValues = getValues(`variants`);
     const updatedValues = [
       ...(currentValues[variantIndex].values || []),
       { value: '' },
     ];
-
     update(variantIndex, {
       ...currentValues[variantIndex],
       values: updatedValues,

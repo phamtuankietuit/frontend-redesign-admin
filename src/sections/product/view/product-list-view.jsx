@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -16,11 +16,11 @@ import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useSetState } from 'src/hooks/use-set-state';
-
-import { PRODUCT_STOCK_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { getProductsAsync } from 'src/services/product/product.service';
+import {
+  deleteProductByIdAsync,
+  getProductsAsync,
+} from 'src/services/product/product.service';
 import {
   selectProduct,
   setTableFilters,
@@ -37,7 +37,6 @@ import SearchBar from '../components/search-bar';
 import { ProductTableToolbar } from '../product-table-toolbar';
 import { ProductTableFiltersResult } from '../product-table-filters-result';
 import {
-  RenderCellStock,
   RenderCellPrice,
   RenderCellPublish,
   RenderCellProduct,
@@ -46,18 +45,13 @@ import {
 
 // ----------------------------------------------------------------------
 
-const PUBLISH_OPTIONS = [
-  { value: 'publish', label: 'Hiển thị' },
-  { value: 'hide', label: 'Ẩn' },
-];
-
 const HIDE_COLUMNS = { category: false };
 
 const HIDE_COLUMNS_TOGGLABLE = ['category', 'actions'];
 
 // ----------------------------------------------------------------------
 
-export function ProductListView({ isInventoryListPage = false }) {
+export function ProductListView() {
   const dispatch = useDispatch();
 
   const confirmRows = useBoolean();
@@ -70,45 +64,43 @@ export function ProductListView({ isInventoryListPage = false }) {
     totalCount,
     tableFilters,
     selectedRowIds,
+    isActiveObject,
   } = useSelector(selectProduct);
-  console.log('🚀 ~ ProductListView ~ products:', products);
-  // const [tableData, setTableData] = useState([]);
-
-  const filters = useSetState({ publish: [], stock: [] });
 
   const [filterButtonEl, setFilterButtonEl] = useState(null);
 
   const [columnVisibilityModel, setColumnVisibilityModel] =
     useState(HIDE_COLUMNS);
 
-  const fetchProducts = useCallback(() => {
-    dispatch(getProductsAsync(tableFilters));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    tableFilters.pageSize,
-    tableFilters.pageNumber,
-    tableFilters.searchQuery,
-    tableFilters.sortBy,
-    tableFilters.sortDirection,
-  ]);
+  const canReset = !!isActiveObject;
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
-
-  const canReset =
-    filters.state.publish.length > 0 || filters.state.stock.length > 0;
-
-  const handleDeleteRow = useCallback((id) => {}, []);
-
-  const handleDeleteRows = useCallback(() => {}, []);
-
-  const handleEditRow = useCallback(
-    (id) => {
-      router.push(paths.dashboard.product.edit(id));
+  const handleDeleteRow = useCallback(
+    async (id) => {
+      try {
+        await dispatch(deleteProductByIdAsync(id)).unwrap();
+        toast.success('Xóa sản phẩm thành công');
+        dispatch(getProductsAsync(tableFilters));
+      } catch (error) {
+        toast.error('Xóa sản phẩm thất bại');
+      }
     },
-    [router],
+    [dispatch, tableFilters],
   );
+
+  const handleDeleteRows = useCallback(async () => {
+    try {
+      await Promise.all(
+        selectedRowIds.map(async (id) => {
+          await dispatch(deleteProductByIdAsync(id)).unwrap();
+        }),
+      );
+      toast.success('Xóa sản phẩm thành công');
+      dispatch(setSelectedRowIds([]));
+      dispatch(getProductsAsync(tableFilters));
+    } catch (error) {
+      toast.error('Xóa sản phẩm thất bại');
+    }
+  }, [dispatch, selectedRowIds, tableFilters]);
 
   const handleViewRow = useCallback(
     (id) => {
@@ -120,21 +112,18 @@ export function ProductListView({ isInventoryListPage = false }) {
   const CustomToolbarCallback = useCallback(
     () => (
       <CustomToolbar
-        filters={filters}
         canReset={canReset}
-        setFilterButtonEl={setFilterButtonEl}
-        filteredResults={products.length}
+        filteredResults={totalCount}
         onOpenConfirmDeleteRows={confirmRows.onTrue}
       />
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filters.state],
+    [canReset, confirmRows, totalCount],
   );
 
   const columns = [
     { field: 'category', headerName: 'Category', filterable: false },
     {
-      field: 'Name',
+      field: 'Id',
       headerName: 'Sản phẩm',
       flex: 1,
       minWidth: 360,
@@ -182,18 +171,11 @@ export function ProductListView({ isInventoryListPage = false }) {
       disableColumnMenu: true,
       getActions: (params) => [
         <GridActionsCellItem
-          key={params.row.id}
-          showInMenu
-          icon={<Iconify icon="solar:eye-bold" />}
-          label="Xem"
-          onClick={() => handleViewRow(params.row.id)}
-        />,
-        <GridActionsCellItem
           key={params.row.id + 1}
           showInMenu
           icon={<Iconify icon="solar:pen-bold" />}
           label="Cập nhật"
-          onClick={() => handleEditRow(params.row.id)}
+          onClick={() => handleViewRow(params.row.id)}
         />,
         <GridActionsCellItem
           key={params.row.id + 2}
@@ -208,11 +190,16 @@ export function ProductListView({ isInventoryListPage = false }) {
       ],
     },
   ];
-
   const getTogglableColumns = () =>
     columns
       .filter((column) => !HIDE_COLUMNS_TOGGLABLE.includes(column.field))
       .map((column) => column.field);
+
+  console.log('🚀 ~ ProductListView ~ tableFilters:', tableFilters);
+  useEffect(() => {
+    // dispatch(getProductsAsync(tableFilters));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, tableFilters]);
 
   return (
     <>
@@ -230,16 +217,14 @@ export function ProductListView({ isInventoryListPage = false }) {
             { name: 'Danh sách sản phẩm' },
           ]}
           action={
-            !isInventoryListPage && (
-              <Button
-                component={RouterLink}
-                href={paths.dashboard.product.new}
-                variant="contained"
-                startIcon={<Iconify icon="mingcute:add-line" />}
-              >
-                Thêm sản phẩm
-              </Button>
-            )
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.product.new}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              Thêm sản phẩm
+            </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
@@ -261,22 +246,27 @@ export function ProductListView({ isInventoryListPage = false }) {
             loading={productsLoading}
             getRowHeight={() => 'auto'}
             pageSizeOptions={[10, 25, 50]}
-            initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
             //
             pagination
             paginationMode="server"
             rowCount={totalCount}
-            onPaginationModelChange={(paginationModel) => {
+            paginationModel={{
+              page: tableFilters.pageNumber - 1,
+              pageSize: tableFilters.pageSize,
+            }}
+            onPaginationModelChange={(model) => {
+              console.log('🚀 ~ ProductListView ~ model:', model);
               dispatch(
                 setTableFilters({
-                  pageNumber: paginationModel.page + 1,
-                  pageSize: paginationModel.pageSize,
+                  pageNumber: model.page + 1,
+                  pageSize: model.pageSize,
                 }),
               );
             }}
             //
             sortingMode="server"
             onSortModelChange={(sortModel) => {
+              console.log('🚀 ~ ProductListView ~ sortModel:', sortModel);
               dispatch(
                 setTableFilters({
                   sortBy: sortModel[0]?.field ? sortModel[0].field : undefined,
@@ -287,13 +277,19 @@ export function ProductListView({ isInventoryListPage = false }) {
               );
             }}
             rowSelectionModel={selectedRowIds}
-            onRowSelectionModelChange={(newSelectionModel) =>
-              dispatch(setSelectedRowIds(newSelectionModel))
-            }
+            onRowSelectionModelChange={(newSelectionModel) => {
+              console.log(
+                '🚀 ~ ProductListView ~ newSelectionModel:',
+                newSelectionModel,
+              );
+              dispatch(setSelectedRowIds(newSelectionModel));
+            }}
             columnVisibilityModel={columnVisibilityModel}
-            onColumnVisibilityModelChange={(newModel) =>
-              setColumnVisibilityModel(newModel)
-            }
+            onColumnVisibilityModelChange={(newModel) => {
+              console.log('🚀 ~ ProductListView ~ newModel:', newModel);
+
+              setColumnVisibilityModel(newModel);
+            }}
             slots={{
               toolbar: CustomToolbarCallback,
               noRowsOverlay: () => <EmptyContent title="Không có dữ liệu" />,
@@ -317,7 +313,7 @@ export function ProductListView({ isInventoryListPage = false }) {
       <ConfirmDialog
         open={confirmRows.value}
         onClose={confirmRows.onFalse}
-        title="Delete"
+        title="Xóa"
         content={
           <>
             Bạn có chắc chắn muốn xóa
@@ -341,13 +337,7 @@ export function ProductListView({ isInventoryListPage = false }) {
   );
 }
 
-function CustomToolbar({
-  filters,
-  canReset,
-  filteredResults,
-  setFilterButtonEl,
-  onOpenConfirmDeleteRows,
-}) {
+function CustomToolbar({ canReset, filteredResults, onOpenConfirmDeleteRows }) {
   const dispatch = useDispatch();
 
   const { tableFilters, selectedRowIds } = useSelector(selectProduct);
@@ -367,17 +357,15 @@ function CustomToolbar({
 
   return (
     <>
-      <GridToolbarContainer>
-        <ProductTableToolbar
-          filters={filters}
-          options={{ stocks: PRODUCT_STOCK_OPTIONS, publishs: PUBLISH_OPTIONS }}
-        />
+      <GridToolbarContainer sx={{ pr: 0 }}>
+        <ProductTableToolbar />
 
         <SearchBar
           placeholder="Tìm kiếm mã, tên sản phẩm..."
           value={tableFilters.searchQuery}
           onSearchChange={handleSearchChange}
           sx={{ flex: 1 }}
+          autoFocus
         />
 
         <Stack
@@ -385,6 +373,7 @@ function CustomToolbar({
           direction="row"
           alignItems="center"
           justifyContent="flex-end"
+          sx={{ pr: 2 }}
         >
           {!!selectedRowIds.length && (
             <Button
@@ -401,10 +390,8 @@ function CustomToolbar({
 
       {canReset && (
         <ProductTableFiltersResult
-          filters={filters}
           totalResults={filteredResults}
           sx={{ p: 2.5, pt: 0 }}
-          publishs={PUBLISH_OPTIONS}
         />
       )}
     </>

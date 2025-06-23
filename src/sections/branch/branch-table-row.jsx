@@ -98,8 +98,8 @@ export function BranchTableRow({ row, onEditRow, onDeleteRow }) {
               }}
               sx={{ color: 'error.main' }}
             >
-              <Iconify icon="solar:trash-bin-trash-bold" />
-              Xóa
+              <Iconify icon="fe:disabled" />
+              Vô hiệu hóa
             </MenuItem>
           )}
 

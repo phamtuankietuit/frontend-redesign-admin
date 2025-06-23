@@ -170,7 +170,7 @@ export function DashboardLayout({ sx, children, header, data }) {
             ),
             rightArea: (
               <Box display="flex" alignItems="center" gap={{ xs: 0, sm: 0.75 }}>
-                <NotificationsDrawer data={_notifications} />
+                {/* <NotificationsDrawer data={_notifications} /> */}
                 <SettingsButton />
                 <AccountDrawer data={_account} />
               </Box>

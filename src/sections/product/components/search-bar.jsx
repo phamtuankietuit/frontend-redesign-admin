@@ -14,7 +14,7 @@ const SearchBar = ({
 }) => {
   const [searchValue, setSearchValue] = useState(value);
 
-  const debouncedSearchValue = useDebounce(searchValue, 500);
+  const debouncedSearchValue = useDebounce(searchValue, 800);
 
   const handleChangeValue = useCallback((event) => {
     setSearchValue(event.target.value);

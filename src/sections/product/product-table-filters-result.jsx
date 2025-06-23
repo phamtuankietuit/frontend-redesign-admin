@@ -2,76 +2,58 @@ import { useCallback } from 'react';
 
 import Chip from '@mui/material/Chip';
 
-import { sentenceCase } from 'src/utils/change-case';
-
 import {
   chipProps,
   FiltersBlock,
   FiltersResult,
 } from 'src/components/filters-result';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  resetTableFilters,
+  selectProduct,
+  setIsActiveObject,
+  setProductType,
+} from 'src/state/product/product.slice';
 
 // ----------------------------------------------------------------------
 
-export function ProductTableFiltersResult({
-  filters,
-  totalResults,
-  sx,
-  publishs,
-}) {
-  const handleRemoveStock = useCallback(
-    (inputValue) => {
-      const newValue = filters.state.stock.filter(
-        (item) => item !== inputValue,
-      );
+export function ProductTableFiltersResult({ totalResults, sx }) {
+  const dispatch = useDispatch();
 
-      filters.setState({ stock: newValue });
-    },
-    [filters],
-  );
+  const { isActiveObject, productType } = useSelector(selectProduct);
 
-  const handleRemovePublish = useCallback(
-    (inputValue) => {
-      const newValue = filters.state.publish.filter(
-        (item) => item !== inputValue,
-      );
+  const handleRemoveShow = useCallback(() => {
+    dispatch(setIsActiveObject(null));
+  }, [dispatch]);
 
-      filters.setState({ publish: newValue });
-    },
-    [filters],
-  );
+  const handleRemoveProductType = useCallback(() => {
+    dispatch(setProductType(null));
+  }, [dispatch]);
+
+  const handleResetState = useCallback(() => {
+    dispatch(resetTableFilters());
+  }, [dispatch]);
 
   return (
     <FiltersResult
       totalResults={totalResults}
-      onReset={filters.onResetState}
+      onReset={handleResetState}
       sx={sx}
     >
-      <FiltersBlock label="Stock:" isShow={!!filters.state.stock.length}>
-        {filters.state.stock.map((item) => (
-          <Chip
-            {...chipProps}
-            key={item}
-            label={sentenceCase(item)}
-            onDelete={() => handleRemoveStock(item)}
-          />
-        ))}
+      <FiltersBlock label="Hiển thị:" isShow={!!isActiveObject}>
+        <Chip
+          {...chipProps}
+          label={isActiveObject?.name}
+          onDelete={handleRemoveShow}
+        />
       </FiltersBlock>
 
-      <FiltersBlock label="Hiển thị:" isShow={!!filters.state.publish.length}>
-        {filters.state.publish.map((item) => {
-          const publishOption = publishs.find(
-            (option) => option.value === item,
-          );
-          const publishLabel = publishOption ? publishOption.label : item;
-          return (
-            <Chip
-              {...chipProps}
-              key={item}
-              label={sentenceCase(publishLabel)}
-              onDelete={() => handleRemovePublish(item)}
-            />
-          );
-        })}
+      <FiltersBlock label="Loại sản phẩm:" isShow={!!productType}>
+        <Chip
+          {...chipProps}
+          label={productType?.displayName}
+          onDelete={handleRemoveProductType}
+        />
       </FiltersBlock>
     </FiltersResult>
   );

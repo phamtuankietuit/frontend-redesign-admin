@@ -32,13 +32,13 @@ export function RenderCellCreatedAt({ params }) {
   return (
     <Stack spacing={0.5}>
       <Box component="span">
-        {fDateTime(new Date(), formatStr.myFormat.date)}
+        {fDateTime(params.row.creationTime, formatStr.myFormat.date)}
       </Box>
       <Box
         component="span"
         sx={{ typography: 'caption', color: 'text.secondary' }}
       >
-        {fDateTime(new Date(), formatStr.myFormat.time)}
+        {fDateTime(params.row.creationTime, formatStr.myFormat.time)}
       </Box>
     </Stack>
   );

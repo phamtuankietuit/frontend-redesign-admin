@@ -47,6 +47,14 @@
     "darker": "#7A0916",
     "contrastText": "#FFFFFF"
   },
+  "silver": {
+    "lighter": "#F5F5F5",
+    "light": "#CCCCCC",
+    "main": "#999999",
+    "dark": "#666666",
+    "darker": "#4D4D4D",
+    "contrastText": "#FFFFFF"
+  },
   "grey": {
     "50": "#FCFDFD",
     "100": "#F9FAFB",

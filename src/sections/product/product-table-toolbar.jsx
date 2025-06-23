@@ -1,139 +1,107 @@
 import { useCallback } from 'react';
-
-import Select from '@mui/material/Select';
-import MenuList from '@mui/material/MenuList';
-import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import OutlinedInput from '@mui/material/OutlinedInput';
-
-import { useSetState } from 'src/hooks/use-set-state';
-
-import { varAlpha } from 'src/theme/styles';
-
-import { Iconify } from 'src/components/iconify';
-import { usePopover, CustomPopover } from 'src/components/custom-popover';
+import { Autocomplete, Stack, TextField } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectProduct,
+  setIsActiveObject,
+  setProductType,
+  setTableFilters,
+} from 'src/state/product/product.slice';
+import { selectProductType } from 'src/state/product-type/product-type.slice';
+import SearchBar from './components/search-bar';
 
 // ----------------------------------------------------------------------
 
-export function ProductTableToolbar({ filters, options }) {
-  const popover = usePopover();
+const options = [
+  { id: 'true', name: 'Hiển thị' },
+  { id: 'false', name: 'Ẩn' },
+];
 
-  const local = useSetState({
-    publish: filters.state.publish,
-  });
+export function ProductTableToolbar() {
+  const dispatch = useDispatch();
 
-  const handleChangePublish = useCallback(
-    (event) => {
-      const {
-        target: { value },
-      } = event;
+  const { tableFilters, isActiveObject, productType } =
+    useSelector(selectProduct);
+  const { productTypesFlatten } = useSelector(selectProductType);
 
-      local.setState({
-        publish: typeof value === 'string' ? value.split(',') : value,
-      });
+  const handleSearchChange = useCallback(
+    (searchValue) => {
+      dispatch(
+        setTableFilters({
+          searchQuery: searchValue,
+          pageNumber: 1,
+        }),
+      );
     },
-    [local],
+    [dispatch],
   );
 
-  const handleFilterPublish = useCallback(() => {
-    filters.setState({ publish: local.state.publish });
-  }, [filters, local.state.publish]);
-
   return (
-    <>
-      <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-        <InputLabel htmlFor="product-filter-publish-select-label">
-          Hiển thị
-        </InputLabel>
-        <Select
-          multiple
-          value={local.state.publish}
-          onChange={handleChangePublish}
-          onClose={handleFilterPublish}
-          input={<OutlinedInput label="Hiển thị" />}
-          renderValue={(selected) => {
-            const publishLabels = options.publishs.map(
-              (option) => option.label,
-            );
+    <Stack
+      spacing={2}
+      alignItems={{ xs: 'flex-end', md: 'center' }}
+      direction={{ xs: 'column', md: 'row' }}
+      sx={{ p: 2.5 }}
+    >
+      <Autocomplete
+        sx={{ width: { xs: 1, md: 180 } }}
+        value={isActiveObject}
+        options={options}
+        onChange={(event, newValue) => {
+          dispatch(setIsActiveObject(newValue));
+        }}
+        getOptionLabel={(option) => option.name}
+        renderInput={(params) => (
+          <TextField
+            sx={{ width: { xs: 1, md: 180 } }}
+            {...params}
+            label="Hiển thị"
+          />
+        )}
+        renderOption={(props, option) => (
+          <li {...props} key={option.id}>
+            {option.name}
+          </li>
+        )}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+      />
 
-            const selectedLabels = selected.map(
-              (value) =>
-                publishLabels[
-                  options.publishs.findIndex((option) => option.value === value)
-                ],
-            );
+      <Autocomplete
+        sx={{ width: { xs: 1, md: 180 } }}
+        value={productType}
+        options={productTypesFlatten}
+        onChange={(event, newValue) => {
+          dispatch(setProductType(newValue));
+        }}
+        getOptionLabel={(option) => option.displayName}
+        renderInput={(params) => (
+          <TextField
+            sx={{ width: { xs: 1, md: 180 } }}
+            {...params}
+            label="Loại sản phẩm"
+          />
+        )}
+        renderOption={(props, option) => (
+          <li {...props} key={option.id}>
+            {option.displayName}
+          </li>
+        )}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+      />
 
-            return selectedLabels.map((value) => value).join(', ');
-          }}
-          inputProps={{ id: 'product-filter-publish-select-label' }}
-          sx={{ textTransform: 'capitalize' }}
-        >
-          {options.publishs.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              <Checkbox
-                disableRipple
-                size="small"
-                checked={local.state.publish.includes(option.value)}
-              />
-              {option.label}
-            </MenuItem>
-          ))}
-
-          <MenuItem
-            disableGutters
-            disableTouchRipple
-            onClick={handleFilterPublish}
-            sx={{
-              justifyContent: 'center',
-              fontWeight: (theme) => theme.typography.button,
-              border: (theme) =>
-                `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
-              bgcolor: (theme) =>
-                varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
-            }}
-          >
-            Áp dụng
-          </MenuItem>
-        </Select>
-      </FormControl>
-
-      <CustomPopover
-        open={popover.open}
-        anchorEl={popover.anchorEl}
-        onClose={popover.onClose}
-        slotProps={{ arrow: { placement: 'right-top' } }}
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={2}
+        flexGrow={1}
+        sx={{ width: 1 }}
       >
-        <MenuList>
-          <MenuItem
-            onClick={() => {
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:printer-minimalistic-bold" />
-            In
-          </MenuItem>
-
-          <MenuItem
-            onClick={() => {
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:import-bold" />
-            Import
-          </MenuItem>
-
-          <MenuItem
-            onClick={() => {
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:export-bold" />
-            Xuất file
-          </MenuItem>
-        </MenuList>
-      </CustomPopover>
-    </>
+        <SearchBar
+          placeholder="Tìm kiếm mã, tên sản phẩm..."
+          value={tableFilters.searchQuery}
+          onSearchChange={handleSearchChange}
+        />
+      </Stack>
+    </Stack>
   );
 }

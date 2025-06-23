@@ -6,15 +6,22 @@ import { _orders } from 'src/_mock/_order';
 import { CONFIG } from 'src/config-global';
 
 import { OrderDetailsView } from 'src/sections/order/view';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getOrderByIdAsync } from 'src/services/order/order.service';
+import { selectOrder } from 'src/state/order/order.slice';
 
 // ----------------------------------------------------------------------
 
-const metadata = { title: `Order details | Dashboard - ${CONFIG.appName}` };
+const metadata = { title: `Chi tiết đơn hàng - ${CONFIG.appName}` };
 
 export default function Page() {
   const { id = '' } = useParams();
 
-  // const currentOrder = _orders.find((order) => order.id === id);
+  const dispatch = useDispatch();
+
+  const { order } = useSelector(selectOrder);
+
   const currentOrder = {
     id: 'e99f09a7-dd88-49d5-b1c8-1daf80c2d7b1',
     orderNumber: 'DH6010',
@@ -93,13 +100,17 @@ export default function Page() {
     status: 'pending',
   };
 
+  useEffect(() => {
+    dispatch(getOrderByIdAsync(id));
+  }, [id, dispatch]);
+
   return (
     <>
       <Helmet>
         <title> {metadata.title}</title>
       </Helmet>
 
-      <OrderDetailsView order={currentOrder} />
+      <OrderDetailsView order={order} />
     </>
   );
 }

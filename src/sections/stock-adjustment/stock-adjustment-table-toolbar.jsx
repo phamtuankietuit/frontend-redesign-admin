@@ -25,18 +25,6 @@ export function StockAdjustmentTableToolbar({ dateError }) {
     createEditPage: { branches },
   } = useSelector(selectStockAdjustment);
 
-  // const handleFilterService = useCallback(
-  //   (event) => {
-  //     const newValue =
-  //       typeof event.target.value === 'string'
-  //         ? event.target.value.split(',')
-  //         : event.target.value;
-
-  //     onResetPage();
-  //     filters.setState({ service: newValue });
-  //   },
-  //   [filters, onResetPage],
-  // );
   const handleFilterStartDate = useCallback(
     (newValue) => {
       dispatch(

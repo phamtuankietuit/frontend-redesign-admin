@@ -180,36 +180,82 @@ export function generateCombinations(variants) {
 }
 
 export function transformVariants(inputData) {
-  // Extract the variant names and their values
-  const variants = inputData.map(item => ({
-    name: item.variantName,
-    values: item.values
-  }));
-
-  // Generate all possible combinations of the variant values
-  const combinations = variants.reduce((acc, variant) => {
-    if (!acc.length) {
-      return variant.values.map(value => [{ name: variant.name, ...value }]);
-    }
-    return acc.flatMap(combination =>
-      variant.values.map(value => [...combination, { name: variant.name, ...value }])
-    );
-  }, []);
-
-  // Create the output structure for each combination
-  const output = combinations.map(combination => ({
+  const defaultVariant = {
+    sku: '',
     recommendedRetailPrice: 0,
     unitPrice: 0,
     weight: 0,
-    stockQuantity: 0,
     dimension: {
       length: 0,
       width: 0,
       height: 0
     },
-    taxRate: 0,
-    comment: "",
-    variantOptions: combination
+    variantOptions: []
+  };
+
+  // Check if inputData is valid
+  if (!inputData || !Array.isArray(inputData) || inputData.length === 0) {
+    return [defaultVariant];
+  }
+
+  // Filter out variants that don't have valid data
+  const validVariants = inputData.filter(item =>
+    item?.variantName &&
+    item?.values &&
+    Array.isArray(item.values) &&
+    item.values.length > 0
+  );
+
+  if (validVariants.length === 0) {
+    return [defaultVariant];
+  }  // Extract the variant names and their values
+  const variants = validVariants.map(item => ({
+    name: item.variantName,
+    productOptionId: item.id || null, // Use variant's id as productOptionId
+    values: item.values.filter(val => val?.value && val.value.trim() !== '').map(val => ({
+      value: val.value,
+      productOptionValueId: val.id || null // Use value's id as productOptionValueId
+    }))
+  }));  // Generate all possible combinations of the variant values
+  const combinations = variants.reduce((acc, variant) => {
+    if (!variant.values || variant.values.length === 0) {
+      return acc;
+    }
+
+    if (!acc.length) {
+      return variant.values.map(value => [{
+        name: variant.name,
+        value: value.value,
+        productOptionId: variant.productOptionId,
+        productOptionValueId: value.productOptionValueId
+      }]);
+    }
+    return acc.flatMap(combination =>
+      variant.values.map(value => [...combination, {
+        name: variant.name,
+        value: value.value,
+        productOptionId: variant.productOptionId,
+        productOptionValueId: value.productOptionValueId
+      }])
+    );
+  }, []);
+  // Create the output structure for each combination
+  const output = combinations.map(combination => ({
+    sku: '',
+    recommendedRetailPrice: 0,
+    unitPrice: 0,
+    weight: 0,
+    dimension: {
+      length: 0,
+      width: 0,
+      height: 0
+    },
+    variantOptions: combination.map(option => ({
+      name: option.name,
+      value: option.value,
+      productOptionId: option.productOptionId || null,
+      productOptionValueId: option.productOptionValueId || null
+    }))
   }));
 
   return output;
@@ -254,3 +300,30 @@ export const findProduct = (products, criteria) =>
       const option = product.optionValues.find(opt => opt.name === key);
       return option && option.value === value;
     }));
+
+export function mergeVariantOptionsWithExisting(transformedVariants, existingVariants = []) {
+  if (!existingVariants || existingVariants.length === 0) {
+    return transformedVariants;
+  }
+
+  return transformedVariants.map((transformed, index) => {
+    const existing = existingVariants[index];
+
+    if (!existing) {
+      return transformed;
+    }
+
+    // Giữ variantOptions từ transformed vì đã có đầy đủ productOptionId và productOptionValueId
+    // Chỉ merge các thông tin khác như giá, trọng lượng, kích thước
+    return {
+      ...transformed,
+      id: existing.id,
+      sku: existing.sku || transformed.sku,
+      recommendedRetailPrice: existing.recommendedRetailPrice || transformed.recommendedRetailPrice,
+      unitPrice: existing.unitPrice || transformed.unitPrice,
+      weight: existing.weight || transformed.weight,
+      dimension: existing.dimension || transformed.dimension,
+      // variantOptions từ transformed đã có đầy đủ IDs
+    };
+  });
+}
