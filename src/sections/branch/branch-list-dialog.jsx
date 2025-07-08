@@ -70,11 +70,11 @@ export function BranchListDialog({
           </Stack>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {branch.address.formattedAddress}
+            {branch?.address?.formattedAddress || branch?.branchAddress}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {branch.address.phoneNumber}
+            {branch?.address?.phoneNumber}
           </Typography>
         </ButtonBase>
       ))}

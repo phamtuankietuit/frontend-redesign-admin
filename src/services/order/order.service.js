@@ -32,3 +32,11 @@ export const confirmPackagingCompleteAsync = createAsyncThunk(
     return response.data;
   }
 );
+
+export const selectBranchForPackagingAsync = createAsyncThunk(
+  'order/selectBranchForPackagingAsync',
+  async ({ id, body }) => {
+    const response = await PATCH(`/orders/${id}/select-branch-for-packaging`, body);
+    return response.data;
+  }
+);

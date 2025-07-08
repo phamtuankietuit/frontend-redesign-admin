@@ -2,7 +2,12 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import { useTheme } from '@mui/material/styles';
 
-import { fNumber, fPercent, fShortenNumber } from 'src/utils/format-number';
+import {
+  fCurrency,
+  fNumber,
+  fPercent,
+  fShortenNumber,
+} from 'src/utils/format-number';
 
 import { CONFIG } from 'src/config-global';
 import { varAlpha, bgGradient } from 'src/theme/styles';
@@ -10,6 +15,7 @@ import { varAlpha, bgGradient } from 'src/theme/styles';
 import { Iconify } from 'src/components/iconify';
 import { SvgColor } from 'src/components/svg-color';
 import { Chart, useChart } from 'src/components/chart';
+import { Stack, Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -17,51 +23,35 @@ export function AnalyticsWidgetSummary({
   icon,
   title,
   total,
-  chart,
   percent,
   color = 'primary',
   sx,
+  money = false,
   ...other
 }) {
   const theme = useTheme();
 
-  const chartColors = [theme.palette[color].dark];
-
-  const chartOptions = useChart({
-    chart: { sparkline: { enabled: true } },
-    colors: chartColors,
-    xaxis: { categories: chart.categories },
-    grid: {
-      padding: {
-        top: 6,
-        left: 6,
-        right: 6,
-        bottom: 6,
-      },
-    },
-    tooltip: {
-      y: { formatter: (value) => fNumber(value), title: { formatter: () => '' } },
-    },
-    ...chart.options,
-  });
-
   const renderTrending = (
-    <Box
+    <Stack
       sx={{
         top: 16,
-        gap: 0.5,
         right: 16,
         display: 'flex',
         position: 'absolute',
-        alignItems: 'center',
+        alignItems: 'flex-end',
       }}
     >
-      <Iconify width={20} icon={percent < 0 ? 'eva:trending-down-fill' : 'eva:trending-up-fill'} />
-      <Box component="span" sx={{ typography: 'subtitle2' }}>
-        {percent > 0 && '+'}
-        {fPercent(percent)}
-      </Box>
-    </Box>
+      <Stack direction="row" alignItems="center" spacing={0.5}>
+        <Iconify
+          width={20}
+          icon={percent < 0 ? 'eva:trending-down-fill' : 'eva:trending-up-fill'}
+        />
+        <Box component="span" sx={{ typography: 'subtitle2' }}>
+          {percent > 0 && '+'}
+          {fPercent(percent)}
+        </Box>
+      </Stack>
+    </Stack>
   );
 
   return (
@@ -93,16 +83,10 @@ export function AnalyticsWidgetSummary({
       >
         <Box sx={{ flexGrow: 1, minWidth: 112 }}>
           <Box sx={{ mb: 1, typography: 'subtitle2' }}>{title}</Box>
-          <Box sx={{ typography: 'h4' }}>{fShortenNumber(total)}</Box>
+          <Box sx={{ typography: 'h4' }}>
+            {!money ? fShortenNumber(total) : fCurrency(total)}
+          </Box>
         </Box>
-
-        <Chart
-          type="line"
-          series={[{ data: chart.series }]}
-          options={chartOptions}
-          width={84}
-          height={56}
-        />
       </Box>
 
       <SvgColor

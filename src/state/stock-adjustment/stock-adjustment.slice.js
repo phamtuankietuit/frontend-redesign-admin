@@ -50,6 +50,8 @@ const initialState = {
     isProductsEnd: false,
     // 
     currentStockAdjustment: null,
+    loading: false,
+    error: null,
   }
 };
 
@@ -109,9 +111,19 @@ const stockAdjustmentSlice = createSlice({
           state.createEditPage.isProductsEnd = true;
         }
       })
-      // 
+
+      // By ID
+      .addCase(getStockAdjustmentByIdAsync.pending, (state) => {
+        state.createEditPage.loading = true;
+        state.createEditPage.currentStockAdjustment = null;
+      })
       .addCase(getStockAdjustmentByIdAsync.fulfilled, (state, action) => {
+        state.createEditPage.loading = false;
         state.createEditPage.currentStockAdjustment = action.payload;
+      })
+      .addCase(getStockAdjustmentByIdAsync.rejected, (state) => {
+        state.createEditPage.loading = false;
+        state.createEditPage.currentStockAdjustment = null;
       })
 
       //

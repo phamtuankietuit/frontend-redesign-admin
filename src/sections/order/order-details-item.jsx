@@ -3,25 +3,15 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import CardHeader from '@mui/material/CardHeader';
-import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 
 import { fCurrency } from 'src/utils/format-number';
 
-import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 // ----------------------------------------------------------------------
 
-export function OrderDetailsItems({
-  taxes,
-  shipping,
-  discount,
-  subtotal,
-  items = [],
-  total,
-  order,
-}) {
+export function OrderDetailsItems({ order }) {
   const renderTotal = (
     <Stack
       spacing={2}
@@ -103,17 +93,10 @@ export function OrderDetailsItems({
 
   return (
     <Card>
-      <CardHeader
-        title="Chi tiết đơn hàng"
-        // action={
-        //   <IconButton>
-        //     <Iconify icon="solar:pen-bold" />
-        //   </IconButton>
-        // }
-      />
+      <CardHeader title="Chi tiết đơn hàng" />
 
       <Scrollbar>
-        {items.map((item) => (
+        {order?.orderLines?.map((item) => (
           <Stack
             key={item.id}
             direction="row"
@@ -133,7 +116,7 @@ export function OrderDetailsItems({
 
             <ListItemText
               primary={item?.productName}
-              secondary={item?.productVariantOptionName}
+              secondary={item?.productVariantName}
               primaryTypographyProps={{ typography: 'body2' }}
               secondaryTypographyProps={{
                 component: 'span',
@@ -144,11 +127,25 @@ export function OrderDetailsItems({
 
             <Box sx={{ typography: 'body2' }}>x{item.quantity}</Box>
 
-            <Box
-              sx={{ width: 110, textAlign: 'right', typography: 'subtitle2' }}
-            >
-              {fCurrency(item?.total)}
-            </Box>
+            <Stack>
+              {item?.recommendedRetailPrice && (
+                <Box
+                  sx={{
+                    textAlign: 'right',
+                    color: 'text.disabled',
+                    textDecoration: 'line-through',
+                    typography: 'subtitle2',
+                  }}
+                >
+                  {fCurrency(item?.recommendedRetailPrice)}
+                </Box>
+              )}
+              <Box
+                sx={{ width: 110, textAlign: 'right', typography: 'subtitle2' }}
+              >
+                {fCurrency(item?.total)}
+              </Box>
+            </Stack>
           </Stack>
         ))}
       </Scrollbar>

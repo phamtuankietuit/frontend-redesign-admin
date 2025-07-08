@@ -54,6 +54,14 @@ export const updatePasswordAsync = createAsyncThunk(
   }
 );
 
+export const logOutAsync = createAsyncThunk(
+  'auth/logOutAsync',
+  async () => {
+    const { data } = await POST(`/auth/logout`);
+    return data;
+  }
+);
+
 export const signOut = () => {
   deleteItem(sessionKey);
   // RESET THEME

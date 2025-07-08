@@ -58,10 +58,17 @@ const NewPromotionSchema = zod
     maximumDiscountValue: zod.number().min(1, {
       message: 'Giảm giá tối đa phải lớn hơn 0',
     }),
-    customerTypeIds: zod.array(schemaHelper.objectOrNull()).min(1, {
-      message: 'Chưa chọn phân loại khách hàng',
+    customerTypeIds: zod
+      .array(schemaHelper.objectOrNull())
+      .min(1, {
+        message: 'Chưa chọn phân loại khách hàng',
+      })
+      .refine((items) => items.length > 0, {
+        message: 'Vui lòng chọn ít nhất một loại khách hàng',
+      }),
+    applyToProductTypeIdsList: zod.array(zod.string()).min(1, {
+      message: 'Chưa chọn loại sản phẩm áp dụng',
     }),
-    applyToProductTypeId: schemaHelper.objectOrNull(),
     valueType: zod.number(),
     value: zod.number(),
     status: zod.number(),
@@ -128,7 +135,6 @@ export function PromotionCreateView() {
   const loadingActive = useBoolean(false);
   const loadingPaused = useBoolean(false);
   const loadingCancelled = useBoolean(false);
-
   const defaultValues = useMemo(
     () => ({
       code: promotion?.code || '',
@@ -140,10 +146,9 @@ export function PromotionCreateView() {
       startTime: dayjs(promotion?.startTime) || today(),
       endTime: dayjs(promotion?.endTime) || today(),
       customerTypeIds: promotion?.customerTypes || [],
-      applyToProductTypeId: promotion?.applyToProductType || {
-        id: 1,
-        displayName: 'Tất Cả Nhóm Sản Phẩm',
-      },
+      applyToProductTypeIdsList: promotion?.applyToProductTypeIdsList
+        ? promotion.applyToProductTypeIdsList.map((item) => String(item))
+        : [],
       status: promotion?.status || 1,
       voucherType: promotion?.voucherType || 1,
       valueType: promotion?.valueType || 2,
@@ -185,7 +190,6 @@ export function PromotionCreateView() {
       reset(defaultValues);
     }
   }, [promotion, promotionLoading, reset, defaultValues]);
-
   const onSubmit = handleSubmit(async (data) => {
     try {
       const body = {
@@ -200,8 +204,9 @@ export function PromotionCreateView() {
         usageLimitOverall: data.usageLimitOverall,
         startTime: data.startTime,
         endTime: data.endTime,
-        applyToProductTypeId: data.applyToProductTypeId?.id || 1,
         customerTypeIds: data.customerTypeIds.map((item) => item.id),
+        applyToProductTypeIdsList:
+          data.applyToProductTypeIdsList.map((item) => Number(item)) || [],
         voucherType: data.discountVoucherType,
       };
 

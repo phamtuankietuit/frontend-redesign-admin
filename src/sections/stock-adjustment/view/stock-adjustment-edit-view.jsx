@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 import { paths } from 'src/routes/paths';
 
+import { Skeleton } from '@mui/material';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
@@ -12,7 +13,7 @@ import { StockAdjustmentNewEditForm } from '../stock-adjustment-new-edit-form';
 
 export function StockAdjustmentEditView() {
   const {
-    createEditPage: { currentStockAdjustment },
+    createEditPage: { currentStockAdjustment, loading },
   } = useSelector(selectStockAdjustment);
 
   return (
@@ -30,7 +31,11 @@ export function StockAdjustmentEditView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <StockAdjustmentNewEditForm />
+      {loading ? (
+        <Skeleton variant="rounded" width="100%" height={400} />
+      ) : (
+        <StockAdjustmentNewEditForm />
+      )}
     </DashboardContent>
   );
 }

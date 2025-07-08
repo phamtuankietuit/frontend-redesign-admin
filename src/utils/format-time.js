@@ -242,3 +242,53 @@ export function fSub({
 
   return result;
 }
+
+// ----------------------------------------------------------------------
+
+/** 
+ * Lấy ngày đầu tiên của tháng
+ * @param {string|Date|dayjs} date - Ngày tháng được truyền vào. Nếu không có thì sử dụng tháng hiện tại
+ * @param {string} format - Định dạng output, mặc định là ISO string
+ * @returns {string} Ngày đầu tiên của tháng
+ * 
+ * Example:
+ * getFirstDayOfMonth() -> '2024-06-01T00:00:00+07:00' (tháng hiện tại)
+ * getFirstDayOfMonth('2024-05-15') -> '2024-05-01T00:00:00+07:00'
+ * getFirstDayOfMonth('2024-05-15', 'DD/MM/YYYY') -> '01/05/2024'
+ */
+export function getFirstDayOfMonth(date, format) {
+  const targetDate = date ? dayjs(date) : dayjs();
+
+  if (!targetDate.isValid()) {
+    return 'Invalid date value';
+  }
+
+  const firstDay = targetDate.startOf('month');
+
+  return format ? firstDay.format(format) : firstDay.format();
+}
+
+// ----------------------------------------------------------------------
+
+/** 
+ * Lấy ngày cuối cùng của tháng
+ * @param {string|Date|dayjs} date - Ngày tháng được truyền vào. Nếu không có thì sử dụng tháng hiện tại
+ * @param {string} format - Định dạng output, mặc định là ISO string
+ * @returns {string} Ngày cuối cùng của tháng
+ * 
+ * Example:
+ * getLastDayOfMonth() -> '2025-06-30T23:59:59+07:00' (tháng hiện tại)
+ * getLastDayOfMonth('2024-05-15') -> '2024-05-31T23:59:59+07:00'
+ * getLastDayOfMonth('2024-02-15', 'DD/MM/YYYY') -> '29/02/2024' (năm nhuận)
+ */
+export function getLastDayOfMonth(date, format) {
+  const targetDate = date ? dayjs(date) : dayjs();
+
+  if (!targetDate.isValid()) {
+    return 'Invalid date value';
+  }
+
+  const lastDay = targetDate.endOf('month');
+
+  return format ? lastDay.format(format) : lastDay.format();
+}

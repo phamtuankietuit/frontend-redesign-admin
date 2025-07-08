@@ -8,7 +8,12 @@ import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-export function AnalyticsConversionRates({ title, subheader, chart, ...other }) {
+export function AnalyticsConversionRates({
+  title,
+  subheader,
+  chart,
+  ...other
+}) {
   const theme = useTheme();
 
   const chartColors = chart.colors ?? [
@@ -31,7 +36,10 @@ export function AnalyticsConversionRates({ title, subheader, chart, ...other }) 
     dataLabels: {
       enabled: true,
       offsetX: -6,
-      style: { fontSize: '10px', colors: ['#FFFFFF', theme.palette.text.primary] },
+      style: {
+        fontSize: '10px',
+        colors: ['#FFFFFF', theme.palette.text.primary],
+      },
     },
     plotOptions: {
       bar: {
@@ -53,7 +61,7 @@ export function AnalyticsConversionRates({ title, subheader, chart, ...other }) 
         series={chart.series}
         options={chartOptions}
         height={360}
-        sx={{ py: 2.5, pl: 1, pr: 2.5 }}
+        sx={{ pr: 3, pb: 2 }}
       />
     </Card>
   );

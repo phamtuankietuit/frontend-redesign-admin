@@ -3,17 +3,12 @@
  * https://github.com/you-dont-need-x/you-dont-need-lodash
  */
 
-import { paths } from "src/routes/paths";
-
-import { Iconify } from "src/components/iconify";
-
 // ----------------------------------------------------------------------
 
 export function flattenArray(list, key = 'children') {
   let children = [];
-
   const flatten = list?.map((item) => {
-    if (item[key] && item[key].length) {
+    if (item[key]?.length) {
       children = [...children, ...item[key]];
     }
     return item;
@@ -327,3 +322,93 @@ export function mergeVariantOptionsWithExisting(transformedVariants, existingVar
     };
   });
 }
+
+// ----------------------------------------------------------------------
+
+export function transformProductTypeHierarchy(data) {
+  if (!data) {
+    return [];
+  }
+  // If this is the root level (level 1), include it and process its children
+  if (data.level === 1 && data.childProductTypes) {
+    const rootItem = {
+      id: String(data.id),
+      label: data.displayName,
+      children: []
+    };
+
+    // Process each level 2 category
+    data.childProductTypes.forEach(level2Category => {
+      const categoryItem = {
+        id: String(level2Category.id),
+        label: level2Category.displayName,
+        children: []
+      };
+
+      // Process level 3 categories
+      if (level2Category.childProductTypes && level2Category.childProductTypes.length > 0) {
+        level2Category.childProductTypes.forEach(level3Category => {
+          const level3Item = {
+            id: String(level3Category.id),
+            label: level3Category.displayName
+          };
+
+          // If there are level 4 categories, add them as children of level 3
+          if (level3Category.childProductTypes && level3Category.childProductTypes.length > 0) {
+            level3Item.children = level3Category.childProductTypes.map(level4Category => ({
+              id: String(level4Category.id),
+              label: level4Category.displayName
+            }));
+          }
+
+          categoryItem.children.push(level3Item);
+        });
+      }
+
+      rootItem.children.push(categoryItem);
+    });
+
+    return [rootItem];
+  }
+
+  // Fallback for non-root data
+  if (!data.childProductTypes) {
+    return [];
+  }
+
+  const result = [];
+  // Process each top-level category (level 2)
+  data.childProductTypes.forEach(level2Category => {
+    const categoryItem = {
+      id: String(level2Category.id),
+      label: level2Category.displayName,
+      children: []
+    };
+
+    // Process level 3 categories
+    if (level2Category.childProductTypes && level2Category.childProductTypes.length > 0) {
+      level2Category.childProductTypes.forEach(level3Category => {
+        const level3Item = {
+          id: String(level3Category.id),
+          label: level3Category.displayName
+        };
+
+        // If there are level 4 categories, add them as children of level 3
+        if (level3Category.childProductTypes && level3Category.childProductTypes.length > 0) {
+          level3Item.children = level3Category.childProductTypes.map(level4Category => ({
+            id: String(level4Category.id),
+            label: level4Category.displayName
+          }));
+        }
+
+        categoryItem.children.push(level3Item);
+      });
+    }
+
+    result.push(categoryItem);
+  });
+
+  return result;
+}
+
+

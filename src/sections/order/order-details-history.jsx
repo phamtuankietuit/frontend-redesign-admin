@@ -15,7 +15,7 @@ import { fDateTime, formatStr } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
-export function OrderDetailsHistory({ history }) {
+export function OrderDetailsHistory({ history, order }) {
   const renderSummary = (
     <Paper
       variant="outlined"
@@ -33,19 +33,11 @@ export function OrderDetailsHistory({ history }) {
     >
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Đặt hàng</Box>
-        {fDateTime(history?.orderTime, formatStr.myFormat.dateTime)}
+        {fDateTime(order?.orderWhen, formatStr.myFormat.dateTime)}
       </Stack>
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Thanh toán</Box>
-        {fDateTime(history?.orderTime, formatStr.myFormat.dateTime)}
-      </Stack>
-      <Stack spacing={0.5}>
-        <Box sx={{ color: 'text.disabled' }}>Shipper lấy hàng</Box>
-        {fDateTime(history?.orderTime, formatStr.myFormat.dateTime)}
-      </Stack>
-      <Stack spacing={0.5}>
-        <Box sx={{ color: 'text.disabled' }}>Nhận hàng</Box>
-        {fDateTime(history?.orderTime, formatStr.myFormat.dateTime)}
+        {fDateTime(order?.paidWhen, formatStr.myFormat.dateTime)}
       </Stack>
     </Paper>
   );
@@ -58,25 +50,25 @@ export function OrderDetailsHistory({ history }) {
         [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 },
       }}
     >
-      {history?.timeline.map((item, index) => {
+      {history?.map((item, index) => {
         const firstTimeline = index === 0;
 
-        const lastTimeline = index === history.timeline.length - 1;
+        const lastTimeline = index === history.length - 1;
 
         return (
-          <TimelineItem key={item.title}>
+          <TimelineItem key={item.id}>
             <TimelineSeparator>
               <TimelineDot color={(firstTimeline && 'primary') || 'grey'} />
               {lastTimeline ? null : <TimelineConnector />}
             </TimelineSeparator>
 
             <TimelineContent>
-              <Typography variant="subtitle2">{item.title}</Typography>
+              <Typography variant="subtitle2">{item?.action}</Typography>
 
               <Box
                 sx={{ color: 'text.disabled', typography: 'caption', mt: 0.5 }}
               >
-                {fDateTime(item.time, formatStr.myFormat.dateTime)}
+                {fDateTime(item?.timestamp, formatStr.myFormat.dateTime)}
               </Box>
             </TimelineContent>
           </TimelineItem>

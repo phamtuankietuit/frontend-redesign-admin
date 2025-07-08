@@ -12,7 +12,10 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Skeleton } from '@mui/material';
 
 import { selectOrder } from 'src/state/order/order.slice';
-import { updateOrderStatusAsync } from 'src/services/order/order.service';
+import {
+  getOrderByIdAsync,
+  updateOrderStatusAsync,
+} from 'src/services/order/order.service';
 import { OrderDetailsInfo } from '../order-details-info';
 import { OrderDetailsItems } from '../order-details-item';
 import { OrderDetailsToolbar } from '../order-details-toolbar';
@@ -73,6 +76,8 @@ export function OrderDetailsView({ order }) {
         }),
       ).unwrap();
 
+      await dispatch(getOrderByIdAsync(order?.id)).unwrap();
+
       toast.success('Cập nhật trạng thái đơn hàng thành công');
 
       setStatus(newValue);
@@ -112,28 +117,17 @@ export function OrderDetailsView({ order }) {
       <Grid container spacing={3}>
         <Grid xs={12} md={8}>
           <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' }}>
-            <OrderDetailsItems
-              items={order?.orderLines}
-              taxes={order?.taxes}
-              shipping={order?.shipping}
-              discount={order?.discount}
-              subtotal={order?.subtotal}
-              total={order?.total}
+            <OrderDetailsItems order={order} />
+
+            <OrderDetailsHistory
+              history={order?.orderHistories || []}
               order={order}
             />
-
-            {/* <OrderDetailsHistory history={order?.history} /> */}
           </Stack>
         </Grid>
 
         <Grid xs={12} md={4}>
-          <OrderDetailsInfo
-            order={order}
-            customer={order?.customer}
-            delivery={order?.delivery}
-            payment={order?.payment}
-            shippingAddress={order?.shippingAddress}
-          />
+          <OrderDetailsInfo order={order} />
         </Grid>
       </Grid>
     </DashboardContent>

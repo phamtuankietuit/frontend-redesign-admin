@@ -6,27 +6,25 @@ import {
   Divider,
   Grid,
   InputAdornment,
-  MenuItem,
   Stack,
   TextField,
   Chip,
+  Autocomplete,
 } from '@mui/material';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { Field } from 'src/components/hook-form';
 import { selectCustomerType } from 'src/state/customer-type/customer-type.slice';
-import { selectProductType } from 'src/state/product-type/product-type.slice';
 import { fCurrency } from 'src/utils/format-number';
 import { DISCOUNT_VOUCHER_TYPE_OPTIONS, VALUE_TYPE_OPTIONS } from './constants';
+import { TreeViewSelection } from './tree-view-selection';
 
 const PromotionInfo = () => {
-  const { control, watch, setValue } = useFormContext();
-
+  const { control, watch, setValue, trigger } = useFormContext();
   const values = watch();
 
   const { customerTypes } = useSelector(selectCustomerType);
-  const { productTypesFlatten } = useSelector(selectProductType);
 
   return (
     <Grid container spacing={3}>
@@ -256,6 +254,8 @@ const PromotionInfo = () => {
               />
             </Stack>
           </Card>
+
+          <TreeViewSelection />
         </Stack>
       </Grid>
 
@@ -289,67 +289,59 @@ const PromotionInfo = () => {
               subheader="Thông tin đối tượng áp dụng khuyến mãi"
               sx={{ mb: 3 }}
             />
-
-            <Divider />
-
+            <Divider />{' '}
             <Stack spacing={3} sx={{ p: 3 }}>
-              <Field.Autocomplete
+              <Controller
                 name="customerTypeIds"
-                label="Loại khách hàng"
-                multiple
-                options={customerTypes}
-                getOptionLabel={(option) => option.name}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                sx={{ width: '100%' }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <Autocomplete
+                    {...field}
                     label="Loại khách hàng"
-                    InputLabelProps={{ shrink: true }}
+                    multiple
+                    options={customerTypes}
+                    getOptionLabel={(option) => option.name}
+                    isOptionEqualToValue={(option, value) =>
+                      option.id === value.id
+                    }
+                    sx={{ width: '100%' }}
+                    onChange={(event, value) => {
+                      field.onChange(value);
+                      // Trigger validation for real-time error feedback
+                      trigger('customerTypeIds');
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Loại khách hàng"
+                        InputLabelProps={{ shrink: true }}
+                        error={!!error}
+                        helperText={error?.message}
+                      />
+                    )}
+                    renderOption={(props, option) => (
+                      <li {...props} key={option.id}>
+                        {capitalize(option.name)}
+                      </li>
+                    )}
+                    renderTags={(selected, getTagProps) =>
+                      selected.map((option, index) => (
+                        <Chip
+                          {...getTagProps({ index })}
+                          key={option.id}
+                          label={option.name}
+                          size="small"
+                          variant="soft"
+                          color={
+                            (option.name === 'Vàng' && 'warning') ||
+                            (option.name === 'Kim cương' && 'info') ||
+                            (option.name === 'Bạc' && 'default') ||
+                            'primary'
+                          }
+                        />
+                      ))
+                    }
                   />
-                )}
-                renderOption={(props, option) => (
-                  <li {...props} key={option.id}>
-                    {capitalize(option.name)}
-                  </li>
-                )}
-                renderTags={(selected, getTagProps) =>
-                  selected.map((option, index) => (
-                    <Chip
-                      {...getTagProps({ index })}
-                      key={option.id}
-                      label={option.name}
-                      size="small"
-                      variant="soft"
-                      color={
-                        (option.name === 'Vàng' && 'warning') ||
-                        (option.name === 'Kim cương' && 'info') ||
-                        (option.name === 'Bạc' && 'default') ||
-                        'primary'
-                      }
-                    />
-                  ))
-                }
-              />
-
-              <Field.Autocomplete
-                name="applyToProductTypeId"
-                label="Loại sản phẩm áp dụng"
-                options={productTypesFlatten}
-                getOptionLabel={(option) => option.displayName}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                sx={{ width: '100%' }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Loại sản phẩm áp dụng"
-                    InputLabelProps={{ shrink: true }}
-                  />
-                )}
-                renderOption={(props, option) => (
-                  <li {...props} key={option.id}>
-                    {option.displayName}
-                  </li>
                 )}
               />
             </Stack>

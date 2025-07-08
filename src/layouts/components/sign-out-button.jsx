@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 
 import { useRouter } from 'src/routes/hooks';
 
-import { signOut } from 'src/services/auth/auth.service';
+import { logOutAsync, signOut } from 'src/services/auth/auth.service';
 import { signOut as signOutSlice } from 'src/state/auth/auth.slice';
 
 import { toast } from 'src/components/snackbar';
@@ -17,6 +17,7 @@ export function SignOutButton({ onClose, ...other }) {
   const handleLogout = useCallback(async () => {
     try {
       dispatch(signOutSlice());
+      dispatch(logOutAsync());
       signOut();
       router.refresh();
       onClose?.();

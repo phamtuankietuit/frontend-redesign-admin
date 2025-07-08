@@ -16,6 +16,7 @@ import stockTransferReducer from './stock-transfer/stock-transfer.slice';
 import promotionReducer from './promotion/promotion.slice';
 import bannerReducer from './banner/banner.slice';
 import orderReducer from './order/order.slice';
+import dashboardReducer from './dashboard/dashboard.slice';
 
 const store = configureStore({
     reducer: {
@@ -34,6 +35,7 @@ const store = configureStore({
         promotion: promotionReducer,
         banner: bannerReducer,
         order: orderReducer,
+        dashboard: dashboardReducer,
     }
 });
 

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { transformProductTypes } from "src/utils/helper";
+import { transformProductTypeHierarchy, transformProductTypes } from "src/utils/helper";
 
 import { getProductTypesAsync, getProductTypesFlattenAsync } from "src/services/product-type/product-type.service";
 
@@ -12,6 +12,10 @@ const initialState = {
     items: []
   },
   formMode: 'new',
+  promotion: {
+    items: [],
+    loading: false,
+  }
 };
 
 const productTypeSlice = createSlice({
@@ -24,8 +28,14 @@ const productTypeSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getProductTypesAsync.pending, (state) => {
+        state.promotion.items = [];
+        state.promotion.loading = true;
+      })
       .addCase(getProductTypesAsync.fulfilled, (state, action) => {
         state.productTypes = action.payload;
+        state.promotion.items = transformProductTypeHierarchy(action.payload[0]);
+        state.promotion.loading = false;
       })
       .addCase(getProductTypesFlattenAsync.pending, (state) => {
         state.productTypesFlatten = [];

@@ -16,7 +16,12 @@ import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { LoadingButton } from '@mui/lab';
-import { confirmPackagingCompleteAsync } from 'src/services/order/order.service';
+import {
+  confirmPackagingCompleteAsync,
+  getOrderByIdAsync,
+  updateOrderStatusAsync,
+} from 'src/services/order/order.service';
+import { OrderBranchDialog } from './order-branch-dialog';
 
 // ----------------------------------------------------------------------
 
@@ -33,35 +38,79 @@ export function OrderDetailsToolbar({
 
   const dispatch = useDispatch();
 
-  const loadingPickBranch = useBoolean(false);
-  const handlePickBranch = async () => {
-    try {
-      loadingPickBranch.onTrue();
-      // Simulate API call to pick branch
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success('Chọn kho thành công');
-    } catch (error) {
-      toast.error('Chọn kho thất bại');
-    } finally {
-      loadingPickBranch.onFalse();
-    }
-  };
+  const branchDialog = useBoolean(false);
 
-  const confirmPacked = useBoolean(false);
+  const buttonLoading = useBoolean(false);
+
+  // Tạo logic hiển thị options theo từng bước
+  const getAvailableStatusOptions = (currentStatus) => {
+    const statusOrder = [
+      'Pending',
+      'WaitForConfirmPackageBranch',
+      'Packaging',
+      'Processing',
+      'Shipped',
+      'Delivered',
+      'Received',
+    ];
+
+    const currentIndex = statusOrder.indexOf(currentStatus);
+
+    // Chỉ cho phép chuyển đến bước tiếp theo
+    const nextSteps = [];
+
+    if (currentIndex >= 0 && currentIndex < statusOrder.length - 1) {
+      // Thêm bước tiếp theo
+      nextSteps.push(statusOrder[currentIndex + 1]);
+    }
+
+    // Luôn có thể hủy và hoàn trả (trừ khi đã là Cancelled hoặc Refunded)
+    if (currentStatus !== 'Cancelled' && currentStatus !== 'Refunded') {
+      nextSteps.push('Cancelled');
+      nextSteps.push('Refunded');
+    }
+
+    return statusOptions.filter((option) => nextSteps.includes(option.value));
+  };
 
   const handleConfirmPacked = async () => {
     try {
-      confirmPacked.onTrue();
+      buttonLoading.onTrue();
 
       await dispatch(
-        confirmPackagingCompleteAsync({ id: order.id, body: {} }),
+        confirmPackagingCompleteAsync({ id: order.id, body: { notes: '' } }),
       ).unwrap();
+
+      await dispatch(getOrderByIdAsync(order?.id)).unwrap();
 
       toast.success('Xác nhận đóng hàng thành công');
     } catch (error) {
+      console.error('Error confirming packed:', error);
       toast.error('Xác nhận đóng hàng thất bại');
     } finally {
-      confirmPacked.onFalse();
+      buttonLoading.onFalse();
+    }
+  };
+
+  const handleCancelOrder = async () => {
+    try {
+      buttonLoading.onTrue();
+
+      await dispatch(
+        updateOrderStatusAsync({
+          id: order.id,
+          body: { status: 7, reason: '', notes: '' },
+        }),
+      ).unwrap();
+
+      await dispatch(getOrderByIdAsync({ id: order?.id })).unwrap();
+
+      toast.success('Hủy đơn hàng thành công');
+    } catch (error) {
+      console.error('Error cancelling order:', error);
+      toast.error('Hủy đơn hàng thất bại');
+    } finally {
+      buttonLoading.onFalse();
     }
   };
 
@@ -120,41 +169,75 @@ export function OrderDetailsToolbar({
           alignItems="center"
           justifyContent="flex-end"
         >
-          <Button
-            color="inherit"
-            variant="outlined"
-            endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
-            onClick={popover.onOpen}
-          >
-            {status === 'Pending' && 'Chờ xác nhận'}
-            {status === 'WaitForConfirmPackageBranch' && 'Chờ chọn kho'}
-            {status === 'Packaging' && 'Đang đóng hàng'}
-            {status === 'Processing' && 'Chờ lấy hàng'}
-            {status === 'Shipped' && 'Đang giao hàng'}
-            {status === 'Delivered' && 'Đã giao'}
-            {status === 'Received' && 'Đã nhận'}
-            {status === 'Cancelled' && 'Đã hủy'}
-            {status === 'Refunded' && 'Trả hàng'}
-          </Button>
-          <LoadingButton
-            color="inherit"
-            variant="contained"
-            onClick={handlePickBranch}
-            loading={loadingPickBranch.value}
-          >
-            Chọn kho
-          </LoadingButton>
+          {/* Chỉ hiển thị dropdown button từ Processing trở đi và không phải Cancelled/Refunded */}
+          {(status === 'Processing' ||
+            status === 'Shipped' ||
+            status === 'Delivered' ||
+            status === 'Received') &&
+            status !== 'Cancelled' &&
+            status !== 'Refunded' && (
+              <Button
+                color="inherit"
+                variant="outlined"
+                endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
+                onClick={popover.onOpen}
+              >
+                {status === 'Processing' && 'Chờ lấy hàng'}
+                {status === 'Shipped' && 'Đang giao hàng'}
+                {status === 'Delivered' && 'Đã giao'}
+                {status === 'Received' && 'Đã nhận'}
+              </Button>
+            )}
 
-          <LoadingButton
-            color="primary"
-            variant="contained"
-            onClick={handleConfirmPacked}
-            loading={confirmPacked.value}
-          >
-            Xác nhận đóng hàng
-          </LoadingButton>
+          {status === 'WaitForConfirmPackageBranch' && (
+            <LoadingButton
+              color="inherit"
+              variant="contained"
+              onClick={branchDialog.onTrue}
+            >
+              Chọn kho
+            </LoadingButton>
+          )}
+
+          {status === 'Packaging' && (
+            <LoadingButton
+              color="primary"
+              variant="contained"
+              onClick={handleConfirmPacked}
+              loading={buttonLoading.value}
+            >
+              Hoàn tất đóng hàng
+            </LoadingButton>
+          )}
+
+          {status === 'Pending' &&
+            (() => {
+              if (!order?.orderWhen) return false;
+              const orderTime = new Date(order.orderWhen);
+              const currentTime = new Date();
+              const timeDifferenceHours =
+                (currentTime - orderTime) / (1000 * 60 * 60);
+              return timeDifferenceHours >= 3;
+            })() && (
+              <LoadingButton
+                color="error"
+                variant="outlined"
+                onClick={handleCancelOrder}
+                loading={buttonLoading.value}
+              >
+                Hủy đơn hàng
+              </LoadingButton>
+            )}
         </Stack>
       </Stack>
+
+      <OrderBranchDialog
+        title="Chọn chi nhánh giao hàng"
+        open={branchDialog.value}
+        onClose={branchDialog.onFalse}
+        list={order?.fulfillments || []}
+        order={order}
+      />
 
       <CustomPopover
         open={popover.open}
@@ -163,7 +246,7 @@ export function OrderDetailsToolbar({
         slotProps={{ arrow: { placement: 'top-right' } }}
       >
         <MenuList>
-          {statusOptions?.map((option) => (
+          {getAvailableStatusOptions(status)?.map((option) => (
             <MenuItem
               key={option.value}
               selected={option.value === status}
